@@ -13,6 +13,8 @@
 	  	margin: 2px;
 	  	border: 1px solid;
 	  	background-color: #eaeaea;
+	  }
+	  .expand {
 	  	width: 100%;
 	  }
 	  .toolbar {
@@ -54,7 +56,7 @@
 		      		<button class="btn btn-primary">+</button>
 		      	</div>
 		      	<div style="margin-top: 15px;">
-      				<div ng-repeat="course in courses" class="btn course" draggable="true">
+      				<div ng-repeat="course in courses" class="btn course expand" draggable="true">
 	      				{{course.name}}
 	      			</div>
 		      	</div>
@@ -75,12 +77,12 @@
 	      					</tr>
      					</thead>
       					<tbody>
-      						<tr ng-repeat="hour in ['8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM']">
+      						<tr ng-repeat="hour in hours">
       							<td>
-      								{{hour}}
+      								{{(hour % 12) + 1}}
       							</td>
-	      						<td class="calendar-slot" ng-repeat="day in ['Mon', 'Tues', 'Wed', 'Thur', 'Fri']">
-	      							{{day}}: {{hour}}
+	      						<td class="calendar-slot" ng-repeat="day in days" id="{{day.acronym}}-{{hour}}">
+	      							{{day.name}}: {{(hour % 12) + 1}}
 	      						</td>
       						</tr>
       					</tbody>
@@ -99,12 +101,6 @@
 		    return false;
 		  });
 
-		  // to get IE to work
-		  addEvent(calendar, 'dragenter', function (e) {
-		    this.className = 'over';
-		    return false;
-		  });
-
 		  addEvent(calendar, 'dragleave', function () {
 		    this.className = '';
 		  });
@@ -113,9 +109,26 @@
 		    if (e.stopPropagation) e.stopPropagation(); // stops the browser from redirecting...why???
 
 		    this.className = '';
-		    var el = document.getElementById(e.dataTransfer.getData('Text'));
-
-		    alert("This course is probably too hard for you");
+		    var coursename = "ANTH 100";
+		    var coursetime = [
+	          {
+	            "time_start": 480,
+	            "day": 1,
+	            "time_end": 600
+	          },
+	          {
+	            "time_start": 600,
+	            "day": 2,
+	            "time_end": 660
+	          }
+	        ];
+	        for(var i = 0; i < coursetime.length; i++) { 
+	        	var tcell_id = coursetime[i]["day"] + "-" + (coursetime[i]["time_start"] / 60);
+	        	var tcell = document.getElementById(tcell_id);
+	        	tcell.innerHTML = coursename;
+	        	tcell.className = "course";
+	        	tcell.draggable = true;
+	        }
 
 		    return false;
 		  });
