@@ -3,6 +3,7 @@
 angular.module('schedulePlanner').controller('MainCtrl', 
     function ($scope, $location, filterFilter) {
       console.log("HERRRRROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
       $scope.courses = [
         { 
           name: 'ANTH 100',
@@ -34,7 +35,7 @@ angular.module('schedulePlanner').controller('MainCtrl',
         16
       ];
 
-      var course_to_coursetime = {
+      $scope.course_to_coursetime = {
         "ANTH 100" : [
           {
             "time_start": 480,
@@ -44,6 +45,25 @@ angular.module('schedulePlanner').controller('MainCtrl',
           {
             "time_start": 600,
             "day": 2,
+            "time_end": 660
+          }
+        ],
+        "ANTH 200" : [
+          {
+            "time_start": 720,
+            "day": 2,
+            "time_end": 780
+          },
+          {
+            "time_start": 600,
+            "day": 3,
+            "time_end": 660
+          }
+        ],
+        "ANTH 300" : [
+          {
+            "time_start": 600,
+            "day": 4,
             "time_end": 660
           }
         ]
@@ -72,7 +92,6 @@ angular.module('schedulePlanner').controller('MainCtrl',
         }
       ];
 
-      window.scope = $scope;
-      
+      //window.scope = $scope;
     }
 );
