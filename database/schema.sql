@@ -1,5 +1,4 @@
-  
-# Users
+/* Users */
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
@@ -8,7 +7,7 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`userid`)
 );
 
-# Playgrounds
+/* Playgrounds */
 DROP TABLE IF EXISTS `playgrounds`;
 
 CREATE TABLE `playgrounds` (
@@ -18,7 +17,7 @@ CREATE TABLE `playgrounds` (
 
 CREATE INDEX `playgrounds_userid` ON `playgrounds` (`userid`);
 
-# Instructors
+/* Instructors */
 DROP TABLE IF EXISTS `instructors`;
 
 CREATE TABLE `instructors` (
@@ -27,7 +26,7 @@ CREATE TABLE `instructors` (
   PRIMARY KEY  (`instructorid`)
 );
 
-# Schedules
+/* Schedules */
 DROP TABLE IF EXISTS `schedules`;
 
 CREATE TABLE `schedules` (
@@ -38,7 +37,7 @@ CREATE TABLE `schedules` (
 
 CREATE INDEX `schedules_userid` ON `schedules` (`userid`);
 
-# Course Instructors
+/* Course Instructors */
 DROP TABLE IF EXISTS `course_instructors`;
 
 CREATE TABLE `course_instructors` (
@@ -48,7 +47,7 @@ CREATE TABLE `course_instructors` (
 
 CREATE INDEX `course_instructors_courseid` ON `course_instructors` (`courseid`);
 
-# Course Times
+/* Course Times */
 /*
 	typedef enum {
 		Sunday = 0,
@@ -77,7 +76,7 @@ CREATE TABLE `course_times` (
 
 CREATE INDEX `course_times_courseid` ON `course_times` (`courseid`);
 
-# Course Restrictions
+/* Course Restrictions */
 /*
 	typedef enum {
 		CoursePrerequisite = 0,
@@ -102,7 +101,7 @@ CREATE TABLE `course_restrictions` (
 
 CREATE INDEX `course_restrictions_courseid` ON `course_restrictions` (`courseid`);
 
-# Courses
+/* Courses */
 /*
 	typdef enum {
 		FallTerm = 0,
@@ -137,13 +136,13 @@ CREATE TABLE `courses` (
   `year` int(64) UNSIGNED NOT NULL,
   `term` int(32) UNSIGNED NOT NULL,
   `title` varchar(128) NOT NULL,
-  `subject` varchar(4) NOT NULL, # Subject (e.g. COMP)
-  `course_number` int(16) UNSIGNED NOT NULL, # 3-Digit Course Number
+  `subject` varchar(4) NOT NULL, /* Subject (e.g. COMP)*/
+  `course_number` int(16) UNSIGNED NOT NULL, /* 3-Digit Course Number*/
   `college` int(16) UNSIGNED NULL,
   `crn` int(64) UNSIGNED NOT NULL,
-  `last_update` int(64) UNSIGNED NOT NULL, # UNIX Timestamp
+  `last_update` int(64) UNSIGNED NOT NULL, /* UNIX Timestamp*/
   `course_url` varchar(255) NULL,
-  `link` varchar(255) NULL, # Link to page on courses.rice.edu
+  `link` varchar(255) NULL, /* Link to page on courses.rice.edu*/
   `description` mediumtext NULL,
   `enrollment` int(32) UNSIGNED NULL,
   `waitlisted` int(32) UNSIGNED NULL,
@@ -155,13 +154,13 @@ CREATE TABLE `courses` (
   `xlist_max_waitlisted` int(32) UNSIGNED NULL,
   `credit_lpap` boolean NOT NULL DEFAULT 0,
   `credit_distribution` int(32) UNSIGNED NULL,
-  `department` varchar(128) NOT NULL, # e.g. Computer Science
-  `school` varchar(128) NOT NULL, # e.g. Engineering, Humanities...
+  `department` varchar(128) NOT NULL, /* e.g. Computer Science*/
+  `school` varchar(128) NOT NULL, /* e.g. Engineering, Humanities...*/
   `section` int(32) UNSIGNED NULL,
   `credit_hours` int(32) UNSIGNED NOT NULL,
   `credit_hours_min` int(32) UNSIGNED NULL,
   `credit_hours_max` int(32) UNSIGNED NULL,
-  `session_type` int(32) UNSIGNED NOT NULL, # see courses.rice.edu
+  `session_type` int(32) UNSIGNED NOT NULL, /* see courses.rice.edu*/
   `xlist_group` varchar(32) NULL,
   `grade_type` int(32) UNSIGNED NOT NULL,
   PRIMARY KEY  (`courseid`)
