@@ -1,0 +1,168 @@
+COURSES table
+crn	int	Unchecked
+term_code	int	Unchecked
+subject	nvarchar(250)	Checked
+course_number	nvarchar(250)	Checked
+section	nvarchar(250)	Checked
+title	nvarchar(250)	Checked
+description	nvarchar(4000)	Checked
+credit_hours	nvarchar(250)	Checked
+distribution_group	nvarchar(250)	Checked
+start_time	nvarchar(250)	Checked
+end_time	nvarchar(250)	Checked
+meeting_days	nvarchar(250)	Checked
+instructor	nvarchar(1000)	Checked
+max_enrollment	int	Unchecked
+actual_enrollment	int	Unchecked
+xlst_actual_enrollment	int	Unchecked
+pre_requisites	nvarchar(250)	Checked
+co_requisites	nvarchar(250)	Checked
+catalog_or_permission	nvarchar(250)	Checked
+catalog_inst_permission	nvarchar(250)	Checked
+term_description	nvarchar(250)	Checked
+school	nvarchar(250)	Checked
+department	nvarchar(250)	Checked
+session	nvarchar(250)	Checked
+major_restrictions	nvarchar(250)	Checked
+class_restrictions	nvarchar(250)	Checked
+xlst_group	nvarchar(250)	Checked
+xlst_max_enrollment	int	Unchecked
+level_restrictions	nvarchar(250)	Checked
+xlink_course	nvarchar(250)	Checked
+program_restrictions	nvarchar(250)	Checked
+meeting_Days_ddl	nvarchar(50)	Checked
+location	nvarchar(250)	Checked
+xlst_wait_capacity	int	Unchecked
+xlst_wait_count	int	Unchecked
+		Unchecked
+
+Courses_Updates Table
+crn	int	Unchecked
+term_code	int	Unchecked
+subject	nvarchar(250)	Checked
+course_number	nvarchar(250)	Checked
+section	nvarchar(250)	Checked
+title	nvarchar(250)	Checked
+description	nvarchar(4000)	Checked
+credit_hours	nvarchar(250)	Checked
+distribution_group	nvarchar(250)	Checked
+start_time	nvarchar(250)	Checked
+end_time	nvarchar(250)	Checked
+meeting_days	nvarchar(250)	Checked
+instructor	nvarchar(1000)	Checked
+max_enrollment	int	Unchecked
+actual_enrollment	int	Unchecked
+xlst_actual_enrollment	int	Unchecked
+pre_requisites	nvarchar(250)	Checked
+co_requisites	nvarchar(250)	Checked
+catalog_or_permission	nvarchar(250)	Checked
+catalog_inst_permission	nvarchar(250)	Checked
+term_description	nvarchar(250)	Checked
+school	nvarchar(250)	Checked
+department	nvarchar(250)	Checked
+session	nvarchar(250)	Checked
+major_restrictions	nvarchar(250)	Checked
+class_restrictions	nvarchar(250)	Checked
+xlst_group	nvarchar(250)	Checked
+xlst_max_enrollment	int	Unchecked
+level_restrictions	nvarchar(250)	Checked
+xlink_course	nvarchar(250)	Checked
+program_restrictions	nvarchar(250)	Checked
+meeting_Days_ddl	nvarchar(50)	Checked
+location	nvarchar(250)	Checked
+xlst_wait_capacity	int	Unchecked
+xlst_wait_count	int	Unchecked
+		Unchecked
+
+
+
+Instructor evals
+ID	int	Unchecked
+CRN	int	Unchecked
+[TERM CODE]	int	Unchecked
+TERM	nvarchar(50)	Checked
+[INSTRUCT EVAL SUBMIT]	datetime	Unchecked
+[INSTRUCT EVAL COMPLETE]	nchar(1)	Checked
+[INSTRUCTOR NAME]	nvarchar(50)	Checked
+COURSE	nvarchar(50)	Checked
+[SECTION ENROLLMENT]	int	Checked
+[XLIST GROUP]	nchar(10)	Checked
+[XLIST ENROLLMENT]	int	Checked
+[INSTRUCT EVAL Q1]	nchar(1)	Checked
+[INSTRUCT EVAL Q2]	nchar(1)	Checked
+[INSTRUCT EVAL Q3]	nchar(1)	Checked
+[INSTRUCT EVAL Q4]	nchar(1)	Checked
+[INSTRUCT EVAL Q5]	nchar(1)	Checked
+[INSTRUCT EVAL Q6]	nchar(1)	Checked
+[INSTRUCT EVAL Q7]	nchar(1)	Checked
+[INSTRUCT EVAL Q8]	nchar(1)	Checked
+[INSTRUCT EVAL Q9]	nchar(1)	Checked
+		Unchecked
+
+
+Instructor eval comments
+ID	int	Unchecked
+CRN	int	Unchecked
+[TERM CODE]	int	Unchecked
+TERM	nvarchar(50)	Checked
+[INSTRUCT EVAL SUBMIT]	datetime	Checked
+[INSTRUCT EVAL COMPLETE]	nchar(1)	Checked
+[INSTRUCTOR NAME]	nvarchar(50)	Checked
+COURSE	nvarchar(50)	Checked
+[SECTION ENROLLMENT]	int	Checked
+[XLIST GROUP]	nchar(10)	Checked
+[XLIST ENROLLMENT]	int	Checked
+COMMENTS	nvarchar(MAX)	Checked
+		Unchecked
+
+Course eval comments
+ID	int	Unchecked
+[TERM CODE]	int	Unchecked
+TERM	nvarchar(50)	Checked
+CRN	int	Unchecked
+[COURSE EVAL SUBMIT]	datetime	Checked
+[COURSE EVAL COMPLETE]	nchar(1)	Checked
+[INSTRUCTOR NAME]	nvarchar(50)	Checked
+COURSE	nvarchar(50)	Checked
+[SECTION ENROLLMENT]	int	Checked
+[XLIST GROUP]	nchar(10)	Checked
+[XLIST ENROLLMENT]	int	Checked
+COMMENTS	nvarchar(MAX)	Checked
+		Unchecked
+
+Course Evals Table (Checked / unchecked pertains to if it is required.
+ID	int	Unchecked
+[TERM CODE]	int	Unchecked
+TERM	nvarchar(50)	Checked
+CRN	int	Unchecked
+[COURSE EVAL SUBMIT]	datetime	Unchecked
+[COURSE EVAL COMPLETE]	nchar(1)	Checked
+[INSTRUCTOR NAME]	nvarchar(50)	Checked
+COURSE	nvarchar(50)	Checked
+[SECTION ENROLLMENT]	int	Checked
+[XLIST GROUP]	nchar(10)	Checked
+[XLIST ENROLLMENT]	int	Checked
+[COURSE EVAL Q1]	nchar(1)	Checked
+[COURSE EVAL Q2]	nchar(1)	Checked
+[COURSE EVAL Q3]	nchar(1)	Checked
+[COURSE EVAL Q4]	nchar(1)	Checked
+[COURSE EVAL Q5]	nchar(1)	Checked
+[COURSE EVAL Q6]	nchar(1)	Checked
+[COURSE EVAL Q7]	nchar(1)	Checked
+[COURSE EVAL Q8]	nchar(1)	Checked
+		Unchecked
+
+
+This short one clears a table.
+
+ALTER PROCEDURE [dbo].[Registration_Courses_Updates_Delete_Data]
+	/*
+	(
+	@parameter1 int = 5,
+	@parameter2 datatype OUTPUT
+	)
+	*/
+AS
+	/* SET NOCOUNT ON */
+	DELETE FROM dbo.Registration_Courses_Updates;
+	RETURN

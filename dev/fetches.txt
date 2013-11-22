@@ -1,0 +1,463 @@
+Next, here is some code that fetches and processes the data feed.  I update
+to a different table and then run a stored procedure that merges the
+differences.
+--------------------
+    Sub UpdateCourseInfo()
+        Try
+            lblError.Text = ""
+            'lblLastYear.Visible = True
+            Dim URL As New StringBuilder
+'Step 1, Load new data from web to local table
+            URL.Append("http://courses.rice.edu/admweb/!SWKSECX.main?term=")
+            'If rblTerm.SelectedIndex = -1 Then rblTerm.SelectedIndex = 0
+            'If LCase(rblTerm.SelectedItem.Text) = "fall" Then
+            'URL.Append("201210")
+            'ElseIf LCase(rblTerm.SelectedItem.Text) = "spring" Then
+            'URL.Append("201120")    'Terms.spring.ToString())
+            'Else
+            'SendError(rblTerm.SelectedItem.Text & " Term must be set")
+            'Return
+            'End If
+ 
+'"http://courses.rice.edu/admweb/!SWKSECX.main?term=201220&dept=ELEC" this
+is just a sample string
+            'lblLastYear.Text = URL.ToString()
+            URL.Append(Session("Term_Code").ToString)
+
+            ShowInfoDS = New DataSet
+            ShowInfoDS.ReadXml(XmlReader.Create(URL.ToString()))
+            If ShowInfoDS.Tables.Count = 0 Then
+                SendError(" No Data Returned.  TC =" &
+Session("Term_Code").ToString)
+                Return
+            End If
+            AddMissingColumns(ShowInfoDS)
+'Step 2, Add any columns that may be missing
+ 
+ExecuteStoredProcedure("Registration_Courses_Updates_Delete_Data")  'Step 3,
+Empty old updates data
+
+            Dim RegistrationCoursesDS As New DataSet()
+'Step 4, Load new data into Updates table
+            Dim RegistrationCoursesAdpt As New SqlDataAdapter()
+            Dim ConnStr As String =
+System.Configuration.ConfigurationManager.ConnectionStrings("COMP446_Connect
+ionString").ConnectionString
+            Dim strSQL As StringBuilder
+            strSQL = New StringBuilder()
+            strSQL.Append("SELECT *")
+            strSQL.Append(" FROM dbo.Registration_Courses_Updates ")
+            Dim RegistrationCoursesConn As New SqlConnection(ConnStr)
+            RegistrationCoursesAdpt.SelectCommand = New
+SqlCommand(strSQL.ToString(), RegistrationCoursesConn)
+            Dim RegistrationCoursesCB As New
+SqlCommandBuilder(RegistrationCoursesAdpt)
+            RegistrationCoursesAdpt.Fill(RegistrationCoursesDS)
+            Dim RegistrationCoursesRow As DataRow
+            Dim DistributionGroup, catalog_permission,
+catalog_inst_permission, major_restrictions, class_restrictions,
+level_restrictions, program_restrictions As String
+            Dim xlst_actual_enrollment, xlst_max_enrollment,
+actual_enrollment, max_enrollment As Integer
+            'Dim RegistrationColumn As DataColumn
+            For I As Int32 = 0 To ShowInfoDS.Tables(0).Rows.Count - 1
+                RegistrationCoursesRow =
+RegistrationCoursesDS.Tables(0).NewRow
+
+                '** Note that '-' are replaced with '_' for SQL stored
+procedure.
+                RegistrationCoursesRow.Item("crn") =
+ShowInfoDS.Tables(0).Rows(I).Item("crn")
+                RegistrationCoursesRow.Item("subject") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("subject"))
+                RegistrationCoursesRow.Item("course_number") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("course-number"))
+                RegistrationCoursesRow.Item("section") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("section"))
+                RegistrationCoursesRow.Item("title") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("title"))
+                If
+IsDBNull(ShowInfoDS.Tables(0).Rows(I).Item("description")) Then
+                    RegistrationCoursesRow.Item("description") = ""
+                Else
+                    RegistrationCoursesRow.Item("description") =
+Trim(Left(ShowInfoDS.Tables(0).Rows(I).Item("description"), 3999))
+                End If
+                RegistrationCoursesRow.Item("credit_hours") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("credit-hours"))
+                DistributionGroup =
+Trim(NotNull(ShowInfoDS.Tables(0).Rows(I).Item("distribution-group")))
+                Select Case DistributionGroup
+                    Case ""
+
+                    Case "Distribution Group I"
+                        DistributionGroup = "I"
+                    Case "Distribution Group II"
+                        DistributionGroup = "II"
+                    Case "Distribution Group III"
+                        DistributionGroup = "III"
+                    Case "Distribution Group II, Distribution Group III"
+                        DistributionGroup = "II, III"
+                    Case "Cntr for Civic Research Course"
+                        DistributionGroup = "C4CRC"
+                    Case "Distribution Group I, Distribution Group I - ARCH"
+                        DistributionGroup = "I, I-ARCH"
+                    Case "Distribution Group II, Distribution Group II -
+ARCH"
+                        DistributionGroup = "II, II-ARCH"
+                    Case "Distribution Group III, Distribution Group III -
+ARCH"
+                        DistributionGroup = "III, III-ARCH"
+                End Select
+                RegistrationCoursesRow.Item("distribution_group") =
+NotNull(DistributionGroup)
+                RegistrationCoursesRow.Item("start_time") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("start-time"))
+                RegistrationCoursesRow.Item("end_time") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("end-time"))
+                RegistrationCoursesRow.Item("meeting_days") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("meeting-days"))
+                RegistrationCoursesRow.Item("meeting_days_ddl") =
+MeetingDaysConverted(NotNull(ShowInfoDS.Tables(0).Rows(I).Item("meeting-days
+")))
+                RegistrationCoursesRow.Item("instructor") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("instructor"))
+                max_enrollment =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("max-enrollment"))
+                RegistrationCoursesRow.Item("max_enrollment") =
+max_enrollment
+                actual_enrollment =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("actual-enrollment"))
+                RegistrationCoursesRow.Item("actual_enrollment") =
+actual_enrollment
+                xlst_max_enrollment =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("xlst-max-enrollment"))
+                If max_enrollment > xlst_max_enrollment Then
+xlst_max_enrollment = max_enrollment
+                RegistrationCoursesRow.Item("xlst_max_enrollment") =
+xlst_max_enrollment
+                xlst_actual_enrollment =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("xlst-actual-enrollment"))
+                If actual_enrollment > xlst_actual_enrollment Then
+xlst_actual_enrollment = actual_enrollment
+                RegistrationCoursesRow.Item("xlst_actual_enrollment") =
+xlst_actual_enrollment
+                RegistrationCoursesRow.Item("pre_requisites") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("pre-requisites"))
+                RegistrationCoursesRow.Item("co_requisites") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("co-requisites"))
+                catalog_permission =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("catalog-or-permission"))
+                Select Case catalog_permission
+                    Case "or permission of instructor"
+                        catalog_permission = "instructor"
+                    Case "or permission of department"
+                        catalog_permission = "department"
+                End Select
+                RegistrationCoursesRow.Item("catalog_or_permission") =
+catalog_permission
+                catalog_inst_permission =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("catalog-inst-permission"))
+                Select Case catalog_inst_permission
+                    Case "Instructor permission required"
+                        catalog_inst_permission = "instructor"
+                    Case "Department permission required"
+                        catalog_inst_permission = "department"
+                End Select
+                RegistrationCoursesRow.Item("catalog_inst_permission") =
+catalog_inst_permission
+                RegistrationCoursesRow.Item("term_code") =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("term-code"))
+                RegistrationCoursesRow.Item("term_description") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("term-description"))
+                RegistrationCoursesRow.Item("school") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("school"))
+                RegistrationCoursesRow.Item("department") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("department"))
+                RegistrationCoursesRow.Item("session") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("session"))
+                major_restrictions =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("major-restrictions"))
+                If InStr(major_restrictions, "Must be enrolled in one of the
+following ") <> 0 Then major_restrictions = Mid(major_restrictions, 42)
+                If InStr(major_restrictions, "May not be enrolled in any of
+the following ") <> 0 Then major_restrictions = "Not " +
+Mid(major_restrictions, 45)
+                RegistrationCoursesRow.Item("major_restrictions") =
+major_restrictions
+                class_restrictions =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("class-restrictions"))
+                If InStr(class_restrictions, "Must be in one of the
+following Classification(s):") <> 0 Then class_restrictions =
+Mid(class_restrictions, 51)
+                If InStr(class_restrictions, "May not be in any of the
+following Classification(s):") <> 0 Then class_restrictions = "Not " +
+Mid(class_restrictions, 54)
+                RegistrationCoursesRow.Item("class_restrictions") =
+class_restrictions
+                RegistrationCoursesRow.Item("xlst_group") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("xlst-group"))
+                level_restrictions =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("level-restrictions"))
+                If InStr(level_restrictions, "Must be enrolled in one of the
+following Level(s):") <> 0 Then level_restrictions = Mid(level_restrictions,
+51)
+                If InStr(level_restrictions, "May not be enrolled in any of
+the following Level(s):") <> 0 Then level_restrictions = "Not " +
+Mid(level_restrictions, 54)
+                RegistrationCoursesRow.Item("level_restrictions") =
+level_restrictions
+                RegistrationCoursesRow.Item("xlink_course") =
+ShowInfoDS.Tables(0).Rows(I).Item("xlink-course")
+                program_restrictions =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("program-restrictions"))
+                If InStr(program_restrictions, "Must be enrolled in one of
+the following Program(s):") <> 0 Then program_restrictions =
+Mid(program_restrictions, 53)
+                RegistrationCoursesRow.Item("program_restrictions") =
+program_restrictions
+                RegistrationCoursesRow.Item("location") =
+NotNull(ShowInfoDS.Tables(0).Rows(I).Item("location"))
+                RegistrationCoursesRow.Item("xlst_wait_capacity") =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("xlst-wait-capacity"))
+                RegistrationCoursesRow.Item("xlst_wait_count") =
+NotNullInt(ShowInfoDS.Tables(0).Rows(I).Item("xlst-wait-count"))
+ 
+RegistrationCoursesDS.Tables(0).Rows.Add(RegistrationCoursesRow)
+            Next I
+            'RegistrationCoursesRow = RegistrationCoursesDS.Tables(0).NewRow
+            'RegistrationCoursesRow.Item("Time") = Now()
+ 
+'RegistrationCoursesDS.Tables(0).Rows.Add(RegistrationCoursesRow)
+            'RegistrationCoursesAdpt.Update(RegistrationCoursesDS)
+            RegistrationCoursesAdpt.Update(RegistrationCoursesDS)
+            RegistrationCoursesAdpt.Dispose()
+            RegistrationCoursesConn.Close()
+
+ 
+ExecuteStoredProcedureWithParameter("Registration_Courses_Synchronize",
+"@Term_Code", SqlDbType.Int, Session("Term_Code"))          'Step 5,
+Synchronize updates into main table
+
+        Catch ex As Exception
+            SendError(ex.ToString())
+        End Try
+
+    End Sub 'Updates the local copy of data table from Registration server
+    Sub AddMissingColumns(ByRef ShowInfoDS As DataSet)
+        Dim ShowInfoTBL As DataTable = ShowInfoDS.Tables(0)
+        If Not ColumnExists(ShowInfoTBL, "crn") Then
+ShowInfoTBL.Columns.Add("crn", Type.GetType("System.Int32"))
+        If Not ColumnExists(ShowInfoTBL, "subject") Then
+ShowInfoTBL.Columns.Add("subject", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "course-number") Then
+ShowInfoTBL.Columns.Add("course-number", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "section") Then
+ShowInfoTBL.Columns.Add("section", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "title") Then
+ShowInfoTBL.Columns.Add("title", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "description") Then
+ShowInfoTBL.Columns.Add("description", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "credit-hours") Then
+ShowInfoTBL.Columns.Add("credit-hours", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "distribution-group") Then
+ShowInfoTBL.Columns.Add("distribution-group", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "start-time") Then
+ShowInfoTBL.Columns.Add("start-time", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "end-time") Then
+ShowInfoTBL.Columns.Add("end-time", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "meeting-days") Then
+ShowInfoTBL.Columns.Add("meeting-days", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "meeting_days_ddl") Then
+ShowInfoTBL.Columns.Add("meeting_days_ddl", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "instructor") Then
+ShowInfoTBL.Columns.Add("instructor", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "max-enrollment") Then
+ShowInfoTBL.Columns.Add("max-enrollment", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "actual-enrollment") Then
+ShowInfoTBL.Columns.Add("actual-enrollment", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlst-actual-enrollment") Then
+ShowInfoTBL.Columns.Add("xlst-actual-enrollment",
+Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "pre-requisites") Then
+ShowInfoTBL.Columns.Add("pre-requisites", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "co-requisites") Then
+ShowInfoTBL.Columns.Add("co-requisites", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "catalog-or-permission") Then
+ShowInfoTBL.Columns.Add("catalog-or-permission",
+Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "catalog-inst-permission") Then
+ShowInfoTBL.Columns.Add("catalog-inst-permission",
+Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "term-code") Then
+ShowInfoTBL.Columns.Add("term-code", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "term-description") Then
+ShowInfoTBL.Columns.Add("term-description", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "school") Then
+ShowInfoTBL.Columns.Add("school", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "department") Then
+ShowInfoTBL.Columns.Add("department", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "session") Then
+ShowInfoTBL.Columns.Add("session", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "major-restrictions") Then
+ShowInfoTBL.Columns.Add("major-restrictions", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "class-restrictions") Then
+ShowInfoTBL.Columns.Add("class-restrictions", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlst-group") Then
+ShowInfoTBL.Columns.Add("xlst-group", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlst-max-enrollment") Then
+ShowInfoTBL.Columns.Add("xlst-max-enrollment",
+Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "level-restrictions") Then
+ShowInfoTBL.Columns.Add("level-restrictions", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlink-course") Then
+ShowInfoTBL.Columns.Add("xlink-course", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "program-restrictions") Then
+ShowInfoTBL.Columns.Add("program-restrictions",
+Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "location") Then
+ShowInfoTBL.Columns.Add("location", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlst-wait-capacity") Then
+ShowInfoTBL.Columns.Add("xlst-wait-capacity", Type.GetType("System.String"))
+        If Not ColumnExists(ShowInfoTBL, "xlst-wait-count") Then
+ShowInfoTBL.Columns.Add("xlst-wait-count", Type.GetType("System.String"))
+        ShowInfoTBL.PrimaryKey = New DataColumn()
+{ShowInfoTBL.Columns("crn")}
+    End Sub 'Adds colums required by local database that might not be in the
+feed
+    Function ColumnExists(ByRef ShowInfoTBL As DataTable, ByVal ColName As
+String) As Boolean
+        Dim I As Integer
+        For I = 0 To ShowInfoTBL.Columns.Count - 1
+            If ShowInfoTBL.Columns(I).ColumnName = ColName Then Return True
+'column exists
+        Next
+        Return False
+    End Function
+    Sub ExecuteStoredProcedure(ByVal StoredProcedureName As String)
+        Dim ExecuteStoredProcedureDS As DataSet
+        Dim ExecuteStoredProcedureConn As SqlConnection
+        Dim ExecuteStoredProcedureAdpt As SqlDataAdapter
+
+        Try
+            'Create a connection to the SQL Server.
+            ExecuteStoredProcedureConn = New
+SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings("C
+OMP446_ConnectionString").ConnectionString)
+
+            'Create a DataAdapter, and then provide the name of the stored
+procedure.
+            ExecuteStoredProcedureAdpt = New
+SqlDataAdapter(StoredProcedureName, ExecuteStoredProcedureConn)
+
+            'Set the command type as StoredProcedure.
+            ExecuteStoredProcedureAdpt.SelectCommand.CommandType =
+CommandType.StoredProcedure
+
+            'Create and add a parameter to Parameters collection for the
+stored procedure.
+            'ExecuteStoredProcedureAdpt.SelectCommand.Parameters.Add(New
+SqlParameter("@au_lname", SqlDbType.VarChar, 40))
+
+            'Assign the search value to the parameter.
+ 
+'ExecuteStoredProcedureAdpt.SelectCommand.Parameters("@au_lname").Value =
+Trim(txtLastName.Text)
+
+            'Create and add an output parameter to Parameters collection. 
+            'ExecuteStoredProcedureAdpt.SelectCommand.Parameters.Add(New
+SqlParameter("@RowCount", SqlDbType.Int, 4))
+
+            'Set the direction for the parameter. This parameter returns the
+Rows returned.
+ 
+'ExecuteStoredProcedureAdpt.SelectCommand.Parameters("@RowCount").Direction
+= ParameterDirection.Output
+
+            ExecuteStoredProcedureDS = New DataSet() 'Create a new DataSet
+to hold the records.
+            ExecuteStoredProcedureAdpt.Fill(ExecuteStoredProcedureDS,
+"RowsChangedByStoredProcedureTable") 'Fill the DataSet with the rows
+returned.
+
+
+            ExecuteStoredProcedureAdpt.Dispose() 'Dispose of the
+DataAdapter.
+            ExecuteStoredProcedureConn.Close() 'Close the connection.
+
+        Catch ex As Exception
+            SendError(ex.ToString())
+        End Try
+
+    End Sub ' Used by UpdateCourseInfo to execute Stored Procedures
+    Sub ExecuteStoredProcedureWithParameter(ByVal StoredProcedureName As
+String, ByVal ParameterName As String, ByVal ParameterType As SqlDbType,
+ByVal ParameterValue As Object)
+        Dim ExecuteStoredProcedureDS As DataSet
+        Dim ExecuteStoredProcedureConn As SqlConnection
+        Dim ExecuteStoredProcedureAdpt As SqlDataAdapter
+
+        Try
+            'Create a connection to the SQL Server.
+            ExecuteStoredProcedureConn = New
+SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings("C
+OMP446_ConnectionString").ConnectionString)
+
+            'Create a DataAdapter, and then provide the name of the stored
+procedure.
+            ExecuteStoredProcedureAdpt = New
+SqlDataAdapter(StoredProcedureName, ExecuteStoredProcedureConn)
+
+            'Set the command type as StoredProcedure.
+            ExecuteStoredProcedureAdpt.SelectCommand.CommandType =
+CommandType.StoredProcedure
+
+            'Create and add a parameter to Parameters collection for the
+stored procedure.
+            ExecuteStoredProcedureAdpt.SelectCommand.Parameters.Add(New
+SqlParameter(ParameterName, ParameterType))
+
+            'Assign the search value to the parameter.
+ 
+ExecuteStoredProcedureAdpt.SelectCommand.Parameters(ParameterName).Value =
+ParameterValue
+
+            'Create and add an output parameter to Parameters collection. 
+            'ExecuteStoredProcedureAdpt.SelectCommand.Parameters.Add(New
+SqlParameter("@RowCount", SqlDbType.Int, 4))
+
+            'Set the direction for the parameter. This parameter returns the
+Rows returned.
+ 
+'ExecuteStoredProcedureAdpt.SelectCommand.Parameters("@RowCount").Direction
+= ParameterDirection.Output
+
+            ExecuteStoredProcedureDS = New DataSet() 'Create a new DataSet
+to hold the records.
+            ExecuteStoredProcedureAdpt.Fill(ExecuteStoredProcedureDS,
+"RowsChangedByStoredProcedureTable") 'Fill the DataSet with the rows
+returned.
+
+
+            'Get the number of rows returned, and then assign it to the
+Label control.
+            'If ExecuteStoredProcedureDS.Tables.Count > 0 Then
+            'lblLastYear.Text =
+ExecuteStoredProcedureDS.Tables(0).Rows.Count.ToString() & " Rows Found!"
+'---  OR  ----
+            'lblLastYear.Visible = True
+            'gvAll.DataSource =
+ExecuteStoredProcedureDS.Tables("RowsChangedByStoredProcedureTable").Default
+View
+            'gvAll.DataBind()
+            'End If
+
+            ExecuteStoredProcedureAdpt.Dispose() 'Dispose of the
+DataAdapter.
+            ExecuteStoredProcedureConn.Close() 'Close the connection.
+
+        Catch ex As Exception
+            SendError(ex.ToString())
+        End Try
+
+    End Sub ' Used by UpdateCourseInfo to execute Stored Procedures
