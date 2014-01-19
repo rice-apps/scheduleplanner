@@ -1,8 +1,10 @@
 http://courses.rice.edu/admweb/!SWKSECX.main?term=201320&title=&course=&crn=&coll=&dept=&subj=
 API for course evaluations?
 
+zz23@rice.edu
+
 Schedule Planner
-	-Course filtering (DEPARTMENT, DEPARTMENT+NUMBER, DISTRIBUTION GROUP, CRN, title, instructor, DAYS, TIMES, credit hrs, cross-list, restrictions, term)
+	-Course filtering (DEPARTMENT, DISTRIBUTION GROUP, CRN, instructor, DAYS, TIMES, credit hrs, cross-list, restrictions)
 		-check box to hide courses that conflict with ones on schedule
 		-check box to search in descriptions also
 	-Integrated network id logins
@@ -13,14 +15,10 @@ Schedule Planner
 	-how to display courses that have time conflicts, turn red on time conflicts
 
 SQL Database Structure
-	instructor_evals {...}
-	instructor_eval_comments {...}
-	course_evals {...}
-	course_eval_comments {...}
-
-
-
-	
+	users { userid, netid } key (userid,netid)
+	courses { courseid, ... } key(courseid)
+	schedules { userid, courseid, year } index(userid)
+	playgrounds { userid, courseid } index(userid)
 
 REST
 	POST = update
@@ -30,9 +28,8 @@ REST
 
 API (JSON):
 	GET /api/courses/?filter1=...&filter2...
-	GET /api/course/<id>
 
-	GET /api/schedules/<year>	-- returns JSON of SELECT * FROM `schedules` WHERE `userid` = '$session->userid';
+	GET /api/schedules/	-- returns JSON of SELECT * FROM `schedules` WHERE `userid` = '$session->userid';
 	PUT /api/schedules/<courseid>,<year>
 	DEL /api/schedules/<courseid>,<year>
 
@@ -63,7 +60,7 @@ Later On:
 	-options to print a friendly schedule with room numbers and stuff, email schedule
 	-scheduling within constraints (people can list courses and we find a combo that fits)
 	-enrollment/waitlist?
-	-merge courses with same name into one droppable item... when dropping onto calendar, show all possible placements in different colors
+	-filter: term
 
 
 ---------------------------------------------------------------------------------
