@@ -11,7 +11,13 @@ from urllib2 import urlopen
 import xml.etree.cElementTree as ET
 
 API_FILE = "./data.xml"
-API_URL = "http://courses.rice.edu/admweb/!SWKSECX.main?term=201320&title=&course=&crn=&coll=&dept=&subj="
+API_URL = "http://courses.rice.edu/admweb/!SWKSECX.main?term=%s%s&title=&course=&crn=&coll=&dept=&subj="
+
+terms_on_server = {
+	"FallTerm" : "10",
+	"SpringTerm" : "20",
+	"SummerTerm" : "30"
+}
 
 def pull_from_file():
 	""" Pulls course XML data from a local file. """
@@ -19,10 +25,10 @@ def pull_from_file():
 		return f.read()
 	return None
 
-def pull_from_server():
+def pull_from_server(url):
 	""" Pulls course XML data from a remote server. """
 	#print "Python -- HTTP/1.1 GET " + API_URL
-	data = urlopen(API_URL)
+	data = urlopen(url)
 
 	if data.getcode() != 200:
 		#print "ERROR!"
@@ -50,10 +56,11 @@ def parse_xml(xml):
 	# Return the list.
 	return courses, keys
 
-def get_courses():
-	data = pull_from_server()
-	courses, keys = parse_xml(data)
-	return courses, keys
+def get_courses(year, term):
+	#url = API_URL % (year, terms_on_server[term])
+	#data = pull_from_server(url)
+	data = pull_from_file()
+	return parse_xml(data)
 
 if __name__ == '__main__':
 	print "You should import this module."

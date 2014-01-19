@@ -1,3 +1,12 @@
+/*
+  WE MUST USE UTF8 ENCODING!
+*/
+
+SET NAMES utf8;
+SET CHARACTER SET utf8;
+SET character_set_connection=utf8;
+SET collation_connection = utf8_unicode_ci;
+
 /* Users */
 DROP TABLE IF EXISTS `users`;
 
@@ -96,6 +105,8 @@ CREATE TABLE `course_restrictions` (
   `courseid` int(64) UNSIGNED NOT NULL,
   `restriction_type` int(32) UNSIGNED NOT NULL,
   `target` int(64) UNSIGNED NOT NULL,
+  `target_subject` varchar(4) NOT NULL,
+  `target_course_number` int(16) UNSIGNED NOT NULL,
   `description` varchar(128) NOT NULL DEFAULT ''
 );
 
