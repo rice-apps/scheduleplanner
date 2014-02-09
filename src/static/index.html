@@ -24,6 +24,7 @@
 	  }
 	  .over {
 	  	background-color: #eaeaea;
+      opacity: 0.5;
 	  }
 	  .opaque {
 	  	opacity: 0.3;
@@ -55,12 +56,12 @@
       		<div class="col-lg-4">
       			<div style="margin-left: 3px;">
       				<!-- fix this? -->
-		      		<input style="display: inline-block; width: 90%;" type="text" class="form-control" placeholder="Find Courses" required=""/>	
+		      		<input id="search-courses" style="display: inline-block; width: 90%;" type="text" class="form-control" placeholder="Find Courses" required=""/>	
 		      		<button class="btn btn-primary">+</button>
 		      	</div>
-		      	<div style="margin-top: 15px;">
-      				<div ng-repeat="course in courses" class="btn course expand" name="{{course.name}}" draggable>
-	      				{{course.name}}
+		      	<div id="course-list" style="margin-top: 15px;">
+      				<div ng-repeat="course in courses" class="btn course expand" name="{{course}}" draggable>
+	      				{{course}}
 	      			</div>
 		      	</div>
 	        </div>
@@ -68,7 +69,7 @@
       			<div class="btn toolbar">
       				toolbar?
       			</div>
-      			<div class="" name="buh" id="calendar" droppable>
+      			<div class="" id="calendar" droppable>
       				<table class="table">
       					<thead>
       						<tr>
@@ -84,14 +85,16 @@
       							<td>
       								{{(hour % 12) + 1}}
       							</td>
-	      						<td class="calendar-slot" ng-repeat="day in days" id="{{day.acronym}}-{{hour}}">
-	      							{{day.name}}: {{(hour % 12) + 1}}
+	      						<td style="position: relative" class="calendar-slot" ng-repeat="day in days" id="{{day.acronym}}-{{hour}}">
+<!--                       <span>
+  	      							{{day.name}}: {{(hour % 12) + 1}}
+                      </span> -->
 	      						</td>
       						</tr>
       					</tbody>
 	      			</table>
       			</div>
-      			<img droppable id="trash" class="hide pull-right opaque" width="100" src="img/trash.jpg"></img>
+      			<img droppable id="trash" class="opaque pull-right" width="100" src="img/trash.jpg"></img>
 	        </div>
       	</div>
       </div>
