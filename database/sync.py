@@ -43,11 +43,15 @@ class DatabaseSynchronizer:
 	def sync(this):
 		print "Synchronizing %d courses..." % len(this.courses)
 
+		# Go through all the courses...
 		for i in xrange(len(this.courses)):
 			course = this.courses[i]
+
+			# Print periodic status updates.
 			if i % 200 == 0:
 				print "%d / %d (%2f)" % (i+1, len(this.courses), float(i+1)/len(this.courses)*100)
 
+			# Process the course into the database.
 			instructorids = this.parse_instructors(course)
 			courseid = this.parse_course(course)
 			this.parse_course_instructors(courseid, instructorids)
@@ -83,12 +87,6 @@ class DatabaseSynchronizer:
 		return instructorids
 
 	def parse_course(this, course):
-		"""
-		  `college` int(16) UNSIGNED NULL,
-		  `course_url` varchar(255) NULL,
-		  `session_type` int(32) UNSIGNED NOT NULL, /* see courses.rice.edu*/
-		  `grade_type` int(32) UNSIGNED NOT NULL,
-		"""
 
 		data_map = {
 			'crn' : 'crn',
@@ -234,76 +232,27 @@ class DatabaseSynchronizer:
 		return
 
 """
+courses:
+  `college` int(16) UNSIGNED NULL,
+  `course_url` varchar(255) NULL,
+  `session_type` int(32) UNSIGNED NOT NULL, /* see courses.rice.edu*/
+  `grade_type` int(32) UNSIGNED NOT NULL,
+course_restrictions:
   `courseid` int(64) UNSIGNED NOT NULL,
   `restriction_type` int(32) UNSIGNED NOT NULL,
   `target` int(64) UNSIGNED NOT NULL,
   `target_subject` varchar(4) NOT NULL,
   `target_course_number` int(16) UNSIGNED NOT NULL,
   `description` varchar(128) NOT NULL DEFAULT ''
-"""
-# courses { ... }
 
-
-
-"""
-def sync(courses, keys, year, term):
-	for course in courses:
-		# Update `courses`
-		courseid = parse_coursedata(course, year, term)
-
-		# Update `instructors`
-		instructorid = parse_instructor(course, year, term)
-
-		# Update `course_instructors`
-		parse_instructors(course, year, term)
-
-		# Update `course_times`
-		parse_times(course, year, term)
-
-		# Update `course_restrictions`
-		parse_restrictions(course, year, term)
-
-		
-		break # remove for production
-
-	return None
-
-def parse_instructor(course, year, term):
-	# instructors { instructorid, name }
-	return None
-
-def parse_course_instructors(course, year, term):
-	# delete all
-	# course_instructors { courseid, instructorid }
-	pass
-
-def parse_times(course, year, term):
-	# course_times { courseid, time_start, day, time_end, building_code, room_number }
-
-	# DELETE FROM `course_times` WHERE `courseid` = ?;
-	#start = course['start-time']
-	#end = course['end-time']
-	#days = course['meeting-days']
-	#room = course['location']
-
-	# keys may be absent
-	#<start-time>0900, 1900</start-time>	mil time
-	#<end-time>0950, 2059</end-time>		mil time
-	#<meeting-days>MWF, T</meeting-days>	MTWRF or null
-	#<location>DCH 1070, SEW 101</location>	TBA or CODE NUM
-	pass
-
-def parse_restrictions(course, year, term):
-	return None
-
-def parse_coursedata(course, year, term):
-	return None
-
-def parse_instructors(course, year, term):
-	return None
-
-def parse_times(course, year, term):
-	return None
+  CoursePrerequisite = 0,
+  CourseCorequisite = 1,
+  InstructorPermission = 2,
+  RegistrarPermission = 3,
+  Major = 4,
+  Program = 5,
+  Classification = 6,
+  Level = 7,
 """
 
 from pull import get_courses
