@@ -1,0 +1,1 @@
+hhvm -m server -c hhvm.hdf

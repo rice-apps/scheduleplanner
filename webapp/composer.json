@@ -1,0 +1,23 @@
+{
+	"name" : "mschurr/project",
+	"description" : "",
+	"keywords" : [],
+	"license" : "MIT",
+	"type" : "project",
+	"homepage" : "https://github.com/mschurr/project",
+	"authors" : [
+		{
+				"name" : "Matthew Schurr",
+				"email" : "mschurr@rice.edu"
+		}
+	],
+	"repositories" : [
+		{
+			"type" : "vcs",
+			"url" : "https://github.com/mschurr/framework"
+		}
+	],
+	"require" : {
+		"mschurr/framework" : "dev-master"
+	}
+}
