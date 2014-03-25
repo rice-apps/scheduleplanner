@@ -3,7 +3,9 @@
  * Regular Pages
  */
 Route::get('/', function(Request $request, Response $response){
-	$response->write('Home Page!');
+	return View::make('Main')->with(array(
+		'user' => $request->session->user
+	));
 });
 
 /**
@@ -18,7 +20,6 @@ Route::get('/api/departments', 'API.Departments');
 /**
  * API Session-Specific Routes
  */
-
 $filter = function(Request $request) {
 	if($request->session->auth->loggedIn)
 		return true;
@@ -32,17 +33,35 @@ Route::filter($filter, function(){
 });
 
 /**
+ * Private API Routes
+ */
+
+$filter = function(Request $request) {
+	if(!isset($request->get['apikey']))
+		return 403;
+
+	// Validate the API key.
+	$db = App::getDatabase();
+	$stmt = $db->prepare("SELECT * FROM `api_authorization` WHERE `key` = ? LIMIT 1;");
+	$res = $stmt->execute($request->get['apikey']);
+
+	if(len($res) == 0)
+		return false;
+
+	return true;
+};
+
+Route::filter($filter, function(){
+	Route::get('/api/instructor-reviews/{course_id}', 'API.InstructorReviews@get');
+	Route::get('/api/course-reviews/{course_id}', 'API.CourseReviews@get');
+});
+
+/**
  * Authentication System
  */
 Route::get('/login', 'AuthController@login');
 Route::post('/login', 'AuthController@loginAction');
 Route::get('/logout', 'AuthController@logout');
-
-Route::get('/debug', function(Request $request, Response $response){
-	App::getUserService()->create('matthew', 'coolperson');
-
-	$response->write('ok');	
-});
 
 /**
  * Error Pages

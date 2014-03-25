@@ -1,14 +1,14 @@
-{{-- 
-	Master Layout
-	--}}
 
-{{-- Load Scripts @script(URL::asset('js/master.js')) --}}
+@script(URL::asset('js/main.js'))
+@style(URL::asset('css/main.css'))
 
-
-{{-- Load Styles @style(URL::asset('css/master.css')) --}}
-
-
-{{-- Render Layout --}}
 <div class="wrapper">
+	@if($user !== null)
+		Welcome, {{{ $user->username }}} 
+		 (<a href="{{{ URL::to('AuthController@logout') }}}">logout</a>).
+	@else
+		You are not logged in (<a href="{{{ URL::to('AuthController@login') }}}">login</a>).
+	@endif
+
 	@yield('content')
 </div>

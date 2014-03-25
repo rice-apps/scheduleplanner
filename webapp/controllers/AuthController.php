@@ -2,10 +2,24 @@
 
 class AuthController extends Controller
 {
+	public function loginCAS()
+	{
+		try {
+			$this->auth->attempt(null, null, true);
+			return Redirect::to('/');
+		}
+		catch(AuthException $e) {
+			return 405;
+		}
+	}
+
 	public function login($errors=array())
 	{
 		if($this->auth->loggedIn)
 			return Redirect::to('/');
+
+		if(Config::get('auth.driver') == 'cas')
+			return $this->loginCAS();
 
 		return View::make('Auth.Login')->with(array(
 			'username' => isset($this->request->post['username']) ? $this->request->post['username'] : '',
@@ -39,6 +53,6 @@ class AuthController extends Controller
 	public function logout()
 	{
 		$this->auth->logout();
-		return Redirect::to(array($this, 'login'));
+		return Redirect::to('/');
 	}
 }
