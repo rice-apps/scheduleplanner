@@ -1,0 +1,651 @@
+
+/*
+	####################################################################################
+	# HTML Reset
+	####################################################################################
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+a[rel=lightbox] {
+	border-bottom: none !important;
+}
+
+
+/*
+	####################################################################################
+	# Form Styles
+	####################################################################################
+*/
+
+form
+{
+}
+
+form input[type="password"],
+form input[type="email"],
+form input[type="text"],
+form input[type="file"],
+form textarea,
+form select
+{
+	width: 99%;
+	padding: 7px 5px;
+	font-size: 18px;
+	border: 1px solid rgb(198, 198, 198);
+	background-color: rgb(244, 244, 244);
+	/*font-family: Arial,Helvetica,Calibri,sans-serif;*/
+	font-family: 'Open Sans';
+	border-radius: 4px 4px 4px 4px;
+	box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.15) inset;
+	color: rgb(30, 57, 80);
+	margin-top: 5px;
+	margin-bottom: 5px;
+	outline: none;
+}
+
+form input[type="password"],
+form input[type="email"],
+form input[type="text"],
+form input[type="file"] {
+	max-width: 350px;
+}
+
+form select {
+	max-width: 360px;
+}
+
+form textarea {
+	max-width: 500px;
+}
+
+form input[type="password"]:focus,
+form input[type="email"]:focus,
+form input[type="text"]:focus,
+form input[type="file"]:focus,
+form textarea:focus,
+form select:focus
+{
+	box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.3) inset, 0pt 0pt 5px rgb(54, 160, 255);
+	border: 1px solid rgb(48, 128, 200);
+	background: none repeat scroll 0% 0% rgb(255, 255, 255);
+}
+
+a.form_submit_style
+{
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	font-family: 'Open Sans', Arial, Helvetica;
+	font-weight: bold !important;
+}
+
+form input[type="submit"],
+form .submit,
+a.form_submit_style,
+button.form_submit_style
+{
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 1px;
+	font-size: 13px;
+	border: 1px solid rgb(148, 175, 189) !important;
+	text-align: center;
+	border-radius: 4px 4px 4px 4px;
+	color: rgb(90, 124, 157) !important;
+	font-weight: bold;
+	box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.2);
+	background: url("./button-bg.jpg") repeat-x scroll left bottom rgb(255, 255, 255);
+	text-shadow: 0pt 1px 0pt rgb(255, 255, 255);
+	padding: 8px;
+	position: relative;
+	/*font-family: Arial,Helvetica,Calibri,sans-serif;*/
+	text-decoration: none;
+}
+
+form .submit
+{
+	padding: 7px 9px !important;
+}
+
+form input[type="submit"]:hover,
+form .submit:hover,
+a.form_submit_style:hover,
+button.form_submit_style:hover
+{
+	background-position: right -156px;
+}
+
+form input[type="submit"]:active,
+form .submit:active
+{
+	top: 1px;
+}
+
+form img
+{
+	border-radius: 5px 5px 5px 5px;
+	box-shadow: 0pt 0pt 5px rgba(255, 255, 255, 0.5);
+	margin-right: 2px;
+	margin-top: 3px;
+	background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+form p.field
+{
+	margin-top: 4px;
+	margin-bottom: 4px;
+	font-weight: bold;
+	line-height: 20px;
+}
+
+html.ie6 form input { margin-top: 13px; }
+/*
+form table td.label {
+	padding: 4px;
+	vertical-align: middle;
+	font-family: 'Open Sans';
+	font-weight: 200;
+	font-size: 18px;
+}
+
+form table td {
+	padding: 4px;
+	
+}
+
+form table td.error {
+	font-weight: bold;
+	color: red;
+	padding: 10px 4px;
+}
+
+form table td.success {
+	font-weight: bold;
+	color: green;
+	padding: 10px 4px;
+}
+
+form table td.title {
+	padding: 10px 4px 14px 4px;
+	font-weight: bold;
+	font-size: 1.6em;
+}
+
+form table td.button {
+	padding: 7px 4px;
+}
+
+form table td.checkbox {
+	padding: 7px 4px;
+}*/
+
+table.form {
+
+}
+
+table.form tr {
+
+}
+
+table.form td {
+	padding: 5px;
+}
+
+table.form td.label {
+	font-weight: bold;
+	font-size: 1.3em;
+}
+
+table.form td.error {
+
+	font-weight: bold;
+	color: #A22;
+}
+
+table.form td.detail {
+
+}
+
+/*
+	####################################################################################
+	# Table Styles
+	####################################################################################
+*/
+
+table, table.reset {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	width: 100%;	
+}
+
+table td, table th, table.reset td, table.reset th {
+	padding: 0;
+	margin: 0;
+	vertical-align: top;
+	border: 0;
+}
+
+table.pad td, table.pad th, table.reset.pad td, table.reset.pad th {
+	padding: 4px !important;
+}
+
+table tr, table.reset tr {
+	border: 0;	
+}
+
+table td strong {
+	font-weight: bold;	
+}
+
+table.reset td {
+	padding: 0px !important;	
+}
+
+table.reset tr {
+	border: 0px !important;	
+}
+
+table.reset tr:nth-child(2n) {
+	background-color: inherit !important;
+}
+
+.noselect {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+
+/*
+	####################################################################################
+	# Table Striping
+	####################################################################################
+*/
+
+div.page_control {
+	text-align: center;
+}
+
+div.page_control a {
+	padding: 4px 0px;
+	display: inline-block;
+	text-align: center;
+	width: 28px;
+	font-size: 16px;
+	border: 1px solid #666;
+	border-bottom: 1px solid #666 !important;
+	color: #333 !important;
+	background-color: #CCC;
+	border-radius: 50%;
+}
+
+div.page_control a.active {
+	color: #FFF !important;
+	background-color: #333;
+}
+
+table.grid {
+	color: #252626;
+	background-color: #FFF;
+}
+
+table.grid thead tr {
+	border-top: 1px solid rgb(218, 222, 229);
+	background-color: #666 !important;
+	color: #FFF;
+	font-weight: bold;
+}
+
+table.grid thead tr td {
+	padding: 5px;
+}
+
+table.grid td {
+	font-size: 16px;
+}
+
+table.grid.nohead tr:first-child
+{
+	border-top: 1px solid rgb(218, 222, 229);
+	background-color: #666 !important;
+	color: #FFF;
+}
+
+table.grid tr {
+	border-bottom: 1px solid rgb(218, 222, 229);
+	border-right: 1px solid rgb(218, 222, 229);
+	border-left: 1px solid rgb(218, 222, 229);
+	background-color: rgb(252,252,250);
+}
+
+table.grid td, table.grid th {
+	padding: 2px 5px 2px 5px;
+	text-align: left;
+}
+
+table.grid tbody tr td {
+	padding: 10px;
+}
+
+table.grid th {
+	font-weight: bold;
+}
+
+table.grid th a, table.grid th a:link, table.grid th a:visited {
+	color: #FFF;
+	text-decoration: none;
+	border-bottom: none;
+}
+
+table.grid tr:nth-child(2n) {
+	background-color: #F0F0F4;
+}
+
+table.grid tr.selected {
+	background-color: #FFFFBE;
+}
+
+
+table.grid.table-nav td {
+	font-size: 16px;
+	padding: 10px;
+}
+
+table.grid.table-nav tr {
+	-webkit-transition: all 0.2s ease-out;
+	-moz-transition: all 0.2s ease-out;
+	-ms-transition: all 0.2s ease-out;
+	-o-transition: all 0.2s ease-out;
+	transition: all 0.2s ease-out;	
+	cursor: pointer;
+}
+
+table.grid.table-nav tr:hover {
+	background: #FFFFAA !important;
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF6D), to(#FFFFAA)) !important;
+	background: -moz-linear-gradient(top,  #FFFF6D,  #FFFFAA) !important;
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF6D', endColorstr='#FFFFAA') !important;
+}
+
+table.grid.table-nav a {
+	border: 0 !important;
+	text-decoration: none;	
+}
+
+table.grid td.control
+{
+	text-align: center;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+table.grid.midalign td {
+	vertical-align: middle !important;
+}
+
+table.grid tbody tr:first-child {
+	border-top: 1px solid rgb(218, 222, 229);
+}
+
+table.grid thead+tbody tr:first-child {
+	border-top: none !important;
+}
+
+/*
+	####################################################################################
+	# Typography
+	####################################################################################
+*/
+
+
+@font-face {
+	font-family:'Open Sans';
+	font-style:normal;
+	font-weight:400;
+	src:local('Open Sans'),local('OpenSans'),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
+}
+
+@font-face {
+	font-family:'Open Sans';
+	font-style:normal;
+	font-weight:600;
+	src:local('Open Sans Semibold'),local('OpenSans-Semibold'),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/MTP_ySUJH_bn48VBG8sNSqRDOzjiPcYnFooOUGCOsRk.woff) format('woff');
+}
+
+/*
+	####################################################################################
+	# Notice Bars
+	####################################################################################
+*/
+
+div.error,
+div.warning,
+div.notice,
+div.success {
+	margin: 10px 10px;
+	padding: 7px 10px 8px 30px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: left;
+	vertical-align: middle;
+	background-repeat: no-repeat;
+	background-position: 6px center;
+	background-size: 16px 16px;
+}
+
+div.error a,
+div.warning a,
+div.notice a,
+div.success a {
+	color: inherit !important;
+	text-decoration: none;
+	border-bottom: 1px dotted;
+}
+
+div.error {
+	background-color: #FEE;
+	border: 1px solid #D55;
+	background-image: url('./exclamation.png');
+	color: #A22;
+}
+
+div.warning {
+	background-color: #FFD;
+	border: 1px solid #ECA;
+	background-image: url('./error.png');
+	color: #A22;
+}
+
+div.notice {
+	background-color: #EEF;
+	border: 1px solid #AAC;
+	background-image: url('./information.png');
+	color: #337;
+}
+
+div.success {
+	background-color: #EFE;
+	border: 1px solid #ACA;
+	color: #373;
+	background-image: url('./accept.png');
+}
+
+/*
+	####################################################################################
+	# Book Exchange
+	####################################################################################
+*/
+
+
+body {
+	font-family: 'Open Sans';
+	background: #4C66A4 url('./bg-html.png') repeat 50% 0;
+}
+
+.wrapper {
+	max-width: 1000px; margin-left: auto; margin-right: auto;
+	color: rgb(85,85,85);
+}
+
+div.wrapper div.content_wrapper {
+	margin-top: 20px;
+	padding: 10px;
+	border: 1px solid rgba(255,255,255,0.2);
+	background-color: rgba(50,60,75,0.5);
+	box-shadow: 0px 0px 15px rgba(0,0,0,1);
+	border-radius: 0px 0px 12px 12px;
+}
+
+div.wrapper div.content {
+	background-color: #FCFCFA;
+	color: rgb(85,85,85);
+	border-radius: 0px;
+	border: 1px solid #6D7A5C;
+	line-height: 1.4em;
+}
+
+
+
+div.content
+{
+	display: table;
+	width: 100%;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	margin: 0px;
+}
+
+div.content > div.left,
+div.content > div.right
+{
+	display: table-cell;
+	padding: none;
+	margin: none;
+	vertical-align: top;
+}
+
+div.content > div.right {
+	width: 35%;
+}
+
+div.content > div.left {
+	width: 65%;
+	padding: 0px !important;
+}
+
+div.right > div.right_content {
+	border-left: 1px solid #CCC;
+	padding: 10px 10px 30px 15px;
+}
+
+div.content a,
+div.content a:visited,
+div.content a:link
+{
+	text-decoration: none;
+	border-bottom-style: dotted;
+	border-bottom-width: 1px;
+	color: rgb(48,128,200);
+}
+
+div.content a:hover
+{
+	color: #36A0FF;
+}
+
+ul.side_navigation {
+	list-style-type: disc;
+	padding-left: 14px;
+}
+
+ul.side_navigation li {
+	padding: 4px;
+}
+
+div.title {
+	font-size: 24px;
+	border-bottom: 2px solid;
+	padding: 5px 0px;
+	margin-bottom: 15px;
+	text-shadow: 1px 1px 2px #BBB;
+}
+
+div.right_menu {
+	float: right;
+	border-bottom: 1px solid rgb(217, 217, 217);
+	border-left: 1px solid rgb(217, 217, 217);
+	border-top: 1px solid rgb(217, 217, 217);
+	padding: 20px;
+	width: 30%;
+	margin-top: 20px;
+}
+
+div.content .header {
+	font-size: 1.6em;
+	font-weight: bold;
+	padding-bottom: 4px;
+	margin: 8px 0px;
+	border-bottom: 3px solid;
+}
+
+div.content div.text
+{
+	padding: 10px;
+}
+
+div.content .section {
+	margin: 0px 0px;
+	padding: 10px;
+}
+
+div.content .section table.grid {
+	margin: 10px 0px;
+}

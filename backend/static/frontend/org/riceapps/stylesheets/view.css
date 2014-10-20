@@ -1,0 +1,412 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700,700italic,400italic);
+
+html, body {
+  margin: 0;
+  font-family: 'Roboto';
+  min-height: 100%;
+  background-color: #FFF;
+}
+
+.modal-view-overlay {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 998;
+}
+
+.modal-view {
+  position: fixed;
+  top: calc(10% - 1px);
+  left: calc(10% - 1px);
+  width: 80%;
+  height: 80%;
+  border: 1px solid #000;
+  background-color: #FFF;
+  z-index: 999;
+  box-shadow: 0px 0px 40px 13px rgba(0,0,0,0.6);
+  overflow: auto;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+}
+
+.modal-view-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  transition: background-color 0.5s ease;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-image: url('./close.png');
+  background-size: 60% 60%;
+  background-position: center;
+  cursor: pointer;
+}
+
+.modal-view-close-button:hover {
+  background-image: url('./close-hover.png');
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+
+.modal-view-close-button:active {
+  background-color: rgba(0, 0, 0, 0.0);
+}
+
+.schedule-planner-view {
+  overflow: hidden;
+}
+
+.schedule-planner-view .schedule-planner-view-columns {
+  width: 100%;
+  display: table;
+  min-height: 600px;
+}
+
+.navigation-bar-view {
+  background-color: #F1F1F1;
+  height: 80px;
+  width: 100%;
+  border-bottom: 1px solid #DDD;
+}
+
+.tool-bar-view {
+  background-color: #FFF;
+  height: 80px;
+  width: 100%;
+  position: relative;
+}
+
+.tool-bar-view .tool-bar-view-input {
+  font-family: inherit;
+  color: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  left: 260px;
+  height: 50px;
+  top: calc(50% - 26px);
+  width: calc(100% - 750px);
+  font-size: 18px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: #FFF;
+  border-radius: 5px;
+  z-index: 1;
+  transition: width 0.3s ease-in-out;
+}
+
+.tool-bar-view-stats {
+  position: absolute;
+  top: calc(50% - 26px);
+  height: 30px;
+  line-height: 30px;
+  left: calc(100% - 480px);
+  width: 380px;
+  padding: 10px;
+}
+
+.tool-bar-view .tool-bar-view-input.tool-bar-view-input-active {
+  color: rgb(85, 85, 85);
+}
+
+.tool-bar-view .tool-bar-view-input:hover {
+  outline: none;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.tool-bar-view .tool-bar-view-input:focus {
+  outline: none;
+  width: calc(100% - 350px);
+  color: rgb(85, 85, 85);
+}
+
+.playground-view {
+  background-color: #FFF;
+  transition: background-color 0.5s ease;
+  padding: 0px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  overflow: auto;
+  height: 100%;
+  max-height: 575px;
+}
+
+.schedule-planner-view .schedule-planner-view-column {
+  display: table-cell;
+  width: 250px;
+  max-width: 250px;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.footer-view {
+  position: relative;
+  text-align: center;
+  height: 100px;
+  width: calc(100% - 20px);
+  background-color: #FFF;
+  line-height: 100px;
+  padding: 0px 10px;
+  font-size: 18px;
+  color: #666;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.footer-view .footer-view-links {
+  display: inline-block;
+}
+
+.footer-view .footer-view-links a {
+  display: inline-block;
+  margin-left: 20px;
+  color: #999;
+  text-decoration: underline;
+}
+
+.course-view,
+.course-calendar-view,
+.course-calendar-guide-view,
+.course-calendar-view-tooltip,
+.course-search-view-tooltip,
+.course-search-view {
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: calc(100% - 48px);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: #f2f5f6; /* Old browsers */
+  background: -moz-linear-gradient(top,  #f2f5f6 0%, #e3eaed 37%, #c8d7dc 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f5f6), color-stop(37%,#e3eaed), color-stop(100%,#c8d7dc)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', endColorstr='#c8d7dc',GradientType=0 ); /* IE6-9 */
+  box-shadow: 0px 0px 10px #000;
+  z-index: 3;
+  line-height: 22px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.course-calendar-view,
+.course-calendar-guide-view {
+  padding: 5px 5px;
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+  -webkit-transition: width 0.3s ease-in-out;
+}
+
+.course-calendar-view div,
+.course-calendar-guide-view div,
+.course-search-view div {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.course-search-view {
+  width: auto;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 2px;
+  height: 60px;
+}
+
+.course-view,
+.course-calendar-view-tooltip,
+.course-search-view-tooltip {
+  height: 22px;
+  margin: 10px;
+}
+
+.course-calendar-view-tooltip,
+.course-search-view-tooltip {
+  width: 215px;
+}
+
+.course-calendar-view-container,
+.course-calendar-guide-view-container {
+  font-size: 11px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 0px;
+  height: 0px;
+}
+
+.course-calendar-guide-view-container {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.calendar-view {
+  position: relative;
+  background-color: #FFF;
+  width: auto;
+  display: table-cell;
+  vertical-align: top;
+  padding-bottom: 10px;
+}
+
+.calendar-view table.calendar td,
+.calendar-view table.calendar th {
+  border: 1px solid #DDD;
+}
+
+.calendar-view table.calendar {
+  background-color: #FFF;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.calendar-view table.calendar tr {
+  height: 20px;
+}
+
+.calendar-view table.calendar th {
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  background-color: #F1F1F1;
+  color: rgb(85, 85, 85);
+}
+
+.calendar-view table.calendar th.hour {
+  width: 10%;
+  vertical-align: top;
+  overflow: hidden;
+  text-overflow: hidden;
+  min-width: 60px;
+  padding: 2px 10px;
+}
+
+.calendar-view table.calendar th.day {
+  width: 18%;
+}
+
+.calendar-view table.calendar td {
+  position: relative;
+  padding: 0px !important;
+  vertical-align: top !important;
+}
+
+.trash-view {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  width: 80px;
+  height: 80px;
+  background-repeat: no-repeat;
+  background-image: url('./trash.png');
+  background-size: 60% 60%;
+  background-position: center;
+  border-radius: 50%;
+  transition: background-color 0.5s ease;
+  z-index: 1;
+}
+
+.trash-view.trash-view-hover {
+  cursor: pointer;
+  background-color: rgba(241,231,103,0.7);
+}
+
+.search-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* horiz vert blur spread */
+  /*box-shadow: 0 9px 0px 0px white,
+              0 -9px 0px 0px white,
+              0 20px 15px -4px rgba(31, 73, 125, 0.8),
+              -12px 0 15px -4px rgba(31, 73, 125, 0.8);*/
+  box-shadow: 5px 12px 20px -12px #000,
+              -12px 5px 20px -12px #000;
+  border-radius: 0px 0px 0px 20px;
+  z-index: 5;
+  background-color: #FFF;
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+}
+
+.search-view-columns {
+  width: 100%;
+  height: 100%;
+  display: table;
+}
+
+.search-view-results {
+  width: auto;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.search-view-results-container {
+  overflow: auto;
+  height: calc(100% - 10px);
+}
+
+.search-view-filters {
+  width: 300px;
+  display: table-cell;
+  vertical-align: top;
+  border-left: 1px solid #999;
+}
+
+.tour-view {
+  z-index: 1001;
+}
+
+.tour-view-overlay {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+.tour-view-frame {
+  position: fixed;
+  top: calc(10% - 1px);
+  left: calc(10% - 1px);
+  width: 80%;
+  height: 80%;
+  border: 1px solid #000;
+  background-color: #FFF;
+  z-index: 1001;
+  box-shadow: 0px 0px 40px 13px rgba(0,0,0,0.6);
+  overflow: auto;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+}

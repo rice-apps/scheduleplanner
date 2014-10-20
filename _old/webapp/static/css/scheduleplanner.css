@@ -1,0 +1,239 @@
+div.draggable {
+	padding: 10px 14px;
+	border-radius: 10px;
+	cursor: pointer;
+	width: auto;
+	margin: 10px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background: #f2f5f6; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f2f5f6 0%, #e3eaed 37%, #c8d7dc 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f5f6), color-stop(37%,#e3eaed), color-stop(100%,#c8d7dc)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f6', endColorstr='#c8d7dc',GradientType=0 ); /* IE6-9 */
+}
+
+div.draggable.calendar {
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 22px;
+}
+
+div.draggable.courseview {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 22px;
+	line-height: 22px;
+	white-space: nowrap;
+}
+
+div.draggable:active {
+	cursor: move;
+}
+
+div.draggable:hover {
+	background: #b8c6df; /* Old browsers */
+	background: -moz-linear-gradient(top,  #b8c6df 0%, #6d88b7 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b8c6df), color-stop(100%,#6d88b7)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #b8c6df 0%,#6d88b7 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #b8c6df 0%,#6d88b7 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #b8c6df 0%,#6d88b7 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #b8c6df 0%,#6d88b7 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b8c6df', endColorstr='#6d88b7',GradientType=0 ); /* IE6-9 */
+}
+
+div.droppable {
+	/*border: 1px solid #000;*/
+	background-color: rgba(0, 0, 0, 0.3);
+	transition: background-color 0.5s ease;
+	padding: 0px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+div.droppable.playground {
+	background-color: #E4E4E4;
+}
+
+div.droppable .handles {
+	padding: 10px;
+}
+
+div.droppable.hovered {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+div.droppable.active {
+	background-color: rgba(200, 177, 77, 0.3)
+}
+
+table.calendar td, #calendar table.calendar th {
+	border: 1px solid #DDD;
+}
+
+table.calendar {
+	background-color: #FFF;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+table.calendar tr {
+	height: 20px;
+}
+
+table.calendar th {
+	font-weight: bold;
+	padding: 10px;
+	text-align: center;
+	background-color: #F1F1F1;
+	color: rgb(85, 85, 85);
+}
+
+table.calendar th.hour {
+	width: 10%;
+	vertical-align: top;
+	overflow: hidden;
+	text-overflow: hidden;
+	min-width: 60px;
+}
+
+table.calendar th.day {
+	width: 18%;
+}
+
+table.calendar td {
+	position: relative;
+	padding: 0px !important;
+	vertical-align: top !important;
+}
+
+.toolbar {
+	position: relative;
+	padding: 16px 10px;
+	border-bottom:  1px solid #DDD;
+	background-color: #F1F1F1;
+	height: 30px;
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#deefff', endColorstr='#98bede',GradientType=0 ); /* IE6-9 */
+}
+
+.trash {
+	position: absolute;
+	top: -10px;
+	right: 10px;
+	width: 80px;
+	height: 80px;
+	background-repeat: no-repeat;
+	background-image: url('../img/trash2.png');
+	background-size: 60% 60%;
+	background-position: center;
+	border-radius: 50%;
+	transition: background-color 0.5s ease;
+}
+
+
+.footer {
+	background-color: #F1F1F1;
+	border-top: 1px solid #DDD;
+	padding: 20px 20px;
+	color: #666;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.footer a {
+	color: rgb(85, 85, 85);
+}
+
+.trash.hovered {
+	background-color: rgba(241,231,103,0.7);
+}
+
+div.beta {
+	display: inline;
+	position: absolute;
+	font-size: 9px;
+	color: #FF0000;
+	right: 10px;
+	top: 20%;
+}
+
+div.modal_overlay {
+	position: fixed;
+	z-index: 19;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	min-height: 1000px;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+div.modal {
+	position: fixed;
+	/*top: 50px;
+	left: 50px;
+	width: 80%;
+	height: 80%;*/
+	border: 1px solid #000;
+	background-color: #FFF;
+	z-index: 20;
+	box-shadow: 0px 0px 40px 13px rgba(0,0,0,0.6);
+	overflow: auto;
+}
+
+div.modal div.close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	height: 40px;
+	width: 40px;
+	transition: background-color 0.5s ease;
+	border-radius: 50%;
+	background-repeat: no-repeat;
+	background-image: url('../img/close.png');
+	background-size: 60% 60%;
+	background-position: center;
+	cursor: pointer;
+}
+
+div.modal div.close:hover {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+
+div.modal div.close:active {
+	background-color: rgba(0, 0, 0, 0.0);
+}
+
+.search input {
+	background-color: transparent;
+	font-size: 20px;
+	border: none;
+	outline: none;
+	width: 400px;
+}

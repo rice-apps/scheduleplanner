@@ -1,0 +1,150 @@
+html {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	font-family: 'Helvetica Neue', 'Helvetica', 'Arial';
+}
+
+.clear {
+	clear: both;
+}
+
+/**
+ * Header
+ */
+
+.wrapper .header {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-color: #f8f8f8;
+	border-bottom: 1px solid #e7e7e7;
+}
+
+.wrapper .header ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0px 20px;
+}
+
+.wrapper .header ul li {
+	float: left;
+}
+
+.wrapper .header ul li a {
+	text-decoration: none;
+	color: #686868;
+}
+
+.wrapper .header ul li:first-child a {
+	font-size: 1.5em;
+	color: #686868;
+	text-shadow: 1px 1px 1px #223;
+	position: relative;
+}
+
+.wrapper .header ul li:last-child a {
+	font-size: 1.1em;
+}
+
+.wrapper .header ul li:first-child {
+	padding-right: 20px;
+}
+
+.wrapper .header ul li:last-child {
+	float: right;
+}
+
+.wrapper .header ul li span {
+	color: #333;
+}
+
+.wrapper .header ul li a {
+	display: table-cell;
+	vertical-align: middle;
+	height: 70px;
+	padding: 0px 10px;
+	transition: background-color 1.0s ease;
+}
+
+.wrapper .header ul li a:hover {
+	background-color: #CCC;
+}
+
+.wrapper .header ul li:first-child a:hover {
+	background-color: transparent;
+}
+
+
+/**
+ * Content
+ */
+.content .layout {
+	display: table;
+	width: 100%;
+}
+
+.content .column {
+	display: table-cell;
+	border-left: 1px solid #e7e7e7;
+	vertical-align: top;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.content .column:last-child {
+}
+
+.content .column.left {
+	width: 25%;
+	vertical-align: top !important;
+}
+
+.content .column.middle {
+	width: 75%;
+	height: 400px;
+}
+
+.content .search form {
+
+}
+
+.content .search form input[type=text] {
+	padding: 10px 10px;
+	margin: 0;
+	font-size: 20px;
+	color: #666;
+	border: 1px solid rgba(0,0,0,0);
+	background-color: transparent;
+	width: calc(100% - 22px);
+	border-radius: 4px;
+}
+
+.content .search form input[type=text]:focus {
+	color: #000;
+	box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.3) inset, 
+	            0pt 0pt 5px rgb(54, 160, 255);
+	border: 1px solid rgb(48, 128, 200);
+			
+}
+
+/**
+ *
+ */
+
+
+/**
+ * Footer
+ */

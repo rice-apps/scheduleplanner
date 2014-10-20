@@ -1,0 +1,9 @@
+composer.lock
+webapp.log
+www.pid
+test.xml
+config.php
+cache/*
+vendor/*
+!.gitkeep
+composer.phar

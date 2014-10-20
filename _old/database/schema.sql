@@ -7,6 +7,15 @@ SET CHARACTER SET utf8;
 SET character_set_connection=utf8;
 SET collation_connection = utf8_unicode_ci;
 
+/* Users */
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `userid` int(64) UNSIGNED NOT NULL auto_increment,
+  `netid` varchar(16) NOT NULL,
+  PRIMARY KEY  (`userid`)
+);
+
 /* Playgrounds */
 DROP TABLE IF EXISTS `playgrounds`;
 
@@ -79,15 +88,14 @@ CREATE INDEX `course_times_courseid` ON `course_times` (`courseid`);
 /* Course Restrictions */
 /*
 	typedef enum {
-    Unknown = 0,
-		CoursePrerequisite = 1,
-		CourseCorequisite = 2,
-		InstructorPermission = 3,
-		RegistrarPermission = 4,
-		Major = 5,
-		Program = 6,
-		Classification = 7,
-		Level = 8
+		CoursePrerequisite = 0,
+		CourseCorequisite = 1,
+		InstructorPermission = 2,
+		RegistrarPermission = 3,
+		Major = 4,
+		Program = 5,
+		Classification = 6,
+		Level = 7,
 	} restriction_type;
 */
 
