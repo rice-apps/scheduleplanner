@@ -47,7 +47,7 @@ CoursesModel.prototype.getCourseById = function(id) {
 /**
  * Returns all sections of the provided course (including the provided course itself).
  * @param {!org.riceapps.models.CourseModel} course
- * @return {!Array.<org.riceapps.models.CourseModel}
+ * @return {!Array.<org.riceapps.models.CourseModel>}
  */
 CoursesModel.prototype.getAllSections = function(course) {
   var keys = this.courses_.getKeys();
@@ -67,48 +67,73 @@ CoursesModel.prototype.getAllSections = function(course) {
 
 /**
  * @param {string} query
+ * @param {!Object.<boolean>} filters
  * @param {number=} opt_limit
  * @param {org.riceapps.models.UserModel=} opt_userModel
- * @return {!Array.<org.riceapps.models.CourseModel>}
+ * @return {!Array.<!org.riceapps.models.CourseModel>}
  */
-CoursesModel.prototype.getCoursesByQuery = function(query, opt_userModel, opt_limit) {
+CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userModel, opt_limit) {
   if (query.length == 0) {
     return [];
   }
 
+  var numberRegularExpression = /(?:^|\D)(\d\d?\d?)/;
+
+  var queryNumbersMatch = query.match(numberRegularExpression);
+  var queryNumber = null;
+
+  if (queryNumbersMatch)
+    queryNumber = queryNumbersMatch[1];
+
   var limit = opt_limit || 100;
   var results = [];
   var keys = this.courses_.getKeys();
-  var used = new goog.structs.Map();
+  var used = new goog.structs.Set();
 
   for (var i = 0; i < keys.length; i++) {
     var course = this.courses_.get(keys[i]);
 
-    if (goog.string.caseInsensitiveContains(course.getTitle(), query)) {
-      var category = course.getCourseCategory();
-      if (used.get(category, false) == true) {
+    if (!course.passesFilters(filters))
+      continue;
+
+    var category = course.getCourseCategory();
+
+    if (course.getMatchScore(query,queryNumber) === 0)
+      continue;
+
+    if (used.contains(category)) {
+      continue;
+    }
+
+    if (opt_userModel) {
+      if (this.userModelContainsCourse_(opt_userModel, course)) {
         continue;
       }
-
-      if (!opt_userModel) {
-        results.push(course);
-        used.set(category, true);
-      } else if (opt_userModel) {
-        if (this.userModelContainsCourse_(opt_userModel, course)) {
-          continue;
-        }
-
-        results.push(course);
-        used.set(category, true);
-      }
-
-      if (results.length > limit) {
-        break;
-      }
     }
+
+    results.push(course);
+    used.add(category);
+    
   }
 
-  return results;
+  results.sort(function(a,b){
+    if (a.getMatchScore(query,queryNumber) > b.getMatchScore(query,queryNumber))
+    {
+      return -1;
+    }
+    else if (a.getMatchScore(query,queryNumber) < b.getMatchScore(query,queryNumber))
+    {
+      return 1;
+    }
+    else
+    {
+      return a.getCourseNumber() - b.getCourseNumber();
+    }
+  });
+
+
+
+  return results.slice(0,limit);
 };
 
 

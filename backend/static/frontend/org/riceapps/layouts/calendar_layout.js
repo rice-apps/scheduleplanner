@@ -8,59 +8,6 @@ goog.require('org.riceapps.models.CourseModel');
 goog.scope(function() {
 
 
-
-/**
- * Represents a calendar.
- * @interface
- */
-org.riceapps.layouts.CalendarLayout.Calendar = function() {};
-
-
-/**
- * Returns the rectangle in which a view embedded on the calendar should be drawn given its day and hour, or null if
- * unable to determine where to render the item.
- * @type {number} day (0 Sunday to 6 Satuday)
- * @type {number} start (number of hours since midnight; decimal values accepted)
- * @type {number} end (number of horus since midnight; decimal values accepted)
- * @tyoe {number} offset (offset within the timeslot at which to render)
- * @type {number} total (total number of columns within the time slot)
- * @return {goog.math.Rect}
- */
-org.riceapps.layouts.CalendarLayout.Calendar.prototype.getCalendarItemRect =
-    function(day, start, end, offset, total) {};
-
-
-/**
- * Returns the items in the calendar.
- * @return {!Array.<!org.riceapps.layouts.CalendarLayout.Item>}
- */
-org.riceapps.layouts.CalendarLayout.Calendar.prototype.getCalendarItems = function() {};
-
-
-
-/**
- * Represents an item in a calendar.
- * @interface
- */
-org.riceapps.layouts.CalendarLayout.Item = function() {};
-
-
-/**
- * Informs the item of the positions and dimensions in which it should render itself.
- * The rectangles are in order corresponding to the order provided by the last call to getCalendarTimes().
- * @param {!Array.<!goog.math.Rect>} rects
- */
-org.riceapps.layouts.CalendarLayout.Item.prototype.drawInRects = function(rects) {};
-
-
-/**
- * Returns the times at which this calendar item wishes to position itself.
- * @return {!Array.<!CourseModel.MeetingTime>}
- */
-org.riceapps.layouts.CalendarLayout.Item.prototype.getCalendarTimes = function() {};
-
-
-
 /**
  * A calendar layout is responsible for positioning the items within a calendar. To position the items, simply call
  * relayout() provided both the calendar and its items implement the required interfaces.
@@ -130,6 +77,7 @@ CalendarLayout.prototype.relayout = function() {
   // Inform the calendar items of their positions.
   for (var i = 0; i < items.length; i++) {
     var times = items[i].getCalendarTimes();
+    var item = items[i];
     var rects = [];
 
     for (var j = 0; j < times.length; j++) {
@@ -285,6 +233,58 @@ CalendarLayout.prototype.createMatrix_ = function() {
 
   return matrix;
 };
+
+
+
+/**
+ * Represents a calendar.
+ * @interface
+ */
+org.riceapps.layouts.CalendarLayout.Calendar = function() {};
+
+
+/**
+ * Returns the rectangle in which a view embedded on the calendar should be drawn given its day and hour, or null if
+ * unable to determine where to render the item.
+ * @param {number} day (0 Sunday to 6 Satuday)
+ * @param {number} start (number of hours since midnight; decimal values accepted)
+ * @param {number} end (number of horus since midnight; decimal values accepted)
+ * @param {number} offset (offset within the timeslot at which to render)
+ * @param {number} total (total number of columns within the time slot)
+ * @return {goog.math.Rect}
+ */
+org.riceapps.layouts.CalendarLayout.Calendar.prototype.getCalendarItemRect =
+    function(day, start, end, offset, total) {};
+
+
+/**
+ * Returns the items in the calendar.
+ * @return {!Array.<!org.riceapps.layouts.CalendarLayout.Item>}
+ */
+org.riceapps.layouts.CalendarLayout.Calendar.prototype.getCalendarItems = function() {};
+
+
+
+/**
+ * Represents an item in a calendar.
+ * @interface
+ */
+org.riceapps.layouts.CalendarLayout.Item = function() {};
+
+
+/**
+ * Informs the item of the positions and dimensions in which it should render itself.
+ * The rectangles are in order corresponding to the order provided by the last call to getCalendarTimes().
+ * @param {!Array.<!goog.math.Rect>} rects
+ */
+org.riceapps.layouts.CalendarLayout.Item.prototype.drawInRects = function(rects) {};
+
+
+/**
+ * Returns the times at which this calendar item wishes to position itself.
+ * @return {!Array.<!org.riceapps.models.CourseModel.MeetingTime>}
+ */
+org.riceapps.layouts.CalendarLayout.Item.prototype.getCalendarTimes = function() {};
 
 
 });

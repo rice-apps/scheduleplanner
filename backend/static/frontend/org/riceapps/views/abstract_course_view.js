@@ -22,7 +22,7 @@ org.riceapps.views.AbstractCourseView = function(courseModel) {
   /** @private {!org.riceapps.models.CourseModel} */
   this.courseModel_ = courseModel;
 
-  /** @private {!Array.<org.riceapps.views.CourseCalendarGuideView>} */
+  /** @private {!Array.<!org.riceapps.views.CourseCalendarGuideView>} */
   this.guideViews_ = [];
 
   /** @type {string} */
@@ -159,7 +159,7 @@ AbstractCourseView.prototype.getGuideViews = function() {
 };
 
 /**
- * @return {!Array.<org.riceapps.views.CourseCalendarGuideView>}
+ * @param {!Array.<org.riceapps.views.CourseCalendarGuideView>} guideViews
  */
 AbstractCourseView.prototype.setGuideViews = function(guideViews) {
   this.removeGuideViews_();

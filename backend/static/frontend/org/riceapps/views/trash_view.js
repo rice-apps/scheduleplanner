@@ -13,7 +13,7 @@ var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 
 /**
  * @extends {org.riceapps.views.View}
- * @implements {org.riceapps.views.DraggableView.Target}
+ * @implements {org.riceapps.views.DraggableView.DropTarget}
  * @constructor
  */
 org.riceapps.views.TrashView = function() {

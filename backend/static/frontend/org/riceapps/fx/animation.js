@@ -106,7 +106,7 @@ Animation.Transform;
 
 /**
  * An enumeration of pre-defined animations.
- * @enum {!Array.<!Animation.Tranform>}
+ * @enum {!Array.<!Animation.Transform>}
  */
 Animation.PresetTransform = {};
 
@@ -249,7 +249,7 @@ Animation.ANIMATION_DEFAULTS = {
   timing: Animation.DEFAULT_TIMING,
   delay: 0,
   iterations: 1,
-  fill: Animation.FillMode.NORMAL,
+  fill: Animation.FillMode.FORWARDS,
   duration: Animation.DEFAULT_DURATION
 };
 

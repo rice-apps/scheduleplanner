@@ -63,13 +63,13 @@ TourView.prototype.createDom = function() {
   goog.dom.appendChild(this.getElement(), item);
   this.explanations_.push(item);
 
-  var item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
+  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
   goog.dom.setTextContent(item, 'Test2');
   goog.style.setElementShown(item, false);
   goog.dom.appendChild(this.getElement(), item);
   this.explanations_.push(item);
 
-  var item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
+  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
   goog.dom.setTextContent(item, 'Test3');
   goog.style.setElementShown(item, false);
   goog.dom.appendChild(this.getElement(), item);
@@ -110,7 +110,6 @@ TourView.prototype.show = function(opt_preventAnimation) {
 
 
 /**
- * @override
  */
 TourView.prototype.advanceStage = function() {
   this.stage_ = Math.max(0, Math.min(this.stage_ + 1 , this.explanations_.length));

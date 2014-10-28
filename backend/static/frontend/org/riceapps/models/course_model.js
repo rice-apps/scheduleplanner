@@ -57,6 +57,32 @@ CourseModel.prototype.getId = function() {
 };
 
 
+CourseModel.prototype.assertDistribution = function(type){
+  return this.getDistributionType() === type; 
+}
+
+
+/**
+ * @param {!Object.<boolean>} filters
+ * @return {boolean}
+ */
+CourseModel.prototype.passesFilters = function(filters) {
+
+  var distributionResponses = {
+    "normal": 0,
+    "d1": 1,
+    "d2": 2,
+    "d3": 3
+  };
+
+  var hitsOneDistribution = !goog.object.every(distributionResponses,function(distributionType,filterName){
+    return !filters[filterName] || !this.assertDistribution(distributionType);
+  },this);
+
+  return hitsOneDistribution;
+};
+
+
 /**
  * @return {!Array.<!CourseModel.MeetingTime>}
  */
@@ -172,6 +198,29 @@ CourseModel.prototype.getTitle = function() {
   return this.data_['subject'] + " " + this.data_['courseNumber'] + ": " + this.data_['title'];
 };
 
+/**
+ * This function gives you the score for how well this course matches the query.
+ * Correct number is a score of 3, correct subject is a score of 2, correct title is a score of 1.
+ * @param {string} query
+ * @return {number}
+ */
+CourseModel.prototype.getMatchScore = function(query, queryNumber) {
+  var total = 0;
+
+  if (queryNumber === this.data_['courseNumber']+"")
+    total += 3;
+  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,2))
+    total += 2.5;
+  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,1))
+    total += 2.2;
+  if (goog.string.caseInsensitiveContains(query,this.data_['subject']))
+    total += 2;
+  if (goog.string.caseInsensitiveContains(this.data_['title'],query))
+    total += 1;
+
+  return total;
+};
+
 
 /**
  * @return {number}
@@ -186,6 +235,13 @@ CourseModel.prototype.getEnrollmentCap = function() {
  */
 CourseModel.prototype.getCredits = function() {
   return 1;
+};
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getDistributionType = function() {
+  return this.data_["distributionGroup"];
 };
 
 

@@ -77,7 +77,7 @@ CalendarView.prototype.createDom = function() {
   cell = goog.dom.createDom(goog.dom.TagName.TH, CalendarView.Theme.HOUR);
   goog.dom.appendChild(row, cell);
 
-  for (var i = 0; i < CalendarView.DAYS.length; i++) {
+  for (i = 0; i < CalendarView.DAYS.length; i++) {
     cell = goog.dom.createDom(goog.dom.TagName.TH, CalendarView.Theme.DAY);
     goog.dom.setTextContent(cell, CalendarView.DAYS[i]);
     goog.dom.appendChild(row, cell);

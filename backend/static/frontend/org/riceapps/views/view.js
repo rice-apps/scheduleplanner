@@ -84,7 +84,7 @@ View.prototype.setParent = function(parent) {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
  */
 View.prototype.handleWindowResize_ = function(event) {
   if (this.getParent()) {

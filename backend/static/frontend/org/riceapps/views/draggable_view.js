@@ -51,7 +51,7 @@ org.riceapps.views.DraggableView = function() {
   /** @private {!Array.<!DraggableView.DropTarget>} */
   this.targets_ = [];
 
-  /** @private {!DraggableView.DropTarget} */
+  /** @private {DraggableView.DropTarget} */
   this.lastTarget_ = null;
 
   /** @private {goog.math.Coordinate} */
@@ -234,7 +234,7 @@ DraggableView.prototype.exitDocument = function() {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
  */
 DraggableView.prototype.handleMouseUp_ = function(event) {
   event.preventDefault();
@@ -244,7 +244,8 @@ DraggableView.prototype.handleMouseUp_ = function(event) {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
+ * @suppress {invalidCasts}
  */
 DraggableView.prototype.handleMouseClick_ = function(event) {
   this.debugLog_('handleMouseClick_', event);
@@ -255,7 +256,7 @@ DraggableView.prototype.handleMouseClick_ = function(event) {
   } else if (this.dragStartCoordinate_) {
     this.debugLog_('self.dispatch.click');
     this.stopDragging_(event);
-    event.target = this;
+    event.target = /** @type {Node} */ (this);
     event.type = DraggableView.EventType.CLICK;
     this.dispatchEvent(event);
   }
@@ -264,7 +265,7 @@ DraggableView.prototype.handleMouseClick_ = function(event) {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
  */
 DraggableView.prototype.handleMouseDown_ = function(event) {
   if (event.button != 0) {
@@ -289,6 +290,10 @@ DraggableView.prototype.maybeStartDrag_ = function(event) {
   this.debugLog_('maybeStartDrag_', event);
   var position = new goog.math.Coordinate(event.clientX, event.clientY);
 
+  // Cast the coordinate to tell the compiler that it will never be null here.
+  if (!this.dragStartCoordinate_)
+    throw Error();
+
   if (goog.math.Coordinate.distance(position, this.dragStartCoordinate_) > 15 &&
       !this.isBeingDragged_) {
     this.startDragging_(position);
@@ -297,17 +302,17 @@ DraggableView.prototype.maybeStartDrag_ = function(event) {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
  */
 DraggableView.prototype.handleDragStart_ = function(event) {
   this.debugLog_('handleDragStart_', event);
   event.preventDefault();
-  event.stopPropogation();
+  event.stopPropagation();
 };
 
 
 /**
- * @param {!DraggableView.DropTarget} target
+ * @param {org.riceapps.views.DraggableView.DropTarget} target
  */
 DraggableView.prototype.dragOver_ = function(target) {
   if (target === this.lastTarget_) {
@@ -329,7 +334,7 @@ DraggableView.prototype.dragOver_ = function(target) {
 
 
 /**
- * @param {!DraggableView.Target} target
+ * @param {!org.riceapps.views.DraggableView.DropTarget} target
  * @param {!Element} element
  */
 DraggableView.prototype.targetContainsElement_ = function(target, element) {
@@ -346,12 +351,12 @@ DraggableView.prototype.targetContainsElement_ = function(target, element) {
 
 
 /**
- * @param {!goog.events.BrowserEvent}
+ * @param {!goog.events.BrowserEvent} event
  */
 DraggableView.prototype.handleMouseMove_ = function(event) {
   var i;
   for (i = 0; i < this.targets_.length; i++) {
-    if (this.targetContainsElement_(this.targets_[i], event.target)) {
+    if (this.targetContainsElement_(this.targets_[i], /** @type {!Element} */ (event.target))) {
       this.dragOver_(this.targets_[i]);
       break;
     }
@@ -390,7 +395,11 @@ DraggableView.prototype.handleWindowBlur_ = function(event) {
  */
 DraggableView.prototype.handleScroll_ = function(opt_event) {
   this.debugLog_('handleScroll_', opt_event);
-  this.pageScroll_ = goog.dom.getDomHelper(this.document_).getDocumentScroll();
+  this.pageScroll_ = goog.dom.getDomHelper().getDocumentScroll();
+
+  if (!this.dragTooltipPosition_)
+    throw Error();
+
   this.moveDragTooltipTo_(this.dragTooltipPosition_);
 };
 
@@ -400,6 +409,8 @@ DraggableView.prototype.handleScroll_ = function(opt_event) {
  */
 DraggableView.prototype.moveDragTooltipTo_ = function(position) {
   var viewport = goog.dom.getViewportSize();
+  if (!this.dragTooltip_) // Verify that dragTooltip is non-null for the type checker
+    throw new Error();
   var tooltip = goog.style.getTransformedSize(this.dragTooltip_);
   goog.style.setPosition(this.dragTooltip_,
       Math.min(10 + position.x + this.pageScroll_.x, viewport.width - tooltip.width - 30),
@@ -425,7 +436,7 @@ DraggableView.prototype.maybeDrop_ = function(event) {
   this.debugLog_('maybeDrop_', event);
 
   for (var i = 0; i < this.targets_.length; i++) {
-    if (this.targetContainsElement_(this.targets_[i], event.target)) {
+    if (this.targetContainsElement_(this.targets_[i], /** @type {!Element} */ (event.target))) {
       return this.targets_[i];
       break;
     }
@@ -436,7 +447,7 @@ DraggableView.prototype.maybeDrop_ = function(event) {
 
 
 /**
- * @param {!DraggableView.DropTarget} target
+ * @param {!org.riceapps.views.DraggableView.DropTarget} target
  */
 DraggableView.prototype.drop_ = function(target) {
   this.debugLog_('drop_', target);
@@ -482,7 +493,7 @@ DraggableView.prototype.startDragging_ = function(initialPosition) {
   this.clearMaybeDrag_();
   this.isBeingDragged_ = true;
   this.dragTooltip_ = this.getDragTooltip();
-  this.pageScroll_ = goog.dom.getDomHelper(this.document_).getDocumentScroll();
+  this.pageScroll_ = goog.dom.getDomHelper().getDocumentScroll();
   goog.dom.appendChild(document.body, this.dragTooltip_);
 
   var styles = {
@@ -566,7 +577,7 @@ DraggableView.prototype.isBeingDragged = function() {
 
 
 /**
- * @param {...Object} var_args
+ * @param {...*} var_args
  */
 DraggableView.prototype.debugLog_ = function(var_args) {
   //window.console.log('[DraggableView] @' + goog.getUid(this), arguments);

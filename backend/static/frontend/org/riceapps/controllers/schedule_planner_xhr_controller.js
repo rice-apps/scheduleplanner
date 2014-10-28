@@ -27,9 +27,6 @@ org.riceapps.controllers.SchedulePlannerXhrController = function() {
 
   /** @private {org.riceapps.models.UserModel} */
   this.userModel_ = null;
-
-  /** @private {org.riceapps.models.CoursesModel} */
-  this.userModel_ = null;
 };
 goog.inherits(org.riceapps.controllers.SchedulePlannerXhrController,
               org.riceapps.controllers.Controller);
@@ -167,7 +164,7 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
 
 /**
  * Pushes the user model to the remote server, synchronizing any properties changed client-side to the server.
- * @return {!goog.Promise<boolean>}
+ * @return {!goog.Promise.<boolean>}
  */
 SchedulePlannerXhrController.prototype.pushUserModel = function() {
   var request = /** @type {Messages.UserRequest} */ ({
@@ -298,17 +295,17 @@ SchedulePlannerXhrController.prototype.buildXhrUrl = function(path, params) {
 
 /**
  * @param {number} courseId
- * @return {!goog.Promise.<CourseModel>}
+ * @return {!goog.Promise.<org.riceapps.models.CourseModel>}
  */
 SchedulePlannerXhrController.prototype.getCourseById = function(courseId) {
-  return goog.Promise.resolve([]);
+  return goog.Promise.resolve();
 };
 
 
 /**
  * Returns all sessions of the provided course model (including the provided model).
- * @param {!CourseModel}
- * @return {!goog.Promise.<!Array.<!CourseModel>>}
+ * @param {!org.riceapps.models.CourseModel} courseModel
+ * @return {!goog.Promise.<!Array.<!org.riceapps.models.CourseModel>>}
  */
 SchedulePlannerXhrController.prototype.getAllCourseSessions = function(courseModel) {
   return goog.Promise.resolve([courseModel]);
@@ -318,7 +315,7 @@ SchedulePlannerXhrController.prototype.getAllCourseSessions = function(courseMod
 /**
  * Returns all courses matching the provided query.
  * @param {!Messages.CoursesRequest} request
- * @return {!goog.Promise.<!Array.<!CourseModel>>}
+ * @return {!goog.Promise.<!Array.<!org.riceapps.models.CourseModel>>}
  */
 SchedulePlannerXhrController.prototype.getCourses = function(request) {
   return goog.Promise.resolve([]);
