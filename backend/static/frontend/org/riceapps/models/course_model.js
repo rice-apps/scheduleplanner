@@ -31,6 +31,20 @@ goog.inherits(org.riceapps.models.CourseModel,
               org.riceapps.models.Model);
 var CourseModel = org.riceapps.models.CourseModel;
 
+/**
+ * Represents the state of the filters for a given query.
+ *
+ * @typedef {{
+ *   normal: boolean,
+ *   d1: boolean,
+ *   d2: boolean,
+ *   d3: boolean,
+ *   conflicts: boolean,
+ *   full: boolean
+ * }}
+ */
+CourseModel.Filter;
+
 
 /**
  * Represents a time and place at which the course meets.
@@ -63,7 +77,7 @@ CourseModel.prototype.assertDistribution = function(type){
 
 
 /**
- * @param {!Object.<boolean>} filters
+ * @param {!CourseModel.Filter} filters
  * @return {boolean}
  */
 CourseModel.prototype.passesFilters = function(filters) {
@@ -75,11 +89,11 @@ CourseModel.prototype.passesFilters = function(filters) {
     "d3": 3
   };
 
-  var hitsOneDistribution = !goog.object.every(distributionResponses,function(distributionType,filterName){
-    return !filters[filterName] || !this.assertDistribution(distributionType);
-  },this);
-
-  return hitsOneDistribution;
+  return (
+    (filters.normal && this.assertDistribution(0)) ||
+    (filters.d1 && this.assertDistribution(1)) ||
+    (filters.d2 && this.assertDistribution(2)) ||
+    (filters.d3 && this.assertDistribution(3)));
 };
 
 

@@ -6,9 +6,11 @@ goog.require('goog.structs.Map');
 goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.protocol.Messages');
+goog.require('org.riceapps.events.SchedulePlannerEvent');
 
 goog.scope(function() {
 var CourseModel = org.riceapps.models.CourseModel;
+var SchedulePlannerEvent = org.riceapps.models.SchedulePlannerEvent;
 
 
 /**
@@ -67,7 +69,7 @@ CoursesModel.prototype.getAllSections = function(course) {
 
 /**
  * @param {string} query
- * @param {!Object.<boolean>} filters
+ * @param {org.riceapps.models.CourseModel.Filter} filters
  * @param {number=} opt_limit
  * @param {org.riceapps.models.UserModel=} opt_userModel
  * @return {!Array.<!org.riceapps.models.CourseModel>}

@@ -8,12 +8,16 @@ goog.require('org.riceapps.fx.Animation');
 goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.utils.DomUtils');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.models.CourseModel');
 
 
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
 var DomUtils = org.riceapps.utils.DomUtils;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var CourseModel = org.riceapps.models.CourseModel;
+
+
 
 
 
@@ -36,11 +40,11 @@ org.riceapps.views.SearchView = function() {
   /** @private {string} */
   this.lastQuery = "";
 
-  /** @private {Object.<boolean>} */
+  /** @private {?CourseModel.Filter} */
   this.lastFilterValues = null;
 
-  /** @private {Object.<!Element>} */
-  this.filterElements = {};
+  /** @private {?org.riceapps.views.SearchView.FilterElements} */
+  this.filterElements = null;
 
   /** @private {Element} */
   this.cancelButton = null;
@@ -48,6 +52,26 @@ org.riceapps.views.SearchView = function() {
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
 var SearchView = org.riceapps.views.SearchView;
+
+
+
+
+/**
+ * Represents the elements for the filters on this object.
+ *
+ * @typedef {{
+ *   normal: !Element,
+ *   d1: !Element,
+ *   d2: !Element,
+ *   d3: !Element,
+ *   conflicts: !Element,
+ *   full: !Element
+ * }}
+ */
+
+
+SearchView.FilterElements;
+
 
 
 
@@ -101,13 +125,22 @@ SearchView.prototype.createDom = function() {
 };
 
 /**
- * @return {Object.<boolean>}
+ * @return {CourseModel.Filter}
  */
 SearchView.prototype.getFilterValues = function(){
-  return goog.structs.map(this.filterElements,function(value,key,collection){
-    var filter = goog.dom.getChildren(value)[0];
-    return filter.checked;
-  });
+
+  function getFilterValue(element){
+    return goog.dom.getChildren(element)[0].checked;
+  }
+
+  return {
+    normal: getFilterValue(this.filterElements.normal),
+    d1: getFilterValue(this.filterElements.d1),
+    d2: getFilterValue(this.filterElements.d2),
+    d3: getFilterValue(this.filterElements.d3),
+    conflicts: getFilterValue(this.filterElements.conflicts),
+    full: getFilterValue(this.filterElements.full)
+  };
 
 }
 
@@ -137,12 +170,21 @@ SearchView.prototype.createFiltersDom = function(container) {
   // department
   // instructor
 
-  /** @type{!Object.<!Element>} */
-  this.filterElements = goog.structs.map(filterDetails,function(value,key,collections){
+  function createCheckbox(name){
+    var value = filterDetails.get(name);
     var child = DomUtils.createCheckbox.apply(this,value); 
     goog.dom.appendChild(container,child);
     return child;
-  },this);
+  }
+
+  this.filterElements = {
+    normal: createCheckbox("normal"),
+    d1: createCheckbox("d1"),
+    d2: createCheckbox("d2"),
+    d3: createCheckbox("d3"),
+    conflicts: createCheckbox("conflicts"),
+    full: createCheckbox("full")
+  };
 
   this.lastFilterValues = this.getFilterValues();
 };

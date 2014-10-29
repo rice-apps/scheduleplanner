@@ -242,6 +242,10 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
   }
 
   this.view_.getSearchView().setLoading(true);
+
+  if (event.filters === null)
+    throw new Error("A query needs a filter");
+
   var results = this.coursesModel_.getCoursesByQuery(event.query, event.filters, this.userModel_);
   var views = [];
 

@@ -22,10 +22,16 @@ org.riceapps.events.SchedulePlannerEvent = function(type) {
 
   /** @type {string} */
   this.query = '';
+
+  /** @type {?org.riceapps.models.CourseModel.Filter} */
+  this.filters = null;
 };
 goog.inherits(org.riceapps.events.SchedulePlannerEvent,
               goog.events.Event);
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+
+
+
 
 /**
  * @enum {string}
