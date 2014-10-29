@@ -150,7 +150,7 @@ Messages.Courses;
  *   start: number,
  *   end: number,
  *   frequency: number,
- *   offset: numer,
+ *   offset: number,
  *   limit: number,
  *   building: string,
  *   room: string

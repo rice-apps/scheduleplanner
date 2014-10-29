@@ -7,7 +7,7 @@ goog.scope(function() {
 
 
 /**
- * @param {SchedulePlannerEvent.Type}
+ * @param {!SchedulePlannerEvent.Type} type
  * @extends {goog.events.Event}
  * @constructor
  */
@@ -17,19 +17,24 @@ org.riceapps.events.SchedulePlannerEvent = function(type) {
   /** @type {!Array.<!org.riceapps.views.AbstractCourseView>} */
   this.courses = [];
 
-  /** @type {!Array.<!org.riceapps.models.CourseModel} */
+  /** @type {!Array.<!org.riceapps.models.CourseModel>} */
   this.models = [];
 
   /** @type {string} */
   this.query = '';
+
+  /** @type {?org.riceapps.models.CourseModel.Filter} */
+  this.filters = null;
 };
 goog.inherits(org.riceapps.events.SchedulePlannerEvent,
               goog.events.Event);
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 
 
+
+
 /**
- * @const {string}
+ * @enum {string}
  */
 SchedulePlannerEvent.Type = {
   ADD_GUIDE_VIEWS: 'sp_add_guide_views',

@@ -319,6 +319,17 @@ html, body {
   vertical-align: top !important;
 }
 
+.close-search-view {
+  content: url('./close.png');
+  width: 30pt;
+  float: right;
+  padding-right: 30px;
+}
+
+.close-search-view:hover {
+  content: url('./close-hover.png');
+}
+
 .trash-view {
   position: absolute;
   top: 0px;

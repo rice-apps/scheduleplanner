@@ -33,7 +33,7 @@ DomUtils.getComputedInnerSize = function(element) {
 
 
 /**
- * @param {number} scrollTop
+ * @param {number} distance
  */
 DomUtils.setDocumentScroll = function(distance) {
   distance = Math.max(Math.min(distance, DomUtils.getDocumentHeight()), 0);
@@ -58,7 +58,7 @@ DomUtils.getDocumentHeight = function() {
 
 
 /**
- * @param {!Elemenet} element
+ * @param {!Element} element
  * @param {goog.math.Rect} rect
  * @param {goog.math.Rect=} opt_adjust
  */
@@ -95,6 +95,7 @@ DomUtils.applyRect = function(element, rect, opt_adjust) {
  * @param {string} value
  * @param {string} text
  * @param {boolean=} opt_checked
+ * @return {!Element}
  */
 DomUtils.createCheckbox = function(name, value, text, opt_checked) {
   var checked = !!opt_checked;

@@ -7,11 +7,17 @@ goog.require('goog.style');
 goog.require('org.riceapps.fx.Animation');
 goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.utils.DomUtils');
+goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.models.CourseModel');
 
 
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
 var DomUtils = org.riceapps.utils.DomUtils;
+var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var CourseModel = org.riceapps.models.CourseModel;
+
+
 
 
 
@@ -27,10 +33,46 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {Element} */
   this.resultsContainer_ = null;
+
+  /** @private {Element} */
+  this.filterContainer = null;
+
+  /** @private {string} */
+  this.lastQuery = "";
+
+  /** @private {?CourseModel.Filter} */
+  this.lastFilterValues = null;
+
+  /** @private {?org.riceapps.views.SearchView.FilterElements} */
+  this.filterElements = null;
+
+  /** @private {Element} */
+  this.cancelButton = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
 var SearchView = org.riceapps.views.SearchView;
+
+
+
+
+/**
+ * Represents the elements for the filters on this object.
+ *
+ * @typedef {{
+ *   normal: !Element,
+ *   d1: !Element,
+ *   d2: !Element,
+ *   d3: !Element,
+ *   conflicts: !Element,
+ *   full: !Element
+ * }}
+ */
+
+
+SearchView.FilterElements;
+
+
 
 
 /**
@@ -43,6 +85,17 @@ SearchView.Theme = {
   FILTERS: 'search-view-filters',
   RESULTS_CONTAINER: 'search-view-results-container'
 };
+
+
+
+/**
+ * @param {string} query
+ */
+SearchView.prototype.setQuery = function(query) {
+  this.lastQuery = query;
+
+  this.updateSearch();
+}
 
 
 /**
@@ -62,33 +115,78 @@ SearchView.prototype.createDom = function() {
   goog.dom.appendChild(results, resultsContainer);
   this.resultsContainer_ = resultsContainer;
 
-  var filters = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.FILTERS);
-  goog.dom.appendChild(columns, filters);
-  this.createFiltersDom(filters);
+  this.filterContainer = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.FILTERS);
+
+  this.cancelButton = goog.dom.createDom(goog.dom.TagName.IMG, "close-search-view");
+  goog.dom.appendChild(this.filterContainer, this.cancelButton);
+
+  goog.dom.appendChild(columns, this.filterContainer);
+  this.createFiltersDom(this.filterContainer);
 };
+
+/**
+ * @return {CourseModel.Filter}
+ */
+SearchView.prototype.getFilterValues = function(){
+
+  function getFilterValue(element){
+    return goog.dom.getChildren(element)[0].checked;
+  }
+
+  return {
+    normal: getFilterValue(this.filterElements.normal),
+    d1: getFilterValue(this.filterElements.d1),
+    d2: getFilterValue(this.filterElements.d2),
+    d3: getFilterValue(this.filterElements.d3),
+    conflicts: getFilterValue(this.filterElements.conflicts),
+    full: getFilterValue(this.filterElements.full)
+  };
+
+}
 
 
 /**
  * @param {!Element} container
  */
 SearchView.prototype.createFiltersDom = function(container) {
-  var normal = DomUtils.createCheckbox('nd', '1', 'Non-Distribution', true);
-  var d1 = DomUtils.createCheckbox('d[]', '1', 'Distribution 1', true);
-  var d2 = DomUtils.createCheckbox('d[]', '2', 'Distribution 2', true);
-  var d3 = DomUtils.createCheckbox('d[]', '3', 'Distribution 3', true);
-  var conflicts = DomUtils.createCheckbox('filter_conflicts', '1', 'Hide conflicts');
-  var full = DomUtils.createCheckbox('filter_full', '1', 'Hide full courses');
+
+  /** @type {!goog.structs.Map.<string, Array>} */
+  var filterDetails = new goog.structs.Map();
+  filterDetails.set("normal",['nd' , '1', 'Non-Distribution',true]);
+  filterDetails.set("d1",['d[]', '1', 'Distribution 1', true]);
+  filterDetails.set("d2",['d[]', '2', 'Distribution 2', true]);
+  filterDetails.set("d3",['d[]', '3', 'Distribution 3', true]);
+  filterDetails.set("conflicts",['filter_conflicts', '1', 'Hide conflicts']);
+  filterDetails.set("full",['filter_full', '1', 'Hide full courses']);
+
+  // var normal = DomUtils.createCheckbox('nd', '1', 'Non-Distribution', true);
+  // var d1 = DomUtils.createCheckbox('d[]', '1', 'Distribution 1', true);
+  // var d2 = DomUtils.createCheckbox('d[]', '2', 'Distribution 2', true);
+  // var d3 = DomUtils.createCheckbox('d[]', '3', 'Distribution 3', true);
+  // var conflicts = DomUtils.createCheckbox('filter_conflicts', '1', 'Hide conflicts');
+  // var full = DomUtils.createCheckbox('filter_full', '1', 'Hide full courses');
   // credit hours
   // school
   // department
   // instructor
 
-  goog.dom.appendChild(container, normal);
-  goog.dom.appendChild(container, d1);
-  goog.dom.appendChild(container, d2);
-  goog.dom.appendChild(container, d3);
-  goog.dom.appendChild(container, conflicts);
-  goog.dom.appendChild(container, full);
+  function createCheckbox(name){
+    var value = filterDetails.get(name);
+    var child = DomUtils.createCheckbox.apply(this,value); 
+    goog.dom.appendChild(container,child);
+    return child;
+  }
+
+  this.filterElements = {
+    normal: createCheckbox("normal"),
+    d1: createCheckbox("d1"),
+    d2: createCheckbox("d2"),
+    d3: createCheckbox("d3"),
+    conflicts: createCheckbox("conflicts"),
+    full: createCheckbox("full")
+  };
+
+  this.lastFilterValues = this.getFilterValues();
 };
 
 
@@ -98,7 +196,51 @@ SearchView.prototype.createFiltersDom = function(container) {
 SearchView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
   this.hide(true);
+
+
+  this.getHandler().
+    listen(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
+    listen(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch);
+
 };
+
+
+/**
+ * @override
+ */
+SearchView.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+
+  this.getHandler().
+    unlisten(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
+    unlisten(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch);
+};
+
+
+/**
+ *
+ */
+SearchView.prototype.onCloseSearch = function() {
+  this.hide();
+}
+
+
+/**
+ *
+ */
+SearchView.prototype.onFilterChange = function() {
+  this.lastFilterValues = this.getFilterValues();
+  this.updateSearch();
+}
+
+
+SearchView.prototype.updateSearch = function() {
+  var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.UPDATE_SEARCH);
+  event.query = this.lastQuery;
+  event.filters = this.lastFilterValues;
+  this.dispatchEvent(event);
+}
+
 
 
 /**

@@ -41,7 +41,7 @@ org.riceapps.views.CourseCalendarGuideView = function(courseModel, childIndex) {
   this.boxes_ = [];
 
   /** @private {number} */
-  this.childIndex_ = childIndex;
+  this.childIndex__ = childIndex;
 };
 goog.inherits(org.riceapps.views.CourseCalendarGuideView,
               org.riceapps.views.View);
@@ -68,7 +68,7 @@ CourseCalendarGuideView.RENDER_ADJUST = new goog.math.Rect(0, 0, 10, 10);
  * @return {number}
  */
 CourseCalendarGuideView.prototype.getChildIndex = function() {
-  return this.childIndex_;
+  return this.childIndex__;
 };
 
 

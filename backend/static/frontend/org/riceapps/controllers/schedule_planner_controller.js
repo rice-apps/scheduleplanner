@@ -43,10 +43,10 @@ org.riceapps.controllers.SchedulePlannerController = function() {
   /** @private {!org.riceapps.controllers.SchedulePlannerXhrController} */
   this.xhrController_ = new org.riceapps.controllers.SchedulePlannerXhrController();
 
-  /** @private {!org.riceapps.models.UserModel} */
+  /** @private {org.riceapps.models.UserModel} */
   this.userModel_ = null;
 
-  /** @private {!org.riceapps.models.CoursesModel} */
+  /** @private {org.riceapps.models.CoursesModel} */
   this.coursesModel_ = null;
 
   /** @private {number} */
@@ -63,7 +63,8 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
  * @private
  */
 SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
-  var modalView = new org.riceapps.views.CourseModalView(event.target.getCourseModel());
+  var courseView = /** @type {org.riceapps.views.AbstractCourseView|Node} */ (event.target);
+  var modalView = new org.riceapps.views.CourseModalView(courseView.getCourseModel());
   modalView.disposeOnHide().show();
 };
 
@@ -187,7 +188,7 @@ SchedulePlannerController.prototype.handleScheduleCoursesAdded_ = function(event
 
 
 /**
- * @param {!org.riceapps.models.CoursesModel}
+ * @param {!org.riceapps.models.CoursesModel} coursesModel
  * @private
  */
 SchedulePlannerController.prototype.onCoursesReady_ = function(coursesModel) {
@@ -198,7 +199,6 @@ SchedulePlannerController.prototype.onCoursesReady_ = function(coursesModel) {
 
 
 /**
- * @param {!org.riceapps.models.CoursesModel}
  * @private
  */
 SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
@@ -221,7 +221,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
 }
 
 /**
- * @param {!org.riceapps.models.UserModel}
+ * @param {!org.riceapps.models.UserModel} userModel
  * @private
  */
 SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
@@ -232,7 +232,7 @@ SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
 
 
 /**
- * @parma {!SchedulePlannerEvent} event
+ * @param {!SchedulePlannerEvent} event
  * @private
  */
 SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
@@ -242,7 +242,11 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
   }
 
   this.view_.getSearchView().setLoading(true);
-  var results = this.coursesModel_.getCoursesByQuery(event.query, this.userModel_);
+
+  if (event.filters === null)
+    throw new Error("A query needs a filter");
+
+  var results = this.coursesModel_.getCoursesByQuery(event.query, event.filters, this.userModel_);
   var views = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -257,7 +261,6 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
 
 
 /**
- * @param {SchedulePlannerXhrController.ErrorType} errorType
  * @private
  */
 SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
@@ -271,7 +274,7 @@ SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
 
 
 /**
- * @param {!Array.<!org.riceapps.models.CourseModel>}
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
  */
 SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
   for (var i = 0; i < courses.length; i++) {
@@ -284,13 +287,13 @@ SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
 
 
 /**
- * @param {!Array.<!org.riceapps.models.CourseModel>}
- * @param {opt_number=} opt_index
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ * @param {number=} opt_index
  */
 SchedulePlannerController.prototype.addCoursesToSchedule = function(courses, opt_index) {
   var index = opt_index || this.calendarInsertAt_ || 0;
-  var index = Math.max(index, 0);
-  var index = Math.min(index, this.view_.getCalendarView().getChildCount() + 1);
+  index = Math.max(index, 0);
+  index = Math.min(index, this.view_.getCalendarView().getChildCount() + 1);
 
   for (var i = 0; i < courses.length; i++) {
     var course = new org.riceapps.views.CourseCalendarView(courses[i]);

@@ -22,6 +22,7 @@ var DomUtils = org.riceapps.utils.DomUtils;
 org.riceapps.views.CourseSearchView = function(courseModel) {
   goog.base(this, courseModel);
 };
+
 goog.inherits(org.riceapps.views.CourseSearchView,
               org.riceapps.views.AbstractCourseView);
 var CourseSearchView = org.riceapps.views.CourseSearchView;

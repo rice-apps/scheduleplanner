@@ -93,7 +93,7 @@ UserModel.prototype.getUserName = function() {
 
 
 /**
- * @return {boolean
+ * @return {boolean}
  */
 UserModel.prototype.hasSeenTour = function() {
   return this.hasSeenTour_;

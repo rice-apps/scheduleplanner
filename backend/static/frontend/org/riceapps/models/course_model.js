@@ -31,6 +31,20 @@ goog.inherits(org.riceapps.models.CourseModel,
               org.riceapps.models.Model);
 var CourseModel = org.riceapps.models.CourseModel;
 
+/**
+ * Represents the state of the filters for a given query.
+ *
+ * @typedef {{
+ *   normal: boolean,
+ *   d1: boolean,
+ *   d2: boolean,
+ *   d3: boolean,
+ *   conflicts: boolean,
+ *   full: boolean
+ * }}
+ */
+CourseModel.Filter;
+
 
 /**
  * Represents a time and place at which the course meets.
@@ -54,6 +68,32 @@ CourseModel.MeetingTime;
  */
 CourseModel.prototype.getId = function() {
   return this.data_['courseId'];
+};
+
+
+CourseModel.prototype.assertDistribution = function(type){
+  return this.getDistributionType() === type; 
+}
+
+
+/**
+ * @param {!CourseModel.Filter} filters
+ * @return {boolean}
+ */
+CourseModel.prototype.passesFilters = function(filters) {
+
+  var distributionResponses = {
+    "normal": 0,
+    "d1": 1,
+    "d2": 2,
+    "d3": 3
+  };
+
+  return (
+    (filters.normal && this.assertDistribution(0)) ||
+    (filters.d1 && this.assertDistribution(1)) ||
+    (filters.d2 && this.assertDistribution(2)) ||
+    (filters.d3 && this.assertDistribution(3)));
 };
 
 
@@ -172,6 +212,29 @@ CourseModel.prototype.getTitle = function() {
   return this.data_['subject'] + " " + this.data_['courseNumber'] + ": " + this.data_['title'];
 };
 
+/**
+ * This function gives you the score for how well this course matches the query.
+ * Correct number is a score of 3, correct subject is a score of 2, correct title is a score of 1.
+ * @param {string} query
+ * @return {number}
+ */
+CourseModel.prototype.getMatchScore = function(query, queryNumber) {
+  var total = 0;
+
+  if (queryNumber === this.data_['courseNumber']+"")
+    total += 3;
+  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,2))
+    total += 2.5;
+  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,1))
+    total += 2.2;
+  if (goog.string.caseInsensitiveContains(query,this.data_['subject']))
+    total += 2;
+  if (goog.string.caseInsensitiveContains(this.data_['title'],query))
+    total += 1;
+
+  return total;
+};
+
 
 /**
  * @return {number}
@@ -186,6 +249,13 @@ CourseModel.prototype.getEnrollmentCap = function() {
  */
 CourseModel.prototype.getCredits = function() {
   return 1;
+};
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getDistributionType = function() {
+  return this.data_["distributionGroup"];
 };
 
 
