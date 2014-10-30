@@ -120,7 +120,7 @@ html, body {
 
 .tool-bar-view .tool-bar-view-input:focus {
   outline: none;
-  width: calc(100% - 350px);
+  width: calc(100% - 370px);
   color: rgb(85, 85, 85);
 }
 
