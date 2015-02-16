@@ -19,7 +19,7 @@ class ProtocolMessage {
   }
 
   public static function serialize(/*ProtocolMessage*/ $protocolMessage) /*throws ProtocolMessageSerializationException*/ {
-    if (!is_a($protocolMessage, ProtocolMessage::class)) {
+    if (!is_a($protocolMessage, 'ProtocolMessage')) {
       throw new ProtocolMessageSerializationException('Provided object is not a ProtocolMessage.');
     }
 
