@@ -1,5 +1,11 @@
 <?php
 
+import('CLIUtilities');
+import('CLIController');
+
+CLIApplication::listen('prompt', 'CLIQueryController');
+
+
 import('CourseDataParser');
 
 /**

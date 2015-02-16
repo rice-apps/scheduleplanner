@@ -10,8 +10,6 @@ FRONT-END COMMUNICATION:
 
 FRONT-END:
   MEDIUM PRIORITY:
-    - [SEAN] CourseModel needs to be updated to properly use all of the information from the underlying protocol message. Currently, some of the data is still hard-coded. Additional methods may need to be added.
-
     - Search Results: show distribution, location/days, and credit hours in list view
 
     - [DEREK] Usability Improvement: When the calendar view contains no items, it should show instructions for the user to drag a view from the playground onto the calendar.
@@ -42,5 +40,6 @@ FRONT-END:
       * View Information (brings a course modal view for the given course)
 
     - Add a list view (similar to the previous schedule planner) so that students can use either view. The list view should appear beneath the calendar view.
+      subj, crn, title, cr, dist, room, instructor, enrollment/waitlist for normal and xlist, restrictions
 
     - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled. These courses also usually have variable credit hours.

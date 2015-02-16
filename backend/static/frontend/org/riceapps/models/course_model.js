@@ -233,7 +233,6 @@ CourseModel.prototype.getCrn = function() {
 
 
 /**
- * TODO(mschurr@): Implement.
  * @return {string}
  */
 CourseModel.prototype.getFormattedTermCodeForPrevYear = function() {
