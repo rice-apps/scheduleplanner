@@ -178,6 +178,29 @@ UserModel.prototype.removeCoursesFromSchedule = function(courses) {
 
 
 /**
+ * @param {!Array.<!CourseModel>} coursesToRemove To be removed from schedule
+ * @param {!Array.<!CourseModel>} coursesToAdd To be added to schedule
+ */
+UserModel.prototype.updateSchedule = function(coursesToRemove, coursesToAdd) {
+  // Remove the courses.
+  for (var i = 0; i < coursesToRemove.length; i++) {
+    goog.array.remove(this.schedule_, coursesToRemove[i]);
+  }
+
+  // Add the courses.
+  for (var i = 0; i < coursesToAdd.length; i++) {
+    if (!goog.array.contains(this.schedule_, coursesToAdd[i])) {
+      goog.array.insert(this.schedule_, coursesToAdd[i]);
+    }
+  }
+
+  this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.SCHEDULE_COURSES_REMOVED, coursesToRemove));
+  this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.SCHEDULE_COURSES_ADDED, coursesToAdd));
+  this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
+};
+
+
+/**
  * Atomically migrates courses from the schedule to the playground in a way that triggers only one
  * modification event.
  * @param {!Array.<!CourseModel>} srcCourses To be removed from schedule
@@ -221,8 +244,8 @@ UserModel.prototype.moveCoursesFromPlaygroundToSchedule = function(srcCourses, d
     }
   }
 
-  this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.SCHEDULE_COURSES_ADDED, srcCourses));
   this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.PLAYGROUND_COURSES_REMOVED, destCourses));
+  this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.SCHEDULE_COURSES_ADDED, srcCourses));
   this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
 };
 

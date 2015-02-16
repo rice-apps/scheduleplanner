@@ -24,6 +24,13 @@ org.riceapps.models.CourseModel = function(data, coursesModel) {
   /** @private {!org.riceapps.models.CoursesModel} */
   this.coursesModel_ = coursesModel;
 
+  /** @private {!Array.<!org.riceapps.models.InstructorModel>} */
+  this.instructorModels_ = [];
+
+  for (var i = 0; i < this.data_['instructors'].length; i++) {
+    this.instructorModels_.push(new org.riceapps.models.InstructorModel(this.data_['instructors'][i]));
+  }
+
   /** @private {Array.<!org.riceapps.models.CourseModel>} */
   this.otherSections_ = null;
 };
@@ -72,7 +79,7 @@ CourseModel.prototype.getId = function() {
 
 
 CourseModel.prototype.assertDistribution = function(type){
-  return this.getDistributionType() === type; 
+  return this.getDistributionType() === type;
 }
 
 
@@ -167,7 +174,14 @@ CourseModel.prototype.getCourseCategory = function() {
  * @return {!org.riceapps.models.InstructorModel}
  */
 CourseModel.prototype.getInstructor = function() {
-  return new org.riceapps.models.InstructorModel();
+  if (this.instructorModels_.length == 0) {
+    return new org.riceapps.models.InstructorModel(/** @type {org.riceapps.protocol.Messages.Instructor} */ ({
+      'instructorId': 0,
+      'instructorName': 'Unknown'
+    }));
+  }
+
+  return this.instructorModels_[0];
 };
 
 
