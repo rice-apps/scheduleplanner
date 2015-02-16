@@ -206,6 +206,7 @@ html, body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  border: 1px solid #000;
 }
 
 .course-calendar-view,

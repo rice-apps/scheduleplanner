@@ -1,6 +1,9 @@
 goog.provide('org.riceapps.views.AbstractCourseView');
 
+goog.require('goog.color');
+goog.require('goog.color.Rgb');
 goog.require('goog.events.Event');
+goog.require('goog.style');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.views.DraggableView');
@@ -9,6 +12,7 @@ goog.require('org.riceapps.views.CourseCalendarGuideView');
 goog.scope(function() {
 var DraggableView = org.riceapps.views.DraggableView;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+
 
 
 /**
@@ -31,6 +35,24 @@ org.riceapps.views.AbstractCourseView = function(courseModel) {
 goog.inherits(org.riceapps.views.AbstractCourseView,
               org.riceapps.views.DraggableView);
 var AbstractCourseView = org.riceapps.views.AbstractCourseView;
+
+
+/**
+ * @param {!Array.<!Element>} elements
+ */
+AbstractCourseView.prototype.applyColor = function(elements) {
+  var base = this.courseModel_.getColor();
+  var color1 = goog.color.lighten(base, 0.2);
+  var color2 = goog.color.lighten(base, 0.1);
+  var color3 = goog.color.darken(base, 0.1);
+
+  for (var i = 0; i < elements.length; i++) {
+    goog.style.setStyle(elements[i], {
+      'background': 'linear-gradient(to bottom, rgb(' + color1[0] + ', ' + color1[1] + ', ' + color1[2] + ') 0%, rgb(' + color2[0] + ', ' + color2[1] + ', ' + color2[2] + ') 37%, rgb(' + color3[0] + ', ' + color3[1] + ', ' + color3[2] + ') 100%)',
+      'filter': 'none'
+    });
+  }
+};
 
 
 /**
@@ -157,6 +179,7 @@ AbstractCourseView.prototype.removeGuideViews_ = function() {
 AbstractCourseView.prototype.getGuideViews = function() {
   return this.guideViews_;
 };
+
 
 /**
  * @param {!Array.<org.riceapps.views.CourseCalendarGuideView>} guideViews

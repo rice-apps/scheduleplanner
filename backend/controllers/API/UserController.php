@@ -13,7 +13,6 @@ class UserController extends Controller {
   }
 
   public function post() {
-    sleep(2);
     $message = null;
     $message = ProtocolMessage::unserialize($this->request->post['_proto'], 'UserRequestProtocolMessage');
 

@@ -122,6 +122,7 @@ CourseCalendarView.prototype.getCalendarTimes = function() {
 CourseCalendarView.prototype.drawInRects = function(rects) {
   this.removeBoxes_();
   this.makeBoxesInRects_(rects);
+  this.applyColor(this.boxes_);
 };
 
 
@@ -149,7 +150,7 @@ CourseCalendarView.prototype.makeBoxesInRects_ = function(rects) {
 
     if (numberOfDetails > 2) {
       var div = goog.dom.createDom(goog.dom.TagName.DIV);
-      goog.dom.setTextContent(div, this.getCourseModel().getInstructor().getName());
+      goog.dom.setTextContent(div, this.getCourseModel().getInstructorNames());
       goog.dom.appendChild(element, div);
     }
 

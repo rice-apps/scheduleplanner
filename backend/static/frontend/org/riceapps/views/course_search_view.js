@@ -49,22 +49,17 @@ CourseSearchView.prototype.createDom = function() {
   goog.dom.classlist.add(this.getElement(), CourseSearchView.Theme.BASE);
   goog.dom.setTextContent(this.getElement(), this.getCourseModel().getTitle());
 
-  /*
+  var div = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.setTextContent(div, this.getCourseModel().getInstructorNames());
+  goog.dom.appendChild(this.getElement(), div);
+
+  /*var div = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.setTextContent(div, this.getCourseModel().getMeetingTimes()[0]['location']);
+  goog.dom.appendChild(this.getElement(), div);*/
 
 
 
-    if (numberOfDetails > 1) {
-      var div = goog.dom.createDom(goog.dom.TagName.DIV);
-      goog.dom.setTextContent(div, times[i]['location']);
-      goog.dom.appendChild(element, div);
-    }
-
-    if (numberOfDetails > 2) {
-      var div = goog.dom.createDom(goog.dom.TagName.DIV);
-      goog.dom.setTextContent(div, this.getCourseModel().getInstructor().getName());
-      goog.dom.appendChild(element, div);
-    }
-  */
+  // Add location + days, credit hour, distribution
 };
 
 

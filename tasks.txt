@@ -12,13 +12,7 @@ FRONT-END:
   MEDIUM PRIORITY:
     - [SEAN] CourseModel needs to be updated to properly use all of the information from the underlying protocol message. Currently, some of the data is still hard-coded. Additional methods may need to be added.
 
-    - Search Results: show D1/D2 and hours in list view
-
-    - Search by professor name
-
-    - [MARK] Usability Improvement: Clean up the calendar view a little bit by making the guide views for different sections be different colors to give user easier visual cues (relevant files: AbstractCourseView, CourseCalendarGuideView, CourseCalendarView).
-
-    - [YOKO] Add an (x) in the top right corner of the search bar that clears the search text and hides the search view.
+    - Search Results: show distribution, location/days, and credit hours in list view
 
     - [DEREK] Usability Improvement: When the calendar view contains no items, it should show instructions for the user to drag a view from the playground onto the calendar.
 
@@ -42,8 +36,8 @@ FRONT-END:
 
   LOW PRIORITY:
 
-    - Add right-click context menu to all course views in calendar and playground w/ options:
-      * Remove (removes the course from either the calendar or playground)
+    - Add right-click context menu to all course views in calendar, search, and playground w/ options:
+      * Remove (removes the course from either the calendar or playground) (only for cal/search)
       * View Evaluations (brings up the course evalations page within ESTHER)
       * View Information (brings a course modal view for the given course)
 

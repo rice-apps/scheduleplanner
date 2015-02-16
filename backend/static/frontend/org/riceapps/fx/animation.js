@@ -1,5 +1,6 @@
 goog.provide('org.riceapps.fx.Animation');
 
+goog.require('goog.Promise');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.dom.classlist');

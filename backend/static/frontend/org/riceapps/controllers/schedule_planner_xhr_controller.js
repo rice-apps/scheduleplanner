@@ -1,3 +1,8 @@
+/**
+ * TODO(mschurr@): Schedule pushed to occur after X ms of no changes, up to at most Xms from
+ * the first changes; ensure only 1 outstanding request at a time.
+ */
+
 goog.provide('org.riceapps.controllers.SchedulePlannerXhrController');
 
 goog.require('goog.Promise');

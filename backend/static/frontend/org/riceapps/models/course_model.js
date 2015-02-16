@@ -1,6 +1,7 @@
 goog.provide('org.riceapps.models.CourseModel');
 
 goog.require('goog.Promise');
+goog.require('goog.color');
 goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.models.InstructorModel');
 goog.require('org.riceapps.protocol.Messages');
@@ -23,6 +24,9 @@ org.riceapps.models.CourseModel = function(data, coursesModel) {
 
   /** @private {!org.riceapps.models.CoursesModel} */
   this.coursesModel_ = coursesModel;
+
+  /** @private {goog.color.Rgb} */
+  this.color_ = null;
 
   /** @private {!Array.<!org.riceapps.models.InstructorModel>} */
   this.instructorModels_ = [];
@@ -85,10 +89,10 @@ CourseModel.prototype.assertDistribution = function(type){
 
 /**
  * @param {!CourseModel.Filter} filters
+ * @param {org.riceapps.models.UserModel=} opt_userModel
  * @return {boolean}
  */
-CourseModel.prototype.passesFilters = function(filters) {
-
+CourseModel.prototype.passesFilters = function(filters, opt_userModel) {
   var distributionResponses = {
     "normal": 0,
     "d1": 1,
@@ -171,13 +175,31 @@ CourseModel.prototype.getCourseCategory = function() {
 
 
 /**
+ * @return {string}
+ */
+CourseModel.prototype.getInstructorNames = function() {
+  if (this.instructorModels_.length == 0) {
+    return 'TBD';
+  }
+
+  var data = '';
+
+  for (var i = 0; i < this.instructorModels_.length; i++) {
+    data += this.instructorModels_[i].getName() + '; ';
+  }
+
+  return data.substring(0, data.length - 2);
+};
+
+
+/**
  * @return {!org.riceapps.models.InstructorModel}
  */
 CourseModel.prototype.getInstructor = function() {
   if (this.instructorModels_.length == 0) {
     return new org.riceapps.models.InstructorModel(/** @type {org.riceapps.protocol.Messages.Instructor} */ ({
       'instructorId': 0,
-      'instructorName': 'Unknown'
+      'instructorName': 'TBD'
     }));
   }
 
@@ -241,6 +263,18 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
     total += 2.5;
   else if (queryNumber === (this.data_['courseNumber']+"").substring(0,1))
     total += 2.2;
+
+  var foundInstructor = false;
+  for (var i = 0; i < this.instructorModels_.length; i++) {
+    if (goog.string.caseInsensitiveContains(this.instructorModels_[i].getName(), query)) {
+      foundInstructor = true;
+    }
+  }
+
+  if (foundInstructor)
+    total += 0.8;
+
+
   if (goog.string.caseInsensitiveContains(query,this.data_['subject']))
     total += 2;
   if (goog.string.caseInsensitiveContains(this.data_['title'],query))
@@ -262,8 +296,25 @@ CourseModel.prototype.getEnrollmentCap = function() {
  * @return {number}
  */
 CourseModel.prototype.getCredits = function() {
-  return 1;
+  return this.data_['creditHours'];
 };
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCreditsMin = function() {
+  return this.data_['creditHoursMin'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCreditsMax = function() {
+  return this.data_['creditHoursMax'];
+};
+
 
 /**
  * @return {number}
@@ -308,6 +359,50 @@ CourseModel.prototype.getAllSections = function() {
 
   this.otherSections_ = this.coursesModel_.getAllSections(this);
   return this.otherSections_;
+};
+
+
+/**
+ * @const {!Array.<!goog.color.Rgb>}
+ */
+CourseModel.COLORS = [
+  [242, 245, 246], // DEFAULT
+  [244,  67,  54],
+  [ 33, 150, 243],
+  [233,  30,  99],
+  [156,  39, 176],
+  [103,  58, 183],
+  [ 63,  81, 181],
+  [  3, 169, 244],
+  [  0, 188, 212],
+  [  0, 150, 136],
+  [ 76, 175,  80],
+  [139, 195,  74],
+  [205, 220,  57],
+  [255, 235,  59],
+  [255, 193,   7],
+  [255, 152,   0],
+  [ 96, 125, 139]
+];
+
+
+/**
+ * @type {number}
+ */
+CourseModel.NEXT_COLOR = 0;
+
+
+/**
+ * @return {!goog.color.Rgb}
+ */
+CourseModel.prototype.getColor = function() {
+  if (this.color_) {
+    return this.color_;
+  }
+
+  this.color_ = CourseModel.COLORS[CourseModel.NEXT_COLOR];
+  CourseModel.NEXT_COLOR = (CourseModel.NEXT_COLOR + 1) % CourseModel.COLORS.length;
+  return this.color_;
 };
 
 });  // goog.scope

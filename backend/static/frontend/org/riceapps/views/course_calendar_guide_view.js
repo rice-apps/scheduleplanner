@@ -16,6 +16,7 @@ goog.require('org.riceapps.utils.DomUtils');
 goog.require('org.riceapps.views.CalendarView');
 goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var DomUtils = org.riceapps.utils.DomUtils;
@@ -124,6 +125,25 @@ CourseCalendarGuideView.prototype.getCalendarTimes = function() {
 CourseCalendarGuideView.prototype.drawInRects = function(rects) {
   this.removeBoxes_();
   this.makeBoxesInRects_(rects);
+  this.applyColor(this.boxes_);
+};
+
+
+/**
+ * @param {!Array.<!Element>} elements
+ */
+CourseCalendarGuideView.prototype.applyColor = function(elements) {
+  var base = this.courseModel_.getColor();
+  var color1 = goog.color.lighten(base, 0.2);
+  var color2 = goog.color.lighten(base, 0.1);
+  var color3 = goog.color.darken(base, 0.1);
+
+  for (var i = 0; i < elements.length; i++) {
+    goog.style.setStyle(elements[i], {
+      'background': 'linear-gradient(to bottom, rgb(' + color1[0] + ', ' + color1[1] + ', ' + color1[2] + ') 0%, rgb(' + color2[0] + ', ' + color2[1] + ', ' + color2[2] + ') 37%, rgb(' + color3[0] + ', ' + color3[1] + ', ' + color3[2] + ') 100%)',
+      'filter': 'none'
+    });
+  }
 };
 
 

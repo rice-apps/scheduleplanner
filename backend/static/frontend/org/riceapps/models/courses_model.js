@@ -70,8 +70,8 @@ CoursesModel.prototype.getAllSections = function(course) {
 /**
  * @param {string} query
  * @param {org.riceapps.models.CourseModel.Filter} filters
- * @param {number=} opt_limit
  * @param {org.riceapps.models.UserModel=} opt_userModel
+ * @param {number=} opt_limit
  * @return {!Array.<!org.riceapps.models.CourseModel>}
  */
 CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userModel, opt_limit) {
@@ -95,14 +95,13 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
   for (var i = 0; i < keys.length; i++) {
     var course = this.courses_.get(keys[i]);
 
-    if (!course.passesFilters(filters))
+    if (!course.passesFilters(filters, opt_userModel))
       continue;
-
-    var category = course.getCourseCategory();
 
     if (course.getMatchScore(query,queryNumber) === 0)
       continue;
 
+    var category = course.getCourseCategory();
     if (used.contains(category)) {
       continue;
     }
@@ -115,25 +114,17 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
 
     results.push(course);
     used.add(category);
-    
   }
 
-  results.sort(function(a,b){
-    if (a.getMatchScore(query,queryNumber) > b.getMatchScore(query,queryNumber))
-    {
+  results.sort(function(a,b) {
+    if (a.getMatchScore(query,queryNumber) > b.getMatchScore(query,queryNumber)) {
       return -1;
-    }
-    else if (a.getMatchScore(query,queryNumber) < b.getMatchScore(query,queryNumber))
-    {
+    } else if (a.getMatchScore(query,queryNumber) < b.getMatchScore(query,queryNumber)) {
       return 1;
-    }
-    else
-    {
+    } else {
       return a.getCourseNumber() - b.getCourseNumber();
     }
   });
-
-
 
   return results.slice(0,limit);
 };
