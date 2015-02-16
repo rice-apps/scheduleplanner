@@ -57,6 +57,14 @@ var CourseModel = org.riceapps.models.CourseModel;
 CourseModel.Filter;
 
 
+/** @enum {number} */
+CourseModel.Term = {
+  FALL: 0,
+  SPRING: 1,
+  SUMMER: 2
+};
+
+
 /**
  * Represents a time and place at which the course meets.
  *   day: 0 (Sunday) to 6 (Saturday)
@@ -82,7 +90,7 @@ CourseModel.prototype.getId = function() {
 };
 
 
-CourseModel.prototype.assertDistribution = function(type){
+CourseModel.prototype.assertDistribution = function(type) {
   return this.getDistributionType() === type;
 }
 
@@ -175,6 +183,15 @@ CourseModel.prototype.getCourseCategory = function() {
 
 
 /**
+ * TODO(mschurr@): Implement.
+ * @return {string}
+ */
+CourseModel.prototype.getMeetingTimesAsString = function() {
+  return '';
+};
+
+
+/**
  * @return {string}
  */
 CourseModel.prototype.getInstructorNames = function() {
@@ -216,10 +233,27 @@ CourseModel.prototype.getCrn = function() {
 
 
 /**
+ * TODO(mschurr@): Implement.
  * @return {string}
  */
-CourseModel.prototype.getFormattedTermCode = function() {
-  return '201420';
+CourseModel.prototype.getFormattedTermCodeForPrevYear = function() {
+  var year = this.getYear() - 1;
+  var term;
+
+  switch (this.getTerm()) {
+    default: // fall through
+    case CourseModel.Term.FALL:
+      term = '10';
+      break;
+    case CourseModel.Term.SPRING:
+      term = '20';
+      break;
+    case CourseModel.Term.SUMMER:
+      term = '30';
+      break;
+  }
+
+  return year + term;
 };
 
 
@@ -245,7 +279,7 @@ CourseModel.prototype.getCourseNumber = function() {
  * @return {string}
  */
 CourseModel.prototype.getTitle = function() {
-  return this.data_['subject'] + " " + this.data_['courseNumber'] + ": " + this.data_['title'];
+  return this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
 };
 
 /**
@@ -257,11 +291,11 @@ CourseModel.prototype.getTitle = function() {
 CourseModel.prototype.getMatchScore = function(query, queryNumber) {
   var total = 0;
 
-  if (queryNumber === this.data_['courseNumber']+"")
+  if (queryNumber === this.data_['courseNumber']+'')
     total += 3;
-  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,2))
+  else if (queryNumber === (this.data_['courseNumber']+'').substring(0,2))
     total += 2.5;
-  else if (queryNumber === (this.data_['courseNumber']+"").substring(0,1))
+  else if (queryNumber === (this.data_['courseNumber']+'').substring(0,1))
     total += 2.2;
 
   var foundInstructor = false;
@@ -277,18 +311,10 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
 
   if (goog.string.caseInsensitiveContains(query,this.data_['subject']))
     total += 2;
-  if (goog.string.caseInsensitiveContains(this.data_['title'],query))
+  if (goog.string.caseInsensitiveContains(this.data_['title'], query))
     total += 1;
 
   return total;
-};
-
-
-/**
- * @return {number}
- */
-CourseModel.prototype.getEnrollmentCap = function() {
-  return 1;
 };
 
 
@@ -320,7 +346,7 @@ CourseModel.prototype.getCreditsMax = function() {
  * @return {number}
  */
 CourseModel.prototype.getDistributionType = function() {
-  return this.data_["distributionGroup"];
+  return this.data_['distributionGroup'];
 };
 
 
@@ -328,7 +354,7 @@ CourseModel.prototype.getDistributionType = function() {
  * @return {number}
  */
 CourseModel.prototype.getDistributionOneCredits = function() {
-  return 0;
+  return this.getDistributionType() == 1 ? this.getCredits() : 0;
 };
 
 
@@ -336,7 +362,7 @@ CourseModel.prototype.getDistributionOneCredits = function() {
  * @return {number}
  */
 CourseModel.prototype.getDistributionTwoCredits = function() {
-  return 0;
+  return this.getDistributionType() == 2 ? this.getCredits() : 0;
 };
 
 
@@ -344,7 +370,7 @@ CourseModel.prototype.getDistributionTwoCredits = function() {
  * @return {number}
  */
 CourseModel.prototype.getDistributionThreeCredits = function() {
-  return 0;
+  return this.getDistributionType() == 3 ? this.getCredits() : 0;
 };
 
 
@@ -365,24 +391,25 @@ CourseModel.prototype.getAllSections = function() {
 /**
  * @const {!Array.<!goog.color.Rgb>}
  */
-CourseModel.COLORS = [
-  [242, 245, 246], // DEFAULT
-  [244,  67,  54],
-  [ 33, 150, 243],
-  [233,  30,  99],
-  [156,  39, 176],
-  [103,  58, 183],
-  [ 63,  81, 181],
-  [  3, 169, 244],
-  [  0, 188, 212],
-  [  0, 150, 136],
-  [ 76, 175,  80],
-  [139, 195,  74],
-  [205, 220,  57],
-  [255, 235,  59],
-  [255, 193,   7],
-  [255, 152,   0],
-  [ 96, 125, 139]
+CourseModel.COLORS = [ // from http://www.google.com/design/spec/style/color.html#color-color-palette
+  [242, 245, 246], // Gray
+  [244,  67,  54], // Red
+  //[233,  30,  99], // Pink
+  //[156,  39, 176], // Purple
+  [103,  58, 183], // Deep Purple
+  [ 63,  81, 181], // Indigo
+  [ 33, 150, 243], // Blue
+  [  3, 169, 244], // Light Blue
+  [  0, 188, 212], // Cyan
+  [  0, 150, 136], // Teal
+  [ 76, 175,  80], // Green
+  //[139, 195,  74], // Light Green
+  //[205, 220,  57], // Lime
+  [255, 235,  59], // Yellow
+  [255, 193,   7], // Amber
+  [255, 152,   0], // Orange
+  [255,  87,  34], // Deep Orange
+  [ 96, 125, 139] // Blue Grey
 ];
 
 
@@ -403,6 +430,196 @@ CourseModel.prototype.getColor = function() {
   this.color_ = CourseModel.COLORS[CourseModel.NEXT_COLOR];
   CourseModel.NEXT_COLOR = (CourseModel.NEXT_COLOR + 1) % CourseModel.COLORS.length;
   return this.color_;
+};
+
+
+/**
+ * @return {!Array.<string>}
+ */
+CourseModel.prototype.getRestrictions = function() {
+  var restrictions = [];
+
+  for (var i = 0; i < this.data_['restrictions'].length; i++) {
+    restrictions.push(this.data_['restrictions'][i]['description']);
+  }
+
+  return restrictions;
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getTerm = function() {
+  return this.data_['term'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getYear = function() {
+  return this.data_['year'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getCollege = function() {
+  return this.data_['college'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getLastUpdateTime = function() {
+  return this.data_['lastUpdate'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getCourseUrl = function() {
+  return this.data_['courseUrl'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getLink = function() {
+  return this.data_['link'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getDescription = function() {
+  return this.data_['description'];
+};
+
+
+/**
+ * @return {boolean}
+ */
+CourseModel.prototype.isLpap = function() {
+  return this.creditLpap;
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getDepartment = function() {
+  return this.data_['department'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getSchool = function() {
+  return this.data_['school'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getSection = function() {
+  return this.data_['section'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getSessionType = function() {
+  return this.data_['sessionType'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getGradeType = function() {
+  return this.data_['gradeType'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getCrosslistGroup = function() {
+  return this.data_['xlistGroup'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCrosslistEnrollment = function() {
+  return this.data_['xlistEnrollment'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCrosslistWaitlisted = function() {
+  return this.data_['xlistWaitlisted'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCrosslistMaxEnrollment = function() {
+  return this.data_['xlistMaxEnrollment'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getCrosslistMaxWaitlisted = function() {
+  return this.data_['xlistMaxWaitlisted'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getMaxEnrollment = function() {
+  return this.data_['maxEnrollment'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getMaxWaitlisted = function() {
+  return this.data_['maxWaitlisted'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getEnrollment = function() {
+  return this.data_['enrollment'];
+};
+
+
+/**
+ * @return {number}
+ */
+CourseModel.prototype.getWaitlisted = function() {
+  return this.data_['waitlisted'];
 };
 
 });  // goog.scope

@@ -52,10 +52,10 @@ var Messages = org.riceapps.protocol.Messages;
 
 
 /** @enum {number} */
-Messages.Terms = {
+Messages.Term = {
   FALL: 0,
   SPRING: 1,
-  SUMEMR: 2
+  SUMMER: 2
 };
 
 

@@ -119,7 +119,7 @@ CourseModalView.prototype.openCourseEvaluations = function() {
   var params = {
     'p_commentid': '',
     'p_confirm': '1',
-    'p_term': this.courseModel_.getFormattedTermCode(),
+    'p_term': this.courseModel_.getFormattedTermCodeForPrevYear(),
     'p_type': 'Course',
     'p_crn': this.courseModel_.getCrn()
   };
