@@ -27,6 +27,12 @@ org.riceapps.controllers.SchedulePlannerXhrController = function() {
 
   /** @private {org.riceapps.models.UserModel} */
   this.userModel_ = null;
+
+  /** @private {goog.Promise.<SchedulePlannerXhrController.ErrorType>} */
+  this.pendingPushRequest_ = null;
+
+  /** @private {goog.Promise.<SchedulePlannerXhrController.ErrorType>} */
+  this.queuedPushRequest_ = null;
 };
 goog.inherits(org.riceapps.controllers.SchedulePlannerXhrController,
               org.riceapps.controllers.Controller);
@@ -37,6 +43,7 @@ var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrCo
  * @enum {string}
  */
 SchedulePlannerXhrController.ErrorType = {
+  NONE: 'none',
   SESSION_EXPIRED: 'session_expired',
   XSRF_EXPIRED: 'xsrf_expired',
   PARSE_ERROR: 'parse_error',
@@ -110,7 +117,8 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
       listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.onPlaygroundCoursesAdded_).
       listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_REMOVED, this.onPlaygroundCoursesRemoved_).
       listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.onScheduleCoursesAdded_).
-      listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_REMOVED, this.onScheduleCoursesRemoved_);
+      listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_REMOVED, this.onScheduleCoursesRemoved_).
+      listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.onUserModelChanged_);
     return userModel;
   }, undefined, this);
 };
@@ -164,9 +172,40 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
 
 /**
  * Pushes the user model to the remote server, synchronizing any properties changed client-side to the server.
- * @return {!goog.Promise.<boolean>}
+ * @return {!goog.Promise.<SchedulePlannerXhrController.ErrorType>}
  */
 SchedulePlannerXhrController.prototype.pushUserModel = function() {
+  // We must ensure that there exists at most one push request pending over the network at a time.
+  // If we don't, we could run into some nasty concurrency data race issues.
+  if (this.pendingPushRequest_ != null) {
+    // If a push request is already queued, then simply return the reference.
+    if (this.queuedPushRequest_ != null) {
+      return this.queuedPushRequest_;
+    }
+
+    // Otherwise, create a new queued push request and schedule the pending one to run it.
+    this.queuedPushRequest_ = new goog.Promise(function(resolve, reject) {
+      // Wait on the pending request to finish, then become the active request.
+      this.pendingPushRequest_.thenAlways(function() {
+        this.pendingPushRequest_ = this.pushUserModelInternal_();
+        this.queuedPushRequest_ = null;
+        this.pendingPushRequest_.then(function(v) { resolve(v); }, function(v) { reject(v); }, this);
+      }, this);
+    }, this);
+    return this.queuedPushRequest_;
+  }
+
+  // Otherwise, if nothing is pending, we can just make the push request now.
+  this.pendingPushRequest_ = this.pushUserModelInternal_();
+  return this.pendingPushRequest_;
+};
+
+
+/**
+ * @return {!goog.Promise.<SchedulePlannerXhrController.ErrorType>}
+ * @private
+ */
+SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
   var request = /** @type {Messages.UserRequest} */ ({
     'userId': this.userModel_.getUserId(),
     'xsrfToken': this.userModel_.getXsrfToken(),
@@ -197,7 +236,7 @@ SchedulePlannerXhrController.prototype.pushUserModel = function() {
 
   window.console.log('xhr dispatch: pushing user model to server ', request);
 
-  return new goog.Promise(function(resolve, reject) {
+  var promise = new goog.Promise(function(resolve, reject) {
     var url = this.buildXhrUrl(SchedulePlannerXhrController.Path.USER, {});
     var data = goog.Uri.QueryData.createFromMap({
       '_proto': goog.json.serialize(request)
@@ -227,12 +266,28 @@ SchedulePlannerXhrController.prototype.pushUserModel = function() {
       }
 
       if (xhr.getStatus() == 200) {
-        resolve(true);
+        resolve(SchedulePlannerXhrController.ErrorType.NONE);
       } else {
         reject(SchedulePlannerXhrController.ErrorType.UNKNOWN);
       }
     }, this), 'POST', data.toString(), undefined, SchedulePlannerXhrController.DEFAULT_TIMEOUT);
   }, this);
+
+  // When the promise finishes:
+  promise.thenAlways(function() {
+    this.pendingPushRequest_ = null;
+  }, this);
+
+  return promise;
+};
+
+
+/**
+ * @param {org.riceapps.events.UserModelEvent} event
+ * @private
+ */
+SchedulePlannerXhrController.prototype.onUserModelChanged_ = function(event) {
+  this.pushUserModel();
 };
 
 
@@ -241,8 +296,7 @@ SchedulePlannerXhrController.prototype.pushUserModel = function() {
  * @private
  */
 SchedulePlannerXhrController.prototype.onPlaygroundCoursesAdded_ = function(event) {
-  window.console.log('xhr dispatch: playground_add ', event.courses);
-  this.pushUserModel();
+  //window.console.log('xhr dispatch: playground_add ', event.courses);
 };
 
 
@@ -251,8 +305,7 @@ SchedulePlannerXhrController.prototype.onPlaygroundCoursesAdded_ = function(even
  * @private
  */
 SchedulePlannerXhrController.prototype.onPlaygroundCoursesRemoved_ = function(event) {
-  window.console.log('xhr dispatch: playground_remove ', event.courses);
-  this.pushUserModel();
+  //window.console.log('xhr dispatch: playground_remove ', event.courses);
 };
 
 
@@ -261,8 +314,7 @@ SchedulePlannerXhrController.prototype.onPlaygroundCoursesRemoved_ = function(ev
  * @private
  */
 SchedulePlannerXhrController.prototype.onScheduleCoursesAdded_ = function(event) {
-  window.console.log('xhr dispatch: schedule_add ', event.courses);
-  this.pushUserModel();
+  //window.console.log('xhr dispatch: schedule_add ', event.courses);
 };
 
 
@@ -271,8 +323,7 @@ SchedulePlannerXhrController.prototype.onScheduleCoursesAdded_ = function(event)
  * @private
  */
 SchedulePlannerXhrController.prototype.onScheduleCoursesRemoved_ = function(event) {
-  window.console.log('xhr dispatch: schedule_remove ', event.courses);
-  this.pushUserModel();
+  //window.console.log('xhr dispatch: schedule_remove ', event.courses);
 };
 
 

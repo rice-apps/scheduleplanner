@@ -13,12 +13,9 @@ class UserController extends Controller {
   }
 
   public function post() {
+    sleep(2);
     $message = null;
-    try {
-      $message = ProtocolMessage::unserialize($this->request->post['_proto'], 'UserRequestProtocolMessage');
-    } catch (ProtocolMessageException $e) {
-      return 400;
-    }
+    $message = ProtocolMessage::unserialize($this->request->post['_proto'], 'UserRequestProtocolMessage');
 
     if ($message->userId != $this->user->id) {
       return 400;
@@ -28,11 +25,23 @@ class UserController extends Controller {
       return 401;
     }
 
-    // TODO(mschurr@): Update database based on the following properties:
-    $this->user->setProperty(SchedulePlannerProtocolMessageUtility::TOUR_PROPERTY, $message->hasSeenTour === true);
-    //public /*PlaygroundProtocolMessage*/ $playground;
-    //public /*ScheduleProtocolMessage */ $schedule;
+    $this->user->setProperty(SchedulePlannerProtocolMessageUtility::TOUR_PROPERTY,
+        $message->hasSeenTour === true);
 
-    $this->response->write('200 OK');
+    $this->db->prepare("DELETE FROM `playgrounds` WHERE `userid` = ?")->execute($this->user->id);
+    $q = $this->db->prepare("INSERT INTO `playgrounds` (`userid`, `courseid`) VALUES (?, ?);");
+
+    foreach ($message->playground->courses as $course) {
+      $q->execute($this->user->id, $course->courseId);
+    }
+
+    $this->db->prepare("DELETE FROM `schedules` WHERE `userid` = ?")->execute($this->user->id);
+    $q = $this->db->prepare("INSERT INTO `schedules` (`userid`, `courseid`, `year`) VALUES (?, ?, 0);");
+
+    foreach ($message->schedule->courses as $course) {
+      $q->execute($this->user->id, $course->courseId);
+    }
+
+    $this->response->json(['STATUS' => 'OK'], true);
   }
 }

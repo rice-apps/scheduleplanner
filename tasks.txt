@@ -1,19 +1,21 @@
 BACK-END:
-  - Needs to properly save user data when a push request is received.
+  - Seems to be a wierd problem where users session expires sooner than intended. Probably an issue with framework.
 
 FRONT-END COMMUNICATION:
   - XHTTPRequests need to be re-tried on failure.
-  - Currently push requests are duplicated (e.g. one for remove from schedule one for add to playground).
   - User interface should be unusuable until both the courses and user model have been loaded.
   - User interface should be made unusable when a push request fails due to session or XSRF timeout.
   - User interface should be made unusable when a push request fails due to any unknown reason.
-  - User model needs method to update hasSeenTour; update should push to server.
   - SchedulePlannerController and SchedulePlannerXhrController need some event-based communication mechanism.
 
 FRONT-END:
   MEDIUM PRIORITY:
     - [SEAN] CourseModel needs to be updated to properly use all of the information from the underlying protocol message.
       Currently, some of the data is still hard-coded. Additional methods may need to be added.
+
+    - Search Results: show D1/D2 and hours in list view
+
+    - Search by prof name
 
     - [MARK] Usability Improvement: Clean up the calendar view a little bit by making the guide views for different
       sections be different colors to give user easier visual cues (relevant files: AbstractCourseView,

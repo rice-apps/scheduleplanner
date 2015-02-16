@@ -72,6 +72,13 @@ class UserRequestProtocolMessage extends ProtocolMessage {
   public /*boolean*/ $hasSeenTour;
   public /*PlaygroundProtocolMessage*/ $playground;
   public /*ScheduleProtocolMessage */ $schedule;
+
+  /** @override */
+  public function onUnserialize() {
+    $this->playground = ProtocolMessage::unserialize_arr($this->playground, 'PlaygroundProtocolMessage');
+    $this->schedule = ProtocolMessage::unserialize_arr($this->schedule, 'ScheduleProtocolMessage');
+    return parent::onUnserialize();
+  }
 }
 
 class UserModelProtocolMessage extends ProtocolMessage {
@@ -113,6 +120,20 @@ class PlaygroundProtocolMessage extends ProtocolMessage {
   public function validate() {
     return parent::validate() && $this->courses !== null && is_array($this->courses);
   }
+
+  /** @override */
+  public function onUnserialize() {
+    for ($i = 0; $i < count($this->courses); $i++) {
+      $data = $this->courses[$i];
+
+      if (is_array($data)) {
+        $this->courses[$i] = new CourseModelProtocolMessage;
+        $this->courses[$i]->courseId = (int) $data['courseId'];
+      }
+    }
+
+    return parent::onUnserialize();
+  }
 }
 
 class CoursesProtocolMessage extends ProtocolMessage {
@@ -140,6 +161,20 @@ class ScheduleProtocolMessage extends ProtocolMessage {
   /** @override */
   public function validate() {
     return parent::validate() && $this->courses !== null && is_array($this->courses);
+  }
+
+  /** @override */
+  public function onUnserialize() {
+    for ($i = 0; $i < count($this->courses); $i++) {
+      $data = $this->courses[$i];
+
+      if (is_array($data)) {
+        $this->courses[$i] = new CourseModelProtocolMessage;
+        $this->courses[$i]->courseId = (int) $data['courseId'];
+      }
+    }
+
+    return parent::onUnserialize();
   }
 }
 
@@ -310,7 +345,7 @@ class SchedulePlannerProtocolMessageUtility {
     }
 
     foreach ($query->rows as $row) {
-      $message->courses[] = $this->createCourseModel($row['courseid']);
+      $message->courses[] = $this->createCourseModelSimple($row['courseid']);
     }
 
     return $message;
@@ -327,7 +362,7 @@ class SchedulePlannerProtocolMessageUtility {
     }
 
     foreach ($query->rows as $row) {
-      $message->courses[] = $this->createCourseModel($row['courseid']);
+      $message->courses[] = $this->createCourseModelSimple($row['courseid']);
     }
 
     return $message;
@@ -391,6 +426,13 @@ class SchedulePlannerProtocolMessageUtility {
     }
 
     return $messages;
+  }
+
+  public /*CourseModelProtocolMessage*/ function createCourseModelSimple($courseid) {
+    $message = new CourseModelProtocolMessage;
+
+    $message->courseId = (int) $courseid;
+    return $message;
   }
 
   public /*CourseModelProtocolMessage*/ function createCourseModel($courseid) {

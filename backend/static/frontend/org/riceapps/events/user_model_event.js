@@ -29,7 +29,8 @@ UserModelEvent.Type = {
   PLAYGROUND_COURSES_ADDED: 'ume_pg_course_add',
   PLAYGROUND_COURSES_REMOVED: 'ume_pg_course_rem',
   SCHEDULE_COURSES_ADDED: 'ume_sc_course_add',
-  SCHEDULE_COURSES_REMOVED: 'ume_sc_course_rem'
+  SCHEDULE_COURSES_REMOVED: 'ume_sc_course_rem',
+  USER_MODEL_CHANGED: 'ume_changed'
 };
 
 

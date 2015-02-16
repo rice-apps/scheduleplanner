@@ -44,9 +44,12 @@ class ProtocolMessage {
 
   public /*ProtocolMessage*/ static function unserialize(/*string*/ $serializedProtocolMessage, /*string*/ $type = null) {
     $deserialized = from_json($serializedProtocolMessage);
+    return static::unserialize_arr($deserialized, $type);
+  }
 
+  public static /*ProtocolMessage*/ function unserialize_arr(/*mixed*/ $deserialized, /*string*/ $type = null) {
     if ($type !== null) {
-      $deserialized['__messageType'] = 'UserRequestProtocolMessage';
+      $deserialized['__messageType'] = $type;
     }
 
     if (!isset($deserialized['__errorCode'])) {
@@ -62,7 +65,7 @@ class ProtocolMessage {
     }
 
     if (!isset($deserialized['__messageType']) || !class_exists($deserialized['__messageType'])) {
-      throw new ProtocolMessageDeserializationException('Unknown protocol message type');
+      throw new ProtocolMessageDeserializationException('Unknown protocol message type ' . $deserialized['__messageType']);
     }
 
     $message = new $deserialized['__messageType']();
@@ -81,6 +84,10 @@ class ProtocolMessage {
       $message->{$key} = $value;
     }
 
+    if(!$message->onUnserialize()) {
+      throw new ProtocolMessageDeserializationException('Deserialized message failed deserialization');
+    }
+
     if (!$message->validate()) {
       throw new ProtocolMessageDeserializationException('Deserialized message failed validation');
     }
@@ -89,6 +96,10 @@ class ProtocolMessage {
   }
 
   public function validate() {
+    return true;
+  }
+
+  protected /*bool*/ function onUnserialize() {
     return true;
   }
 }
