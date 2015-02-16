@@ -14,7 +14,7 @@ import('CourseDataParser');
  */
 CLIApplication::listen('reset', function($args) {
   $db = App::getDatabase();
-  $db->query("DELETE FROM `playergrounds`;");
+  $db->query("DELETE FROM `playgrounds`;");
   $db->query("DELETE FROM `schedules`;");
   $db->query("DELETE FROM `instructors`;");
   $db->query("DELETE FROM `courses`;");
@@ -23,6 +23,29 @@ CLIApplication::listen('reset', function($args) {
   $db->query("DELETE FROM `course_instructors`;");
   printf("OK\n");
 });
+
+
+/**
+ * Executes an SQL file.
+ * php server.php import file.sql
+ */
+CLIApplication::listen('import', function($args) {
+  $file = File::open($args[1]);
+
+  if (!$file->exists) {
+    fprintf(STDERR, "File not found.\n");
+    return 0;
+  }
+
+  if (!$file->isReadable) {
+    fprintf(STDERR, "File not readable.\n");
+    return 0;
+  }
+
+  import('SQLImport');
+  SQLImport::import($file);
+});
+
 
 /**
  * Pulls data from the course xml feed and updates the database.
@@ -56,3 +79,4 @@ CLIApplication::listen('courses', function($args) {
     fprintf(STDOUT, "Unrecognized command.\n");
   }
 });
+
