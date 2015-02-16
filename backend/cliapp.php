@@ -8,6 +8,22 @@ CLIApplication::listen('prompt', 'CLIQueryController');
 
 import('CourseDataParser');
 
+
+/**
+ * Resets the database.
+ */
+CLIApplication::listen('reset', function($args) {
+  $db = App::getDatabase();
+  $db->query("DELETE FROM `playergrounds`;");
+  $db->query("DELETE FROM `schedules`;");
+  $db->query("DELETE FROM `instructors`;");
+  $db->query("DELETE FROM `courses`;");
+  $db->query("DELETE FROM `course_restrictions`;");
+  $db->query("DELETE FROM `course_times`;");
+  $db->query("DELETE FROM `course_instructors`;");
+  printf("OK\n");
+});
+
 /**
  * Pulls data from the course xml feed and updates the database.
  * This should probably be run periodically as a cron job.
