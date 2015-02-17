@@ -506,7 +506,7 @@ CourseModel.prototype.getDescription = function() {
  * @return {boolean}
  */
 CourseModel.prototype.isLpap = function() {
-  return this.creditLpap;
+  return this.data_['creditLpap'];
 };
 
 

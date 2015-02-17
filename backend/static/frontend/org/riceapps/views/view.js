@@ -5,8 +5,11 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.style');
 goog.require('goog.ui.Component');
+goog.require('org.riceapps.events.ViewEvent');
+goog.require('org.riceapps.events.ViewEvent.Type');
 
 goog.scope(function() {
+var ViewEvent = org.riceapps.events.ViewEvent;
 
 
 
@@ -51,7 +54,6 @@ View.prototype.enterDocument = function() {
     this.hasRelayoutListener_ = true;
   }
 };
-
 
 
 /**
@@ -138,5 +140,54 @@ View.prototype.isHidden = function() {
 View.prototype.isShown = function() {
   return this.isShown_;
 };
+
+
+/**
+ * @override
+ */
+View.prototype.removeChild = function(child, opt_unrender) {
+  var component = goog.base(this, 'removeChild', child, opt_unrender);
+  this.dispatchEvent(new ViewEvent(ViewEvent.Type.CHILD_REMOVED));
+  return component;
+};
+
+
+/**
+ * @override
+ */
+View.prototype.removeChildAt = function(index, opt_unrender) {
+  var component = goog.base(this, 'removeChildAt', index, opt_unrender);
+  this.dispatchEvent(new ViewEvent(ViewEvent.Type.CHILD_REMOVED));
+  return component;
+};
+
+
+/**
+ * @override
+ */
+View.prototype.removeChildren = function(opt_unrender) {
+  var components = goog.base(this, 'removeChildren', opt_unrender);
+  this.dispatchEvent(new ViewEvent(ViewEvent.Type.CHILD_REMOVED));
+  return components;
+};
+
+
+/**
+ * @override
+ */
+View.prototype.addChild = function(child, opt_render) {
+  goog.base(this, 'addChild', child, opt_render);
+  this.dispatchEvent(new ViewEvent(ViewEvent.Type.CHILD_ADDED));
+};
+
+
+/**
+ * @override
+ */
+View.prototype.addChildAt = function(child, index, opt_render) {
+  goog.base(this, 'addChildAt', child, index, opt_render);
+  this.dispatchEvent(new ViewEvent(ViewEvent.Type.CHILD_ADDED));
+};
+
 
 });  // goog.scope

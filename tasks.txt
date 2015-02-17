@@ -1,5 +1,6 @@
 BACK-END:
   - Seems to be a wierd problem where users session expires sooner than intended. Probably an issue with framework.
+  - Sometimes wierd duplication bug when dragging between calendar and playground for courses with multiple sections.
 
 FRONT-END COMMUNICATION:
   - XHTTPRequests need to be re-tried on failure.
@@ -11,12 +12,6 @@ FRONT-END COMMUNICATION:
 FRONT-END:
   MEDIUM PRIORITY:
     - Search Results: show distribution, location/days, and credit hours in list view
-
-    - [DEREK] Usability Improvement: When the calendar view contains no items, it should show instructions for the user to drag a view from the playground onto the calendar.
-
-    - [DEREK] Usability Improvement: When the playground view contains no items, it should show instructions for the user to drag a view from the search view onto the playground.
-
-    - [DEREK] Usability Improvement: When the search view is open but has no results to display, instructions should be shown to the user on how to use the search system (filters, drag results into playground, etc).
 
     - [SEAN] Implement the navigation bar (NavigationBarView). The bar should display the user's network ID (obtained from UserModel), a title, a logout link (to /logout), and a help link that will bring up the tour (TourView).
 
@@ -30,9 +25,9 @@ FRONT-END:
 
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
 
-    - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour).
-
   LOW PRIORITY:
+
+    - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour).
 
     - Add right-click context menu to all course views in calendar, search, and playground w/ options:
       * Remove (removes the course from either the calendar or playground) (only for cal/search)
@@ -43,3 +38,5 @@ FRONT-END:
       subj, crn, title, cr, dist, room, instructor, enrollment/waitlist for normal and xlist, restrictions
 
     - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled. These courses also usually have variable credit hours.
+
+    - Drag and Drop should support touch screen; need to add support for touch events.

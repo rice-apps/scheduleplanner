@@ -4,6 +4,7 @@ goog.require('goog.Timer');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('goog.style');
+goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.fx.Animation');
 goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.utils.DomUtils');
@@ -14,10 +15,9 @@ goog.require('org.riceapps.models.CourseModel');
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
 var DomUtils = org.riceapps.utils.DomUtils;
-var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 var CourseModel = org.riceapps.models.CourseModel;
-
-
+var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var ViewEvent = org.riceapps.events.ViewEvent;
 
 
 
@@ -48,6 +48,12 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {Element} */
   this.cancelButton = null;
+
+  /** @type {boolean} */
+  this.directionsShown_ = false;
+
+  /** @type {Element} */
+  this.directionsElement_ = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
@@ -80,6 +86,7 @@ SearchView.FilterElements;
  */
 SearchView.Theme = {
   BASE: 'search-view',
+  DIRECTIONS: 'search-view-directions',
   COLUMNS: 'search-view-columns',
   RESULTS: 'search-view-results',
   FILTERS: 'search-view-filters',
@@ -122,6 +129,24 @@ SearchView.prototype.createDom = function() {
 
   goog.dom.appendChild(columns, this.filterContainer);
   this.createFiltersDom(this.filterContainer);
+
+  // Directions
+  var directionsSpan;
+  this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(this.directionsElement_, SearchView.Theme.DIRECTIONS);
+  goog.dom.setTextContent(this.directionsElement_, 'Instructions');
+  goog.dom.appendChild(this.getElement(), this.directionsElement_);
+
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(directionsSpan,
+    'In order to find courses, start typing in the box above and using the filters on the right side of the panel.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(directionsSpan,
+    'Once you begin typing, results should appear instantly. You can drag search results directly onto the staging area to the left.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+  this.showDirections_();
 };
 
 /**
@@ -172,7 +197,7 @@ SearchView.prototype.createFiltersDom = function(container) {
 
   function createCheckbox(name){
     var value = filterDetails.get(name);
-    var child = DomUtils.createCheckbox.apply(this,value); 
+    var child = DomUtils.createCheckbox.apply(this,value);
     goog.dom.appendChild(container,child);
     return child;
   }
@@ -200,8 +225,8 @@ SearchView.prototype.enterDocument = function() {
 
   this.getHandler().
     listen(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
-    listen(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch);
-
+    listen(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch).
+    listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
 };
 
 
@@ -213,7 +238,8 @@ SearchView.prototype.exitDocument = function() {
 
   this.getHandler().
     unlisten(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
-    unlisten(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch);
+    unlisten(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch).
+    unlisten(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
 };
 
 
@@ -234,13 +260,15 @@ SearchView.prototype.onFilterChange = function() {
 }
 
 
+/**
+ *
+ */
 SearchView.prototype.updateSearch = function() {
   var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.UPDATE_SEARCH);
   event.query = this.lastQuery;
   event.filters = this.lastFilterValues;
   this.dispatchEvent(event);
 }
-
 
 
 /**
@@ -318,6 +346,46 @@ SearchView.prototype.setSearchResults = function(results) {
  */
 SearchView.prototype.getContentElement = function() {
   return this.resultsContainer_;
+};
+
+
+/**
+ * @param {!org.riceapps.events.ViewEvent} event
+ */
+SearchView.prototype.handleChildrenChanged_ = function(event) {
+  if (this.hasChildren()) {
+    this.hideDirections_();
+  } else {
+    this.showDirections_();
+  }
+}
+
+
+/**
+ * @return {void}
+ * @private
+ */
+SearchView.prototype.showDirections_ = function() {
+  if (this.directionsShown_) {
+    return;
+  }
+
+  goog.style.setElementShown(this.directionsElement_, true);
+  this.directionsShown_ = true;
+};
+
+
+/**
+ * @return {void}
+ * @private
+ */
+SearchView.prototype.hideDirections_ = function() {
+  if (!this.directionsShown_) {
+    return;
+  }
+
+  goog.style.setElementShown(this.directionsElement_, false);
+  this.directionsShown_ = false;
 };
 
 

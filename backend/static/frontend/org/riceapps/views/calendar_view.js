@@ -6,6 +6,7 @@ goog.require('goog.dom.TagName');
 goog.require('goog.events.Event');
 goog.require('goog.math.Rect');
 goog.require('goog.style');
+goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.layouts.CalendarLayout');
 goog.require('org.riceapps.layouts.CalendarLayout.Calendar');
 goog.require('org.riceapps.views.View');
@@ -13,6 +14,7 @@ goog.require('org.riceapps.views.DraggableView');
 
 goog.scope(function() {
 var DraggableView = org.riceapps.views.DraggableView;
+var ViewEvent = org.riceapps.events.ViewEvent;
 
 
 
@@ -26,6 +28,12 @@ org.riceapps.views.CalendarView = function() {
 
   /** @private {!org.riceapps.layouts.CalendarLayout} */
   this.calendarLayout_ = new org.riceapps.layouts.CalendarLayout(this);
+
+  /** @type {boolean} */
+  this.directionsShown_ = false;
+
+  /** @type {Element} */
+  this.directionsElement_ = null;
 };
 goog.inherits(org.riceapps.views.CalendarView,
               org.riceapps.views.View);
@@ -37,18 +45,22 @@ CalendarView.Theme = {
   BASE: 'calendar-view',
   CALENDAR: 'calendar',
   HOUR: 'hour',
-  DAY: 'day'
+  DAY: 'day',
+  DIRECTIONS: 'calendar-view-directions'
 };
 
 
 /** @const {!Array.<string>} */
 CalendarView.DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
+
 /**
  * @override
  */
 CalendarView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
+  this.getHandler().listen(this,
+      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
 };
 
 
@@ -57,6 +69,48 @@ CalendarView.prototype.enterDocument = function() {
  */
 CalendarView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
+  this.getHandler().unlisten(this,
+      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+};
+
+
+/**
+ * @param {!org.riceapps.events.ViewEvent} event
+ */
+CalendarView.prototype.handleChildrenChanged_ = function(event) {
+  if (this.hasChildren()) {
+    this.hideDirections_();
+  } else {
+    this.showDirections_();
+  }
+}
+
+
+/**
+ * @return {void}
+ * @private
+ */
+CalendarView.prototype.showDirections_ = function() {
+  if (this.directionsShown_) {
+    return;
+  }
+
+  goog.style.setElementShown(this.directionsElement_, true);
+  this.directionsShown_ = true;
+};
+
+
+/**
+ * @return {void}
+ * @private
+ */
+CalendarView.prototype.hideDirections_ = function() {
+  if (!this.directionsShown_) {
+    return;
+  }
+
+  goog.style.setElementShown(this.directionsElement_, false);
+  this.directionsShown_ = false;
 };
 
 
@@ -119,6 +173,19 @@ CalendarView.prototype.createDom = function() {
 
     goog.dom.appendChild(table, row);
   }
+
+  // Directions
+  var directionsSpan;
+  this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(this.directionsElement_, CalendarView.Theme.DIRECTIONS);
+  goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner!');
+  goog.dom.appendChild(this.getElement(), this.directionsElement_);
+
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(directionsSpan,
+    'To get started, search for courses using the search bar above.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+  this.showDirections_();
 };
 
 
