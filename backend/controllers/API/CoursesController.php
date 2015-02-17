@@ -8,8 +8,13 @@ class CoursesController extends Controller {
   }
 
   public function get() {
+    $file = new File(FILE_ROOT.'/cache/courses.json');
+    if ($file->exists && $file->isReadable) {
+      return $file;
+    }
+
     $response = $this->utility->createCoursesResponse(null);
-    $this->response->json(ProtocolMessage::serialize($response), true);
+    $this->response->json(ProtocolMessage::serialize($response), true); // "')]}\n"
   }
 
   public function post() {

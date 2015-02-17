@@ -1,11 +1,7 @@
-BACK-END (launch blockers):
-  - Performance optimizations and caching when distribution JSON of all courses (probably distribute as static file).
-
 FRONT-END:
   HIGH PRIORITY (launch blockers):
 
     - Implement the CourseModalView, a popup which displays information about ALL SECTIONS of a given course (when initiated from a course click in the playground view, search view, or calendar view).
-
 
   MEDIUM PRIORITY (launch blockers):
     - Search Results: show distribution, location/days, and credit hours in list view

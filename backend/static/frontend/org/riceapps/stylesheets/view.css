@@ -209,6 +209,8 @@ html, body {
   padding-top: 10px;
   display: block;
   font-size: 14px;
+  text-align: left;
+  padding-left: 10px;
 }
 
 .schedule-planner-view .schedule-planner-view-column {
@@ -516,6 +518,10 @@ html, body {
   display: table-cell;
   vertical-align: top;
   border-left: 1px solid #999;
+}
+
+.search-view-filters div {
+  padding: 5px;
 }
 
 .tour-view {

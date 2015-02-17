@@ -7,6 +7,8 @@ CLIApplication::listen('prompt', 'CLIQueryController');
 
 
 import('CourseDataParser');
+import('ProtocolMessage');
+import('SchedulePlannerProtocolMessages');
 
 
 /**
@@ -74,6 +76,18 @@ CLIApplication::listen('courses', function($args) {
 
     $cdp = new CourseDataParser(App::getDatabase(), $year, $term);
     $cdp->run();
+
+    $utility = new SchedulePlannerProtocolMessageUtility(App::getDatabase());
+    $response = $utility->createCoursesResponse(null);
+    $json = ProtocolMessage::serialize($response);
+
+    try {
+      $file = new File(FILE_ROOT.'/cache/courses.json');
+      $file->content = "')]}\n".$json;
+    } catch (FileException $e) {
+      fprintf(STDOUT, "Failed to write file cache, continuing.\n");
+    }
+
     fprintf(STDOUT, "Done!\n");
   } else {
     fprintf(STDOUT, "Unrecognized command.\n");
