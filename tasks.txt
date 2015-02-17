@@ -6,7 +6,7 @@ FRONT-END:
   MEDIUM PRIORITY:
     - Search Results: show distribution, location/days, and credit hours in list view
 
-    - Implement the navigation bar (NavigationBarView). The bar should display the user's network ID (obtained from UserModel), a title, a logout link (to /logout), and a help link that will bring up the tour (TourView).
+    - Implement the navigation bar (NavigationBarView). The bar should display the user's network ID (obtained from UserModel), a title, a logout link (to /logout).
 
     - Implement the CourseModalView, a popup which displays information about ALL SECTIONS of a given course (when initiated from a course click in the playground view, search view, or calendar view).
 
@@ -16,7 +16,7 @@ FRONT-END:
 
   LOW PRIORITY:
 
-    - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour).
+    - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour). Add link to open tour on navigation bar as "Help".
 
     - Add right-click context menu to all course views in calendar, search, and playground w/ options:
       * Remove (removes the course from either the calendar or playground) (only for cal/search)

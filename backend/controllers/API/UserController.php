@@ -20,9 +20,9 @@ class UserController extends Controller {
       return 400;
     }
 
-    if (!$this->utility->checkXsrfToken($this->session, $message->xsrfToken)) {
+    /*if (!$this->utility->checkXsrfToken($this->session, $message->xsrfToken)) {
       return 401;
-    }
+    }*/
 
     $this->user->setProperty(SchedulePlannerProtocolMessageUtility::TOUR_PROPERTY,
         $message->hasSeenTour === true);
