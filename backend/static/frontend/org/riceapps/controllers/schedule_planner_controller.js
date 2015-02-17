@@ -6,6 +6,7 @@ goog.require('goog.events.Event');
 goog.require('org.riceapps.controllers.Controller');
 goog.require('org.riceapps.controllers.SchedulePlannerXhrController');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.events.SchedulePlannerXhrEvent');
 goog.require('org.riceapps.events.UserModelEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.CoursesModel');
@@ -25,6 +26,7 @@ var CourseView = org.riceapps.views.CourseView;
 var DraggableView = org.riceapps.views.DraggableView;
 var ModalView = org.riceapps.views.ModalView;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var SchedulePlannerXhrEvent = org.riceapps.events.SchedulePlannerXhrEvent;
 var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrController;
 var UserModelEvent = org.riceapps.events.UserModelEvent;
 
@@ -252,6 +254,8 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
     listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_);
+
+  this.view_.getLoadingInterruptView().hide();
 }
 
 /**
@@ -353,15 +357,28 @@ SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
  */
 SchedulePlannerController.prototype.start = function() {
   this.view_.render();
+  this.view_.getLoadingInterruptView().show();
 
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
-    listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_);
+    listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
+    listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
 
   this.xhrController_.getUserModel().then(this.onUserModelReady_, this.onXhrError_, this);
   this.xhrController_.getAllCourses().then(this.onCoursesReady_, this.onXhrError_, this);
 };
+
+
+/**
+ * @param {!SchedulePlannerXhrEvent} event
+ */
+SchedulePlannerController.prototype.handleXhrFailed_ = function(event) {
+  window.console.log('[XhrEvent] SchedulePlannerController.handleXhrFailed_', event);
+  this.view_.getLoadingInterruptView().hide();
+  this.view_.getErrorInterruptView().show();
+};
+
 
 });  // goog.scope

@@ -2,12 +2,6 @@ BACK-END:
   - Seems to be a wierd problem where users session expires sooner than intended. Probably an issue with framework.
   - Performance optimizations and caching when distribution JSON of all courses.
 
-FRONT-END COMMUNICATION:
-  - XHTTPRequests need to be re-tried on failure.
-  - User interface should be unusuable until both the courses and user model have been loaded.
-  - User interface should be made unusable when a push request fails due to session or XSRF timeout.
-  - User interface should be made unusable when a push request fails due to any unknown reason.
-
 FRONT-END:
   MEDIUM PRIORITY:
     - Search Results: show distribution, location/days, and credit hours in list view

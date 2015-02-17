@@ -6,6 +6,7 @@ goog.require('goog.dom.classlist');
 goog.require('org.riceapps.views.CalendarView');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.FooterView');
+goog.require('org.riceapps.views.InterruptView');
 goog.require('org.riceapps.views.ModalView');
 goog.require('org.riceapps.views.NavigationBarView');
 goog.require('org.riceapps.views.SearchView');
@@ -53,6 +54,12 @@ org.riceapps.views.SchedulePlannerView = function() {
   /** @private {!org.riceapps.views.TourView} */
   this.tourView_ = new org.riceapps.views.TourView(this);
   this.addChild(this.tourView_);
+
+  /** @private {!org.riceapps.views.InterruptView} */
+  this.loadingInterruptView_ = this.createLoadingInterruptView_();
+
+  /** @private {!org.riceapps.views.InterruptView} */
+  this.errorInterruptView_ = this.createErrorInterruptView_();
 };
 goog.inherits(org.riceapps.views.SchedulePlannerView,
               org.riceapps.views.View);
@@ -63,7 +70,76 @@ var SchedulePlannerView = org.riceapps.views.SchedulePlannerView;
 SchedulePlannerView.Theme = {
   BASE: 'schedule-planner-view',
   COLUMNS: 'schedule-planner-view-columns',
-  COLUMN: 'schedule-planner-view-column'
+  COLUMN: 'schedule-planner-view-column',
+  LOADING_CONTAINER: 'schedule-planner-view-directions',
+  LOADING_IMAGE: 'schedule-planner-view-loader',
+  ERROR_CONTAINER: 'schedule-planner-view-error'
+};
+
+
+/**
+ * @return {!org.riceapps.views.InterruptView}
+ * @private
+ */
+SchedulePlannerView.prototype.createLoadingInterruptView_ = function() {
+  var view = new org.riceapps.views.InterruptView();
+  view.render();
+
+  var element;
+  var container = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(container, SchedulePlannerView.Theme.LOADING_CONTAINER);
+  goog.dom.setTextContent(container, 'Welcome to Rice Schedule Planner (BETA)!');
+  goog.dom.appendChild(view.getElement(), container);
+
+  element = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(element, 'Please wait while we load your course and schedule data...');
+  goog.dom.appendChild(container, element);
+
+  goog.dom.classlist.add(view.getElement(), SchedulePlannerView.Theme.LOADING_IMAGE);
+
+  return view;
+};
+
+
+/**
+ * @return {!org.riceapps.views.InterruptView}
+ */
+SchedulePlannerView.prototype.getLoadingInterruptView = function() {
+  return this.loadingInterruptView_;
+};
+
+
+/**
+ * @return {!org.riceapps.views.InterruptView}
+ * @private
+ */
+SchedulePlannerView.prototype.createErrorInterruptView_ = function() {
+  var view = new org.riceapps.views.InterruptView();
+  view.render();
+
+  var element;
+  var container = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(container, SchedulePlannerView.Theme.LOADING_CONTAINER);
+  goog.dom.setTextContent(container, 'Synchronization Failure');
+  goog.dom.appendChild(view.getElement(), container);
+
+  element = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(element,
+    'An unrecoverable error occured trying to synchronize your schedule with the remote server. ' +
+    'Please reload the page in order to continue.');
+  goog.dom.appendChild(container, element);
+
+  goog.dom.classlist.add(view.getElement(), SchedulePlannerView.Theme.ERROR_CONTAINER);
+
+  return view;
+};
+
+
+/**
+ * @return {!org.riceapps.views.InterruptView}
+ */
+SchedulePlannerView.prototype.getErrorInterruptView = function() {
+  return this.errorInterruptView_;
 };
 
 

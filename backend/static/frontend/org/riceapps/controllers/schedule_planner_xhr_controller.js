@@ -1,6 +1,8 @@
 /**
  * TODO(mschurr@): Schedule pushed to occur after X ms of no changes, up to at most Xms from
  * the first changes; ensure only 1 outstanding request at a time.
+ *
+ * TODO(mschurr@): Retry a request multiple times before throwing failure event.
  */
 
 goog.provide('org.riceapps.controllers.SchedulePlannerXhrController');
@@ -12,6 +14,7 @@ goog.require('goog.events.Event');
 goog.require('goog.json');
 goog.require('goog.net.XhrIo');
 goog.require('org.riceapps.controllers.Controller');
+goog.require('org.riceapps.events.SchedulePlannerXhrEvent');
 goog.require('org.riceapps.models.CoursesModel');
 goog.require('org.riceapps.models.UserModel');
 goog.require('org.riceapps.protocol.Messages');
@@ -19,6 +22,7 @@ goog.require('org.riceapps.events.UserModelEvent');
 
 goog.scope(function() {
 var Messages = org.riceapps.protocol.Messages;
+var SchedulePlannerXhrEvent = org.riceapps.events.SchedulePlannerXhrEvent;
 var UserModelEvent = org.riceapps.events.UserModelEvent;
 
 
@@ -33,29 +37,15 @@ org.riceapps.controllers.SchedulePlannerXhrController = function() {
   /** @private {org.riceapps.models.UserModel} */
   this.userModel_ = null;
 
-  /** @private {goog.Promise.<SchedulePlannerXhrController.ErrorType>} */
+  /** @private {goog.Promise.<SchedulePlannerXhrEvent.ErrorType>} */
   this.pendingPushRequest_ = null;
 
-  /** @private {goog.Promise.<SchedulePlannerXhrController.ErrorType>} */
+  /** @private {goog.Promise.<SchedulePlannerXhrEvent.ErrorType>} */
   this.queuedPushRequest_ = null;
 };
 goog.inherits(org.riceapps.controllers.SchedulePlannerXhrController,
               org.riceapps.controllers.Controller);
 var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrController;
-
-
-/**
- * @enum {string}
- */
-SchedulePlannerXhrController.ErrorType = {
-  NONE: 'none',
-  SESSION_EXPIRED: 'session_expired',
-  XSRF_EXPIRED: 'xsrf_expired',
-  PARSE_ERROR: 'parse_error',
-  NETWORK_FAILURE: 'network_failure',
-  ACCESS_VIOLATION: 'access_violation',
-  UNKNOWN: 'unknown'
-};
 
 
 /** @const {string} */
@@ -88,19 +78,19 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
   }
 
   // Otherwise, we will need to make a request to the server.
-  return new goog.Promise(function(resolve, reject) {
+  var promise = new goog.Promise(function(resolve, reject) {
     var url = this.buildXhrUrl(SchedulePlannerXhrController.Path.USER, {});
 
     goog.net.XhrIo.send(url, goog.bind(function(event) {
       var xhr = event.target;
 
       if (!xhr.isSuccess()) {
-        reject(SchedulePlannerXhrController.ErrorType.NETWORK_FAILURE);
+        reject(SchedulePlannerXhrEvent.ErrorType.NETWORK_FAILURE);
         return;
       }
 
       if (xhr.getStatus() !== 200) {
-        reject(SchedulePlannerXhrController.ErrorType.SESSION_EXPIRED);
+        reject(SchedulePlannerXhrEvent.ErrorType.SESSION_EXPIRED);
         return;
       }
 
@@ -110,13 +100,15 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
         data = /** @type {org.riceapps.protocol.Messages.User} */
             (xhr.getResponseJson(SchedulePlannerXhrController.XSSI_PREFIX));
       } catch (error) {
-        reject(SchedulePlannerXhrController.ErrorType.PARSE_ERROR);
+        reject(SchedulePlannerXhrEvent.ErrorType.PARSE_ERROR);
         return;
       }
 
       resolve(new org.riceapps.models.UserModel(data));
     }, this), 'GET', undefined, undefined, SchedulePlannerXhrController.DEFAULT_TIMEOUT);
-  }, this).then(function(userModel) {
+  }, this);
+
+  return promise.then(function(userModel) {
     this.userModel_ = userModel;
     this.getHandler().
       listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.onPlaygroundCoursesAdded_).
@@ -125,7 +117,10 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
       listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_REMOVED, this.onScheduleCoursesRemoved_).
       listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.onUserModelChanged_);
     return userModel;
-  }, undefined, this);
+  }, function(errorType) {
+    window.console.log('[XhrEvent] An error occured retrieving user model.', errorType);
+    this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
+  }, this);
 };
 
 
@@ -147,12 +142,12 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
       var xhr = event.target;
 
       if (!xhr.isSuccess()) {
-        reject(SchedulePlannerXhrController.ErrorType.NETWORK_FAILURE);
+        reject(SchedulePlannerXhrEvent.ErrorType.NETWORK_FAILURE);
         return;
       }
 
       if (xhr.getStatus() !== 200) {
-        reject(SchedulePlannerXhrController.ErrorType.SESSION_EXPIRED);
+        reject(SchedulePlannerXhrEvent.ErrorType.SESSION_EXPIRED);
         return;
       }
 
@@ -162,7 +157,7 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
         data = /** @type {org.riceapps.protocol.Messages.Courses} */
             (xhr.getResponseJson(SchedulePlannerXhrController.XSSI_PREFIX));
       } catch (error) {
-        reject(SchedulePlannerXhrController.ErrorType.PARSE_ERROR);
+        reject(SchedulePlannerXhrEvent.ErrorType.PARSE_ERROR);
         return;
       }
 
@@ -171,13 +166,16 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
   }, this).then(function(coursesModel) {
     this.coursesModel_ = coursesModel;
     return coursesModel;
-  }, undefined, this);
+  }, function(errorType) {
+    window.console.log('[XhrEvent] An error occured retrieving courses model.', errorType);
+    this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
+  }, this);
 };
 
 
 /**
  * Pushes the user model to the remote server, synchronizing any properties changed client-side to the server.
- * @return {!goog.Promise.<SchedulePlannerXhrController.ErrorType>}
+ * @return {!goog.Promise.<SchedulePlannerXhrEvent.ErrorType>}
  */
 SchedulePlannerXhrController.prototype.pushUserModel = function() {
   // We must ensure that there exists at most one push request pending over the network at a time.
@@ -207,7 +205,7 @@ SchedulePlannerXhrController.prototype.pushUserModel = function() {
 
 
 /**
- * @return {!goog.Promise.<SchedulePlannerXhrController.ErrorType>}
+ * @return {!goog.Promise.<SchedulePlannerXhrEvent.ErrorType>}
  * @private
  */
 SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
@@ -251,31 +249,36 @@ SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
       var xhr = event.target;
 
       if (!xhr.isSuccess()) {
-        reject(SchedulePlannerXhrController.ErrorType.NETWORK_FAILURE);
+        reject(SchedulePlannerXhrEvent.ErrorType.NETWORK_FAILURE);
         return;
       }
 
       if (xhr.getStatus() == 400) {
-        reject(SchedulePlannerXhrController.ErrorType.PARSE_ERROR);
+        reject(SchedulePlannerXhrEvent.ErrorType.PARSE_ERROR);
         return;
       }
 
       if (xhr.getStatus() == 401) {
-        reject(SchedulePlannerXhrController.ErrorType.SESSION_EXPIRED);
+        reject(SchedulePlannerXhrEvent.ErrorType.SESSION_EXPIRED);
         return;
       }
 
       if (xhr.getStatus() == 403) {
-        reject(SchedulePlannerXhrController.ErrorType.XSRF_EXPIRED);
+        reject(SchedulePlannerXhrEvent.ErrorType.XSRF_EXPIRED);
         return;
       }
 
       if (xhr.getStatus() == 200) {
-        resolve(SchedulePlannerXhrController.ErrorType.NONE);
+        resolve(SchedulePlannerXhrEvent.ErrorType.NONE);
       } else {
-        reject(SchedulePlannerXhrController.ErrorType.UNKNOWN);
+        reject(SchedulePlannerXhrEvent.ErrorType.UNKNOWN);
       }
     }, this), 'POST', data.toString(), undefined, SchedulePlannerXhrController.DEFAULT_TIMEOUT);
+  }, this).then(function(a) {
+    return a;
+  }, function(errorType) {
+    window.console.log('[XhrEvent] An error occured pushing user model.', errorType);
+    this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
   }, this);
 
   // When the promise finishes:
