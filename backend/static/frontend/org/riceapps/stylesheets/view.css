@@ -279,11 +279,13 @@ html, body {
   text-overflow: ellipsis;
   overflow: hidden;
   border: 1px solid #000;
+  font-size: 11px;
 }
 
 .course-calendar-view,
 .course-calendar-guide-view {
-  padding: 5px 5px;
+  padding: 2px 5px;
+  line-height: 13px;
   border-radius: 2px;
   transition: width 0.3s ease-in-out;
   -webkit-transition: width 0.3s ease-in-out;
