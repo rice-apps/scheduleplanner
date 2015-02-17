@@ -48,6 +48,7 @@ org.riceapps.views.SchedulePlannerView = function() {
   /** @private {!org.riceapps.views.ToolbarView} */
   this.toolbarView_ = new org.riceapps.views.ToolbarView(this.searchView_);
   this.addChild(this.toolbarView_);
+  this.searchView_.registerToolbarView(this.toolbarView_);
 
   /** @private {!org.riceapps.views.TourView} */
   this.tourView_ = new org.riceapps.views.TourView(this);

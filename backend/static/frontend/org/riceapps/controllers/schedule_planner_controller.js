@@ -89,6 +89,8 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   // Move an item from the calendar to the calendar.
   if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
      event.target instanceof org.riceapps.views.CourseCalendarView) {
+    window.console.log("[MoveEvent] CALENDAR [" + event.target.getCourseModel().getId() + "] -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+
     // Update the user model.
     this.calendarInsertAt_ = event.target.getParent().indexOfChild(event.target);
 
@@ -105,15 +107,30 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
     }
   }
 
+  // Move an item from the search view to the calendar.
+  else if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
+          event.target instanceof org.riceapps.views.CourseSearchView) {
+    window.console.log("[MoveEvent] SEARCH -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+
+    // Update the user model.
+    this.userModel_.addCoursesToSchedule([event.dropTarget.getCourseModel()]);
+
+    // Dispose of the view.
+    event.target.getParent().removeChild(event.target, true);
+    event.target.dispose();
+  }
+
   // Move an item from the playground to the calendar.
   else if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
           event.target instanceof org.riceapps.views.CourseView) {
+    window.console.log("[MoveEvent] PLAYGROUND [" + event.target.getCourseModel().getId() + "] -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+
     // Update the user model.
-    //this.userModel_.removeCoursesFromPlayground( [event.target.getCourseModel()]);
+    //this.userModel_.removeCoursesFromPlayground([event.target.getCourseModel()]);
     //this.userModel_.addCoursesToSchedule([event.dropTarget.getCourseModel()]);
     this.userModel_.moveCoursesFromPlaygroundToSchedule(
-        [event.dropTarget.getCourseModel()],
-        [event.target.getCourseModel()]);
+        [event.target.getCourseModel()],
+        [event.dropTarget.getCourseModel()]);
 
     // Dispose of the view.
     event.target.getParent().removeChild(event.target, true);
@@ -123,6 +140,8 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   // Move an item from the calendar to the playground.
   else if(event.dropTarget === this.view_.getPlaygroundView() &&
           event.target instanceof org.riceapps.views.CourseCalendarView) {
+    window.console.log("[MoveEvent] CALENDAR -> PLAYGROUND [" + event.target.getCourseModel().getId() + "]");
+
     // Update the user model.
     //this.userModel_.removeCoursesFromSchedule([event.target.getCourseModel()]);
     //this.userModel_.addCoursesToPlayground([event.target.getCourseModel()]);
@@ -138,6 +157,8 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   // Move an item from the search results to the playground.
   else if(event.dropTarget === this.view_.getPlaygroundView() &&
           event.target instanceof org.riceapps.views.CourseSearchView) {
+    window.console.log("[MoveEvent] SEARCH -> PLAYGROUND [" + event.target.getCourseModel().getId() + "]");
+
     // Update the user model.
     this.userModel_.addCoursesToPlayground([event.target.getCourseModel()]);
 
@@ -155,6 +176,8 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   // Move an item from the calendar to the trash.
   else if(event.dropTarget === this.view_.getTrashView() &&
           event.target instanceof org.riceapps.views.CourseCalendarView) {
+    window.console.log("[MoveEvent] CALENDAR -> TRASH [" + event.target.getCourseModel().getId() + "]");
+
     // Update the user model.
     this.userModel_.removeCoursesFromSchedule([event.target.getCourseModel()]);
 
@@ -163,9 +186,11 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
     event.target.dispose();
   }
 
-  // Move an item form the playground to the trash.
+  // Move an item from the playground to the trash.
   else if(event.dropTarget === this.view_.getTrashView() &&
           event.target instanceof org.riceapps.views.CourseView) {
+    window.console.log("[MoveEvent] PLAYGROUND -> TRASH [" + event.target.getCourseModel().getId() + "]");
+
     // Update the user model.
     this.userModel_.removeCoursesFromPlayground([event.target.getCourseModel()]);
 
@@ -245,7 +270,6 @@ SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
  * @private
  */
 SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
-  window.console.log('TOOD: update search results');
   if (!this.coursesModel_) {
     return;
   }

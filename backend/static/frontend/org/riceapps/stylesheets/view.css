@@ -118,7 +118,7 @@ html, body {
   color: rgba(0, 0, 0, 0.7);
 }
 
-.tool-bar-view .tool-bar-view-input:focus {
+.tool-bar-view .tool-bar-view-input.tool-bar-view-input-active {
   outline: none;
   width: calc(100% - 370px);
   color: rgb(85, 85, 85);
@@ -303,7 +303,7 @@ html, body {
 }
 
 .calendar-view-directions span {
-  text-align: left;
+  text-align: justify;
   padding-top: 10px;
   display: block;
   font-size: 14px;

@@ -6,6 +6,8 @@ goog.require('goog.dom.classlist');
 goog.require('goog.style');
 goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.fx.Animation');
+goog.require('org.riceapps.views.DraggableView');
+goog.require('org.riceapps.views.ToolbarView');
 goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.utils.DomUtils');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
@@ -15,6 +17,7 @@ goog.require('org.riceapps.models.CourseModel');
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
 var DomUtils = org.riceapps.utils.DomUtils;
+var DraggableView = org.riceapps.views.DraggableView;
 var CourseModel = org.riceapps.models.CourseModel;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 var ViewEvent = org.riceapps.events.ViewEvent;
@@ -35,31 +38,32 @@ org.riceapps.views.SearchView = function() {
   this.resultsContainer_ = null;
 
   /** @private {Element} */
-  this.filterContainer = null;
+  this.filterContainer_ = null;
 
   /** @private {string} */
-  this.lastQuery = "";
+  this.lastQuery_ = "";
 
   /** @private {?CourseModel.Filter} */
-  this.lastFilterValues = null;
+  this.lastFilterValues_ = null;
 
   /** @private {?org.riceapps.views.SearchView.FilterElements} */
-  this.filterElements = null;
+  this.filterElements_ = null;
 
   /** @private {Element} */
-  this.cancelButton = null;
+  this.cancelButton_ = null;
 
   /** @type {boolean} */
   this.directionsShown_ = false;
 
   /** @type {Element} */
   this.directionsElement_ = null;
+
+  /** @type {org.riceapps.views.ToolbarView} */
+  this.toolbarView_ = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
 var SearchView = org.riceapps.views.SearchView;
-
-
 
 
 /**
@@ -74,11 +78,7 @@ var SearchView = org.riceapps.views.SearchView;
  *   full: !Element
  * }}
  */
-
-
 SearchView.FilterElements;
-
-
 
 
 /**
@@ -94,15 +94,22 @@ SearchView.Theme = {
 };
 
 
+/**
+ * @param {!org.riceapps.views.ToolbarView} toolbarView
+ */
+SearchView.prototype.registerToolbarView = function(toolbarView) {
+  this.toolbarView_ = toolbarView;
+};
+
 
 /**
  * @param {string} query
  */
 SearchView.prototype.setQuery = function(query) {
-  this.lastQuery = query;
+  this.lastQuery_ = query;
 
   this.updateSearch();
-}
+};
 
 
 /**
@@ -122,13 +129,13 @@ SearchView.prototype.createDom = function() {
   goog.dom.appendChild(results, resultsContainer);
   this.resultsContainer_ = resultsContainer;
 
-  this.filterContainer = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.FILTERS);
+  this.filterContainer_ = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.FILTERS);
 
-  this.cancelButton = goog.dom.createDom(goog.dom.TagName.IMG, "close-search-view");
-  goog.dom.appendChild(this.filterContainer, this.cancelButton);
+  this.cancelButton_ = goog.dom.createDom(goog.dom.TagName.IMG, "close-search-view");
+  goog.dom.appendChild(this.filterContainer_, this.cancelButton_);
 
-  goog.dom.appendChild(columns, this.filterContainer);
-  this.createFiltersDom(this.filterContainer);
+  goog.dom.appendChild(columns, this.filterContainer_);
+  this.createFiltersDom(this.filterContainer_);
 
   // Directions
   var directionsSpan;
@@ -159,12 +166,12 @@ SearchView.prototype.getFilterValues = function(){
   }
 
   return {
-    normal: getFilterValue(this.filterElements.normal),
-    d1: getFilterValue(this.filterElements.d1),
-    d2: getFilterValue(this.filterElements.d2),
-    d3: getFilterValue(this.filterElements.d3),
-    conflicts: getFilterValue(this.filterElements.conflicts),
-    full: getFilterValue(this.filterElements.full)
+    normal: getFilterValue(this.filterElements_.normal),
+    d1: getFilterValue(this.filterElements_.d1),
+    d2: getFilterValue(this.filterElements_.d2),
+    d3: getFilterValue(this.filterElements_.d3),
+    conflicts: getFilterValue(this.filterElements_.conflicts),
+    full: getFilterValue(this.filterElements_.full)
   };
 
 }
@@ -202,7 +209,7 @@ SearchView.prototype.createFiltersDom = function(container) {
     return child;
   }
 
-  this.filterElements = {
+  this.filterElements_ = {
     normal: createCheckbox("normal"),
     d1: createCheckbox("d1"),
     d2: createCheckbox("d2"),
@@ -211,7 +218,7 @@ SearchView.prototype.createFiltersDom = function(container) {
     full: createCheckbox("full")
   };
 
-  this.lastFilterValues = this.getFilterValues();
+  this.lastFilterValues_ = this.getFilterValues();
 };
 
 
@@ -224,8 +231,10 @@ SearchView.prototype.enterDocument = function() {
 
 
   this.getHandler().
-    listen(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
-    listen(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch).
+    listen(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
+    listen(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearch).
+    listen(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
+    listen(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
     listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
 };
 
@@ -237,9 +246,31 @@ SearchView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
 
   this.getHandler().
-    unlisten(this.filterContainer, goog.events.EventType.CHANGE, this.onFilterChange).
-    unlisten(this.cancelButton, goog.events.EventType.CLICK, this.onCloseSearch).
+    unlisten(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
+    unlisten(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearch).
+    unlisten(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
+    unlisten(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
     unlisten(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+};
+
+
+/**
+ * @param {!DraggableView.Event}
+ */
+SearchView.prototype.onChildDragStart_ = function() {
+  this.hide();
+
+  if (this.toolbarView_) {
+    this.toolbarView_.getSearchInput().blur();
+  }
+};
+
+
+/**
+ * @param {!DraggableView.Event}
+ */
+SearchView.prototype.onChildDragEnd_ = function() {
+  this.show();
 };
 
 
@@ -248,6 +279,10 @@ SearchView.prototype.exitDocument = function() {
  */
 SearchView.prototype.onCloseSearch = function() {
   this.hide();
+
+  if (this.toolbarView_) {
+    this.toolbarView_.resetInput();
+  }
 }
 
 
@@ -255,7 +290,7 @@ SearchView.prototype.onCloseSearch = function() {
  *
  */
 SearchView.prototype.onFilterChange = function() {
-  this.lastFilterValues = this.getFilterValues();
+  this.lastFilterValues_ = this.getFilterValues();
   this.updateSearch();
 }
 
@@ -265,8 +300,8 @@ SearchView.prototype.onFilterChange = function() {
  */
 SearchView.prototype.updateSearch = function() {
   var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.UPDATE_SEARCH);
-  event.query = this.lastQuery;
-  event.filters = this.lastFilterValues;
+  event.query = this.lastQuery_;
+  event.filters = this.lastFilterValues_;
   this.dispatchEvent(event);
 }
 

@@ -2,6 +2,7 @@ goog.provide('org.riceapps.utils.DomUtils');
 
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
+goog.require('goog.string');
 goog.require('goog.style');
 goog.require('goog.math.Coordinate');
 goog.require('goog.math.Rect');
@@ -101,9 +102,10 @@ DomUtils.createCheckbox = function(name, value, text, opt_checked) {
   var checked = !!opt_checked;
 
   var container = goog.dom.createDom(goog.dom.TagName.DIV);
+  var label_id = 'cb_' + goog.string.getRandomString() + '_' + name;
 
   var label = goog.dom.createDom(goog.dom.TagName.LABEL, {
-    'for': name
+    'for': label_id
   });
 
   goog.dom.setTextContent(label, text);
@@ -111,7 +113,8 @@ DomUtils.createCheckbox = function(name, value, text, opt_checked) {
   var checkbox = goog.dom.createDom(goog.dom.TagName.INPUT, {
     'type': 'checkbox',
     'name': name,
-    'value': value
+    'value': value,
+    'id': label_id
   });
 
   if (checked) {

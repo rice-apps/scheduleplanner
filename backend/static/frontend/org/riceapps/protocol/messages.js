@@ -27,6 +27,9 @@
  * POST /api/user
  *   INPUT: Messages.UserRequest
  *   RETURNS: none (check HTTP status code)
+ * GET /api/courses
+ *   INPUTS: none
+ *   RETURNS: Messages.Courses
  * POST /api/courses
  *   INPUT: Messages.CoursesRequest
  *   RETURNS: Messages.Courses

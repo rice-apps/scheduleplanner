@@ -278,6 +278,7 @@ CourseModel.prototype.getCourseNumber = function() {
  * @return {string}
  */
 CourseModel.prototype.getTitle = function() {
+  //return '[' + this.data_['courseId'] + '] ' + this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
   return this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
 };
 

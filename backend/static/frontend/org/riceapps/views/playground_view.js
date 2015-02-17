@@ -103,6 +103,11 @@ PlaygroundView.prototype.createDom = function() {
     'You can also drag courses freely between the staging area and calendar.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(directionsSpan,
+    'To remove a course, drag it to the trash can.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+
   this.showDirections_();
 };
 

@@ -54,6 +54,14 @@ CalendarView.Theme = {
 CalendarView.DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 
+/** @const {!Array.<string>} */
+CalendarView.DIRECTION_TEXT = [
+  'You are using an early beta release of Rice University Schedule Planner. This release is only tested on ' +
+  'Google Chrome. At this time, other browsers, touch screens, and mobile devices are not supported.',
+  'To get started, use the search box above.'
+];
+
+
 /**
  * @override
  */
@@ -178,13 +186,15 @@ CalendarView.prototype.createDom = function() {
   var directionsSpan;
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, CalendarView.Theme.DIRECTIONS);
-  goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner!');
+  goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner (BETA)!');
   goog.dom.appendChild(this.getElement(), this.directionsElement_);
 
+  for (var i = 0; i < CalendarView.DIRECTION_TEXT.length; i++) {
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
-  goog.dom.setTextContent(directionsSpan,
-    'To get started, search for courses using the search bar above.');
-  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+    goog.dom.setTextContent(directionsSpan, CalendarView.DIRECTION_TEXT[i]);
+    goog.dom.appendChild(this.directionsElement_, directionsSpan);
+  }
+
   this.showDirections_();
 };
 
