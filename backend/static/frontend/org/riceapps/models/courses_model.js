@@ -68,6 +68,26 @@ CoursesModel.prototype.getAllSections = function(course) {
 
 
 /**
+ * Returns all crosslisted sections of the provided course (including the provided course itself).
+ * @param {!org.riceapps.models.CourseModel} course
+ * @return {!Array.<org.riceapps.models.CourseModel>}
+ */
+CoursesModel.prototype.getAllCrosslistedSections = function(course) {
+  var keys = this.courses_.getKeys();
+  var sections = [];
+
+  for (var i = 0; i < keys.length; i++) {
+    var otherCourse = this.courses_.get(keys[i]);
+    if (otherCourse.isCrosslistedWith(course)) {
+      sections.push(otherCourse);
+    }
+  }
+
+  return sections;
+};
+
+
+/**
  * @param {string} query
  * @param {org.riceapps.models.CourseModel.Filter} filters
  * @param {org.riceapps.models.UserModel=} opt_userModel

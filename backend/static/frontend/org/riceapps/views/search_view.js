@@ -255,9 +255,9 @@ SearchView.prototype.exitDocument = function() {
 
 
 /**
- * @param {!DraggableView.Event}
+ * @param {!DraggableView.Event} event
  */
-SearchView.prototype.onChildDragStart_ = function() {
+SearchView.prototype.onChildDragStart_ = function(event) {
   this.hide();
 
   if (this.toolbarView_) {
@@ -267,9 +267,9 @@ SearchView.prototype.onChildDragStart_ = function() {
 
 
 /**
- * @param {!DraggableView.Event}
+ * @param {!DraggableView.Event} event
  */
-SearchView.prototype.onChildDragEnd_ = function() {
+SearchView.prototype.onChildDragEnd_ = function(event) {
   this.show();
 };
 

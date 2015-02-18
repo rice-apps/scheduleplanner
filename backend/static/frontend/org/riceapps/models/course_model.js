@@ -2,6 +2,7 @@ goog.provide('org.riceapps.models.CourseModel');
 
 goog.require('goog.Promise');
 goog.require('goog.color');
+goog.require('goog.array');
 goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.models.InstructorModel');
 goog.require('org.riceapps.protocol.Messages');
@@ -187,7 +188,13 @@ CourseModel.prototype.getCourseCategory = function() {
  * @return {string}
  */
 CourseModel.prototype.getMeetingTimesAsString = function() {
-  return '';
+  var times = this.getMeetingTimes();
+
+  if (times.length == 0) {
+    return 'TBD';
+  }
+
+  return '[TODO CourseModel getMeetingTimesAsString]';
 };
 
 
@@ -277,6 +284,14 @@ CourseModel.prototype.getCourseNumber = function() {
 /**
  * @return {string}
  */
+CourseModel.prototype.getSubjectAndCourseNumber = function() {
+  return this.data_['subject'] + ' ' + this.data_['courseNumber'];
+};
+
+
+/**
+ * @return {string}
+ */
 CourseModel.prototype.getTitle = function() {
   //return '[' + this.data_['courseId'] + '] ' + this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
   return this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
@@ -315,6 +330,18 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
     total += 1;
 
   return total;
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getCreditsAsString = function() {
+  if (this.data_['creditHoursMin'] != this.data_['creditHoursMax']) {
+    return this.data_['creditHoursMin'] + ' to ' + this.data_['creditHoursMax'];
+  }
+
+  return this.data_['creditHours'] + '';
 };
 
 
@@ -456,6 +483,24 @@ CourseModel.prototype.getTerm = function() {
 
 
 /**
+ * @return {string}
+ */
+CourseModel.prototype.getTermAsString = function() {
+  switch(this.data_['term']) {
+    case CourseModel.Term.FALL:
+      return 'Fall';
+    case CourseModel.Term.SPRING:
+      return 'Spring';
+    case CourseModel.Term.SUMMER:
+      return 'Summer';
+    default:
+      return 'Unknown';
+  }
+};
+
+
+
+/**
  * @return {number}
  */
 CourseModel.prototype.getYear = function() {
@@ -483,7 +528,7 @@ CourseModel.prototype.getLastUpdateTime = function() {
  * @return {string}
  */
 CourseModel.prototype.getCourseUrl = function() {
-  return this.data_['courseUrl'];
+  return this.data_['courseUrl'] || '';
 };
 
 
@@ -560,6 +605,58 @@ CourseModel.prototype.getCrosslistGroup = function() {
 
 
 /**
+ * @return {boolean}
+ */
+CourseModel.prototype.isCrosslisted = function() {
+  return this.data_['xlistGroup'].length > 0;
+};
+
+
+/**
+ * @param {!CourseModel} otherCourse
+ * @return {boolean}
+ */
+CourseModel.prototype.isCrosslistedWith = function(otherCourse) {
+  return this.data_['xlistGroup'] == otherCourse.data_['xlistGroup'];
+};
+
+
+/**
+ * Returns all crosslisted sections of the current course (including this one).
+ * @param {boolean} opt_hideSelf
+ * @return {!Array.<!CourseModel>}
+ */
+CourseModel.prototype.getAllCrosslistedSections = function(opt_hideSelf) {
+  var data = this.coursesModel_.getAllCrosslistedSections(this);
+
+  if (opt_hideSelf) {
+    goog.array.remove(data, this);
+  }
+
+  return data;
+};
+
+
+/**
+ * Returns titles of all crosslisted sections of the current course (excluding this one) as a string.
+ * @return {!Array.<string>}
+ */
+CourseModel.prototype.getAllCrosslistedSectionsAsString = function() {
+  var data = this.getAllCrosslistedSections();
+  var titles = [];
+
+  for (var i = 0; i < data.length; i++) {
+    if (!goog.array.contains(titles, data[i].getSubjectAndCourseNumber()) &&
+        data[i].getSubjectAndCourseNumber() != this.getSubjectAndCourseNumber()) {
+      goog.array.insert(titles, data[i].getSubjectAndCourseNumber());
+    }
+  }
+
+  return titles.join('/');
+};
+
+
+/**
  * @return {number}
  */
 CourseModel.prototype.getCrosslistEnrollment = function() {
@@ -620,6 +717,29 @@ CourseModel.prototype.getEnrollment = function() {
  */
 CourseModel.prototype.getWaitlisted = function() {
   return this.data_['waitlisted'];
+};
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getTotalEnrollmentAsString = function() {
+  if (this.getCrosslistGroup()) {
+    return this.data_['xlistEnrollment'] + ' / ' + this.data_['xlistMaxEnrollment'] + '*';
+  }
+
+  return this.data_['enrollment'] + ' / ' + this.data_['maxEnrollment'];
+};
+
+
+/**
+ * @return {string}
+ */
+CourseModel.prototype.getTotalWaitlistedAsString = function() {
+  if (this.getCrosslistGroup()) {
+    return this.data_['xlistWaitlisted'] + ' / ' + this.data_['xlistMaxWaitlisted'] + '*';
+  }
+
+  return this.data_['waitlisted'] + ' / ' + this.data_['maxWaitlisted'];
 };
 
 });  // goog.scope

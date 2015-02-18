@@ -572,3 +572,64 @@ html, body {
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
 }
+
+.course-modal-view {
+  position: absolute !important;
+  padding: 15px 25px;
+  height: auto !important;
+  min-height: 400px;
+  left: calc(10% - 26px) !important;
+  min-width: 800px;
+}
+
+.course-modal-view .title:first-child {
+  margin-top: 0px;
+}
+
+.course-modal-view .title {
+  font-size: 26px;
+  line-height: 32px;
+  margin-top: 12px;
+}
+
+.course-modal-view .subtitle {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.course-modal-view .text {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.course-modal-view table {
+  width: 100%;
+  margin-top: 7px;
+}
+
+.course-modal-view table th {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.course-modal-view table th,
+.course-modal-view table td {
+  padding: 0px 5px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.course-modal-view a,
+.course-modal-view a:visited,
+.course-modal-view a:link
+{
+  text-decoration: none;
+  border-bottom-style: dotted;
+  border-bottom-width: 1px;
+  color: rgb(48,128,200);
+}
+
+.course-modal-view a:hover
+{
+  color: #36A0FF;
+}

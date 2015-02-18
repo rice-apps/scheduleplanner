@@ -11,7 +11,6 @@ goog.require('goog.events.KeyEvent');
 goog.require('goog.events.EventType');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.CourseView');
-goog.require('org.riceapps.views.SearchView');
 goog.require('org.riceapps.views.TrashView');
 goog.require('org.riceapps.views.View');
 

@@ -189,7 +189,7 @@ CalendarView.prototype.createDom = function() {
   goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner (BETA)!');
   goog.dom.appendChild(this.getElement(), this.directionsElement_);
 
-  for (var i = 0; i < CalendarView.DIRECTION_TEXT.length; i++) {
+  for (i = 0; i < CalendarView.DIRECTION_TEXT.length; i++) {
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
     goog.dom.setTextContent(directionsSpan, CalendarView.DIRECTION_TEXT[i]);
     goog.dom.appendChild(this.directionsElement_, directionsSpan);
