@@ -141,6 +141,26 @@ html, body {
   position: relative;
 }
 
+.tool-bar-view .tool-bar-view-title {
+  position: absolute;
+  font-size: 26px;
+  line-height: 26px;
+  top: calc(50% - 22px);
+  left: 20px;
+}
+
+.tool-bar-view .tool-bar-view-logout {
+  position: absolute;
+  font-size: 14px;
+  line-height: 14px;
+  top: calc(50% + 8px);
+  left: 20px;
+}
+
+.tool-bar-view .tool-bar-view-logout a {
+
+}
+
 .tool-bar-view .tool-bar-view-input {
   font-family: inherit;
   color: rgba(0, 0, 0, 0.4);
@@ -164,8 +184,8 @@ html, body {
   top: calc(50% - 26px);
   height: 30px;
   line-height: 30px;
-  left: calc(100% - 480px);
-  width: 380px;
+  left: calc(100% - 460px);
+  width: 360px;
   padding: 10px;
 }
 

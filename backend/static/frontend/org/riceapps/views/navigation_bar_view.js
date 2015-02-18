@@ -1,6 +1,8 @@
 goog.provide('org.riceapps.views.NavigationBarView');
 
+goog.require('goog.dom');
 goog.require('goog.dom.classlist');
+goog.require('goog.style');
 goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
@@ -31,6 +33,7 @@ NavigationBarView.Theme = {
 NavigationBarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), NavigationBarView.Theme.BASE);
+  goog.style.setElementShown(this.getElement(), false);
 };
 
 

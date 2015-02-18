@@ -258,4 +258,29 @@ UserModel.prototype.getCoursesInSchedule = function() {
 };
 
 
+/**
+ * @param {number=} opt_distributionGroup
+ * @return {number}
+ */
+UserModel.prototype.getCreditHoursInSchedule = function(opt_distributionGroup) {
+  var dg = opt_distributionGroup || 0;
+  var hours = 0;
+
+  for (var i = 0; i < this.schedule_.length; i++) {
+    var course = this.schedule_[i];
+
+    if (dg == 0) {
+      hours += course.getCredits();
+    } else if (dg == 1) {
+      hours += course.getDistributionOneCredits();
+    } else if (dg == 2) {
+      hours += course.getDistributionTwoCredits();
+    } else if (dg == 3) {
+      hours += course.getDistributionThreeCredits();
+    }
+  }
+
+  return hours;
+};
+
 });  // goog.scope

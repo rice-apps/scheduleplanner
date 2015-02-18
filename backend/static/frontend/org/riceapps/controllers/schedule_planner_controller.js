@@ -253,10 +253,26 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
   this.getHandler().
     listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
     listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
-    listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_);
+    listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
+    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_);
 
+  this.handleUserModelChange_();
+  this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
   this.view_.getLoadingInterruptView().hide();
 }
+
+
+/**
+ * @param {org.riceapps.events.UserModelEvent=} opt_event
+ */
+SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event) {
+  this.view_.getToolbarView().setCredits(
+    this.userModel_.getCreditHoursInSchedule(),
+    this.userModel_.getCreditHoursInSchedule(1),
+    this.userModel_.getCreditHoursInSchedule(2),
+    this.userModel_.getCreditHoursInSchedule(3));
+};
+
 
 /**
  * @param {!org.riceapps.models.UserModel} userModel
@@ -351,6 +367,15 @@ SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
   this.view_.getCalendarView().relayout();
 };
 
+/**
+ * @param {goog.events.Event} event
+ */
+SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
+  if (event.target.getParent() === this.view_.getPlaygroundView()) {
+    this.view_.getSearchView().onCloseSearch();
+  }
+};
+
 
 /**
  * Informs the controller to start rendering and listening for events.
@@ -363,6 +388,7 @@ SchedulePlannerController.prototype.start = function() {
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
+    listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
     listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
 

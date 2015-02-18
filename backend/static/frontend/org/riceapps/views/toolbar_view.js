@@ -59,6 +59,9 @@ org.riceapps.views.ToolbarView = function(searchView) {
 
   /** @private {number} */
   this.updateSearchTimer_ = -1;
+
+  /** @private {string} */
+  this.userName_ = '';
 };
 goog.inherits(org.riceapps.views.ToolbarView,
               org.riceapps.views.View);
@@ -70,7 +73,9 @@ ToolbarView.Theme = {
   BASE: 'tool-bar-view',
   INPUT: 'tool-bar-view-input',
   STATS: 'tool-bar-view-stats',
-  INPUT_ACTIVE: 'tool-bar-view-input-active'
+  TITLE: 'tool-bar-view-title',
+  INPUT_ACTIVE: 'tool-bar-view-input-active',
+  LOGOUT: 'tool-bar-view-logout'
 };
 
 
@@ -109,6 +114,27 @@ ToolbarView.prototype.createDom = function() {
   this.statsContainer_ = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.STATS);
   this.setCredits(0, 0, 0, 0);
   goog.dom.appendChild(this.getElement(), this.statsContainer_);
+
+  var titleElement = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.TITLE);
+  goog.dom.setTextContent(titleElement, 'Schedule Planner');
+  goog.dom.appendChild(this.getElement(), titleElement);
+};
+
+
+/**
+ * @param {string} userName
+ */
+ToolbarView.prototype.setUserName = function(userName) {
+  this.userName_ = userName;
+
+  var spanElement = goog.dom.createDom(goog.dom.TagName.SPAN, ToolbarView.Theme.LOGOUT);
+  goog.dom.setTextContent(spanElement, 'Welcome, ' + this.userName_ + ' ');
+  goog.dom.appendChild(this.getElement(), spanElement);
+
+  var logoutElement = goog.dom.createDom(goog.dom.TagName.A);
+  logoutElement.href = '/logout';
+  goog.dom.setTextContent(logoutElement, '(Logout)');
+  goog.dom.appendChild(spanElement, logoutElement);
 };
 
 
@@ -119,8 +145,10 @@ ToolbarView.prototype.createDom = function() {
  * @param {number} d3
  */
 ToolbarView.prototype.setCredits = function(total, d1, d2, d3) {
+  window.console.log('ToolbarView.setCredits ', total, d1, d2, d3);
   // TODO(mschurr): Implement this and make the container look prettier.
-  //goog.dom.setTextContent(this.statsContainer_, 'Credits: 0 (0 D1, 0 D2, 0 D3)');
+  goog.dom.setTextContent(this.statsContainer_,
+      'Credits: ' + total + ' (' + d1 + ' D1, ' + d2 + ' D2, ' + d3 + ' D3)');
 };
 
 

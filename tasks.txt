@@ -4,11 +4,7 @@ FRONT-END:
     - Implement the CourseModalView, a popup which displays information about ALL SECTIONS of a given course (when initiated from a course click in the playground view, search view, or calendar view).
 
   MEDIUM PRIORITY (launch blockers):
-    - Search Results: show distribution, location/days, and credit hours in list view
-
-    - Show the number of credits in schedule on the toolbar (broken down for all, D1, D2, D3).
-
-    - Implement the navigation bar (NavigationBarView). The bar should display the user's network ID (obtained from UserModel), a title, a logout link (to /logout).
+    - Search Results: show distribution, location/days, and credit hours in the result tiles
 
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
 
@@ -16,8 +12,6 @@ FRONT-END:
     - Add indicator to courses on calendar that have multiple sections available.
 
     - Add indicator to courses on calendar for waitlist and enrollment data.
-
-    - Dragging course from playground when search view is open should hide search view while user performs the drag.
 
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 
