@@ -45,20 +45,30 @@ CourseSearchView.RENDER_ADJUST = new goog.math.Rect(0, 0, 0, 0);
  * @override
  */
 CourseSearchView.prototype.createDom = function() {
+  var course = this.getCourseModel();
+  var div, text;
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), CourseSearchView.Theme.BASE);
-  goog.dom.setTextContent(this.getElement(), this.getCourseModel().getTitle());
+  goog.dom.setTextContent(this.getElement(), course.getTitle());
 
-  var div = goog.dom.createDom(goog.dom.TagName.DIV);
-  goog.dom.setTextContent(div, this.getCourseModel().getInstructorNames());
+  div = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.setTextContent(div, course.getInstructorNames());
+  goog.dom.appendChild(this.getElement(), div);
+
+  div = goog.dom.createDom(goog.dom.TagName.DIV);
+  if (course.isLpap()) {
+    text = course.getCreditsAsString() + ' Hours, LPAP';
+  } else if (course.getDistributionType() != 0) {
+    text = course.getCreditsAsString() + ' Hours, Distribution ' + course.getDistributionTypeAsString() ;
+  } else {
+    text = course.getCreditsAsString() + ' Hours';
+  }
+  goog.dom.setTextContent(div, text);
   goog.dom.appendChild(this.getElement(), div);
 
   /*var div = goog.dom.createDom(goog.dom.TagName.DIV);
-  goog.dom.setTextContent(div, this.getCourseModel().getMeetingTimes()[0]['location']);
+  goog.dom.setTextContent(div, course.getMeetingTimes()[0]['location']);
   goog.dom.appendChild(this.getElement(), div);*/
-
-
-
   // Add location + days, credit hour, distribution
 };
 

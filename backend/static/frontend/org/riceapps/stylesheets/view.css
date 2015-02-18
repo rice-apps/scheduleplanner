@@ -304,6 +304,12 @@ html, body {
   font-size: 11px;
 }
 
+.course-search-view {
+  font-size: 14px;
+  line-height: 18px;
+  padding: 5px 10px;
+}
+
 .course-calendar-view,
 .course-calendar-guide-view {
   padding: 2px 5px;

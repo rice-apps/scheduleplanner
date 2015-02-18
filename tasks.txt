@@ -1,6 +1,5 @@
 FRONT-END:
   MEDIUM PRIORITY (launch blockers):
-    - Search Results: show distribution, location/days, and credit hours in the result tiles
 
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
 
@@ -8,6 +7,8 @@ FRONT-END:
     - Add indicator to courses on calendar that have multiple sections available.
 
     - Add indicator to courses on calendar for waitlist and enrollment data.
+
+    - Search Results: show location/days
 
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 

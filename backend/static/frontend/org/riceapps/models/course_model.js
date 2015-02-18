@@ -378,6 +378,23 @@ CourseModel.prototype.getDistributionType = function() {
 
 
 /**
+ * @return {string}
+ */
+CourseModel.prototype.getDistributionTypeAsString = function() {
+  switch(this.data_['distributionGroup']) {
+    case 1:
+      return 'I';
+    case 2:
+      return 'II';
+    case 3:
+      return 'III';
+    default:
+      return '';
+  }
+};
+
+
+/**
  * @return {number}
  */
 CourseModel.prototype.getDistributionOneCredits = function() {
