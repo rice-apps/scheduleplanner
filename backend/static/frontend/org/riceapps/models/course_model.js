@@ -136,7 +136,7 @@ CourseModel.prototype.getMeetingTimes = function() {
     };
     times.push(t);
   }
-
+  console.log(times)
   return times;
 };
 
@@ -190,13 +190,29 @@ CourseModel.prototype.getCourseCategory = function() {
 CourseModel.prototype.getMeetingTimesAsString = function() {
   var times = this.getMeetingTimes();
 
+  var days = {0: 'M', 1: 'T', 2:'W', 3:'R', 4:'F', 5:'S', 6:'U'}
+
   if (times.length == 0) {
     return 'TBD';
   }
+  var meeting_times_string = ''
 
-  return '[TODO CourseModel getMeetingTimesAsString]';
+  for (var i = 0; i < times.length; i++) {
+    meeting_times_string += days[times[i]['day']] + ' ' + timeToString(times[i]['start']) + '-' + timeToString(times[i]['end']) + ' (' + times[i]['location'] + ')' + ' / ';
+  }
+
+  return meeting_times_string.substring(0,meeting_times_string.length -2);
 };
 
+function timeToString(time) {
+  var hour = Math.floor(time);
+  var min = Math.floor((time - hour) * 60);
+  if (min < 10) {
+    return '' + hour + ':0' + min;
+  } else {
+  return '' + hour + ":" + min;
+  }
+}
 
 /**
  * @return {string}

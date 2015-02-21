@@ -31,7 +31,7 @@ FRONT-END:
 
     - Add button to toolbar to clear calendar and playground.
 
-    - Compatability testing with IE, Firefox, Safari, Opera.
+    - Compatability testing with IE, Firefox, Safari, Opera, mobile.
 
     - Search Functionality: support for conflicts and hide full filters. See SearchView, CoursesModel.
 
