@@ -4,12 +4,6 @@ FRONT-END:
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
 
   LOW PRIORITY:
-    - Add indicator to courses on calendar that have multiple sections available.
-
-    - Add indicator to courses on calendar for waitlist and enrollment data.
-
-    - Search Results: show location/days
-
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 
     - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour). Add link to open tour on navigation bar as "Help".

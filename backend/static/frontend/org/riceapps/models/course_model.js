@@ -136,7 +136,6 @@ CourseModel.prototype.getMeetingTimes = function() {
     };
     times.push(t);
   }
-  console.log(times)
   return times;
 };
 
@@ -184,7 +183,7 @@ CourseModel.prototype.getCourseCategory = function() {
 
 
 /**
- * TODO(mschurr@): Implement.
+ * Returns the days, times, and locations for the course.
  * @return {string}
  */
 CourseModel.prototype.getMeetingTimesAsString = function() {
@@ -198,13 +197,17 @@ CourseModel.prototype.getMeetingTimesAsString = function() {
   var meeting_times_string = ''
 
   for (var i = 0; i < times.length; i++) {
-    meeting_times_string += days[times[i]['day']] + ' ' + timeToString(times[i]['start']) + '-' + timeToString(times[i]['end']) + ' (' + times[i]['location'] + ')' + ' / ';
+    meeting_times_string += days[times[i]['day']] + ' ' + this.timeToString(times[i]['start']) + '-' + this.timeToString(times[i]['end']) + ' (' + times[i]['location'] + ')' + ' / ';
   }
 
   return meeting_times_string.substring(0,meeting_times_string.length -2);
 };
 
-function timeToString(time) {
+/**
+* Returns time as a string in standard hh:mm format.
+* @return {string}
+*/
+CourseModel.prototype.timeToString = function(time) {
   var hour = Math.floor(time);
   var min = Math.floor((time - hour) * 60);
   if (min < 10) {

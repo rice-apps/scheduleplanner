@@ -173,7 +173,7 @@ CourseModalView.prototype.createDom = function() {
   goog.dom.appendChild(row, cell);
 
   cell = goog.dom.createDom(goog.dom.TagName.TH);
-  goog.dom.setTextContent(cell, 'Meeting Times');
+  goog.dom.setTextContent(cell, 'Meeting Times/Locations');
   goog.dom.appendChild(row, cell);
 
   for (i = 0; i < sections.length; i++) {
