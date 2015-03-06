@@ -12,13 +12,14 @@ goog.require('goog.events.EventType');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.TrashView');
+goog.require('org.riceapps.views.CRNView');
 goog.require('org.riceapps.views.View');
+goog.require('org.riceapps.views.DraggableView');
+
 
 goog.scope(function() {
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
-
-
-
+var DraggableView = org.riceapps.views.DraggableView;
 /**
  * TODO: Show the number of credits in calendar (all, D1, D2, D3)
  * TODO: Add an export option (for CRNs to Esther)
@@ -34,7 +35,12 @@ org.riceapps.views.ToolbarView = function(searchView) {
   /** @private {!org.riceapps.views.TrashView} */
   this.trashView_ = new org.riceapps.views.TrashView();
   this.addChild(this.trashView_);
+  
+  this.crnView_ = new org.riceapps.views.CRNView();
+  this.addChild(this.crnView_);
 
+  this.userModel_ = org.riceapps.models.UserModel;
+  
   /** @private {Element} */
   this.searchInput_ = null;
 
@@ -90,6 +96,10 @@ ToolbarView.prototype.getTrashView = function() {
 };
 
 
+ToolbarView.prototype.getCRNView = function() {
+	return this.crnView_;
+}
+
 /**
  * @return {Element}
  */
@@ -104,6 +114,7 @@ ToolbarView.prototype.getSearchInput = function() {
 ToolbarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), ToolbarView.Theme.BASE);
+  this.crnView_.render(this.getElement());
   this.trashView_.render(this.getElement());
 
   this.searchInput_ = goog.dom.createDom(goog.dom.TagName.INPUT, ToolbarView.Theme.INPUT);
@@ -169,7 +180,8 @@ ToolbarView.prototype.enterDocument = function() {
   this.getHandler().
     listen(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     listen(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
-    listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_);
+    listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
+	listen(this.crnView_.element_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
 
@@ -182,9 +194,19 @@ ToolbarView.prototype.exitDocument = function() {
   this.getHandler().
     unlisten(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     unlisten(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
-    unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_);
+    unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
+	unlisten(this.crnView_.element_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
+/**
+ * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+ * @param {goog.events.BrowserEvent} event
+ * @private
+ */
+ToolbarView.prototype.onCRNViewClick_ = function(event) {
+  var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
+  this.dispatchEvent(event);
+};
 
 /**
  * @param {?goog.events.BrowserEvent=} opt_event
@@ -244,6 +266,4 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
 ToolbarView.prototype.onSearchQueryChanged_ = function(query) {
   this.searchView_.setQuery(query);
 };
-
-
 }); // goog.scope

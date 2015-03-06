@@ -12,11 +12,13 @@ goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.CoursesModel');
 goog.require('org.riceapps.models.UserModel');
 goog.require('org.riceapps.views.CourseView');
+goog.require('org.riceapps.views.CRNView');
 goog.require('org.riceapps.views.CourseCalendarView');
 goog.require('org.riceapps.views.CourseCalendarGuideView');
 goog.require('org.riceapps.views.CourseSearchView');
 goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.CourseModalView');
+goog.require('org.riceapps.views.CRNModalView');
 goog.require('org.riceapps.views.SchedulePlannerView');
 
 
@@ -31,7 +33,6 @@ var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrCo
 var UserModelEvent = org.riceapps.events.UserModelEvent;
 
 
-
 /**
  * @extends {org.riceapps.controllers.Controller}
  * @constructor
@@ -41,7 +42,7 @@ org.riceapps.controllers.SchedulePlannerController = function() {
 
   /** @private {!org.riceapps.views.SchedulePlannerView} */
   this.view_ = new org.riceapps.views.SchedulePlannerView();
-
+  
   /** @private {!org.riceapps.controllers.SchedulePlannerXhrController} */
   this.xhrController_ = new org.riceapps.controllers.SchedulePlannerXhrController();
 
@@ -70,6 +71,15 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
   modalView.disposeOnHide().show();
 };
 
+/**
+ * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+ * @param {goog.events.BrowserEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
+  var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
+  modalView.disposeOnHide().show();
+};
 
 /**
  * @param {SchedulePlannerEvent} event
@@ -254,8 +264,9 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
     listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
+	listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_);
-
+	
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
   this.view_.getLoadingInterruptView().hide();
@@ -384,14 +395,18 @@ SchedulePlannerController.prototype.start = function() {
   this.view_.render();
   this.view_.getLoadingInterruptView().show();
 
+  //var crnView = new org.riceapps.views.CRNView();
+  //window.console.log(this.view_);
+  window.console.log(this.view_.toolbarView_.crnView_.element_);
+  
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
+	listen(this.view_, DraggableView.EventType.CLICK, this.onCRNViewClick_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
     listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
     listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
-
   this.xhrController_.getUserModel().then(this.onUserModelReady_, this.onXhrError_, this);
   this.xhrController_.getAllCourses().then(this.onCoursesReady_, this.onXhrError_, this);
 };

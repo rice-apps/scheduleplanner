@@ -10,8 +10,6 @@ goog.require('org.riceapps.views.ModalView');
 
 goog.scope(function() {
 
-
-
 /**
  * @param {!org.riceapps.models.CourseModel} courseModel
  * @extends {org.riceapps.views.ModalView}
@@ -160,14 +158,14 @@ CourseModalView.prototype.createDom = function() {
 
   cell = goog.dom.createDom(goog.dom.TagName.TH);
   goog.style.setStyle(cell, {
-    'width': '80px'
+    'width': '40px'
   });
   goog.dom.setTextContent(cell, 'Enrolled');
   goog.dom.appendChild(row, cell);
 
   cell = goog.dom.createDom(goog.dom.TagName.TH);
   goog.style.setStyle(cell, {
-    'width': '80px'
+    'width': '40px'
   });
   goog.dom.setTextContent(cell, 'Waitlisted');
   goog.dom.appendChild(row, cell);

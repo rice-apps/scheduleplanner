@@ -20,6 +20,7 @@ goog.inherits(org.riceapps.views.CourseView,
 var CourseView = org.riceapps.views.CourseView;
 
 
+
 /** @enum {string} */
 CourseView.Theme = {
   'BASE': 'course-view'

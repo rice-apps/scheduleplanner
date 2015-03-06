@@ -38,7 +38,8 @@ var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
  */
 SchedulePlannerEvent.Type = {
   ADD_GUIDE_VIEWS: 'sp_add_guide_views',
-  UPDATE_SEARCH: 'sp_update_search'
+  UPDATE_SEARCH: 'sp_update_search',
+  CRN_CLICK: 'sp_crn_click'
 };
 
 });  // goog.scope
