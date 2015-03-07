@@ -61,7 +61,7 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
 
 /**
  * Event handler; called when a course view is clicked. Shows a modal view containing information about the course.
- * @param {goog.events.BrowserEvent} event
+ * @param {goog.events.SchedulePlannerEvent} event
  * @private
  */
 SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
