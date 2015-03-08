@@ -32,7 +32,7 @@ CRNModalView.Theme = {
   TITLE: 'title',
   SUBTITLE: 'subtitle',
   CONTAINER: 'container',
-  TEXT: 'text',
+  TEXT: 'text'
 };
 
 

@@ -173,7 +173,7 @@ ToolbarView.prototype.enterDocument = function() {
     listen(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     listen(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
     listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-	listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
+    listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
 
@@ -196,8 +196,10 @@ ToolbarView.prototype.exitDocument = function() {
  * @private
  */
 ToolbarView.prototype.onCRNViewClick_ = function(event) {
-  var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
-  this.dispatchEvent(event);
+  if (event != null) {
+    var new_event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
+    this.dispatchEvent(new_event);
+  }
 };
 
 /**

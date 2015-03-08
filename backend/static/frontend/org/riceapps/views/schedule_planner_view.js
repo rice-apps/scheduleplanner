@@ -185,11 +185,6 @@ SchedulePlannerView.prototype.getTrashView = function() {
   return this.toolbarView_.getTrashView();
 };
 
-SchedulePlannerView.prototype.getCRNView = function() {
-	return this.toolbarView_.getCRNView();
-};
-
-
 /**
  * @override
  */
