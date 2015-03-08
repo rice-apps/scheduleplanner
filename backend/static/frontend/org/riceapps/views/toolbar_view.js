@@ -13,12 +13,12 @@ goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.TrashView');
 goog.require('org.riceapps.views.View');
+goog.require('org.riceapps.views.DraggableView');
+
 
 goog.scope(function() {
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
-
-
-
+var DraggableView = org.riceapps.views.DraggableView;
 /**
  * TODO: Show the number of credits in calendar (all, D1, D2, D3)
  * TODO: Add an export option (for CRNs to Esther)
@@ -34,7 +34,7 @@ org.riceapps.views.ToolbarView = function(searchView) {
   /** @private {!org.riceapps.views.TrashView} */
   this.trashView_ = new org.riceapps.views.TrashView();
   this.addChild(this.trashView_);
-
+  
   /** @private {Element} */
   this.searchInput_ = null;
 
@@ -89,7 +89,6 @@ ToolbarView.prototype.getTrashView = function() {
   return this.trashView_;
 };
 
-
 /**
  * @return {Element}
  */
@@ -117,6 +116,10 @@ ToolbarView.prototype.createDom = function() {
   var titleElement = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.TITLE);
   goog.dom.setTextContent(titleElement, 'Schedule Planner');
   goog.dom.appendChild(this.getElement(), titleElement);
+  
+  var crnElement = goog.dom.createDom(goog.dom.TagName.DIV, 'crn-view');
+  goog.dom.appendChild(this.getElement(), crnElement);
+  this.crnElement_ = crnElement;
 };
 
 
@@ -169,7 +172,8 @@ ToolbarView.prototype.enterDocument = function() {
   this.getHandler().
     listen(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     listen(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
-    listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_);
+    listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
+	listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
 
@@ -182,9 +186,19 @@ ToolbarView.prototype.exitDocument = function() {
   this.getHandler().
     unlisten(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     unlisten(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
-    unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_);
+    unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
+	unlisten(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
+/**
+ * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+ * @param {goog.events.BrowserEvent} event
+ * @private
+ */
+ToolbarView.prototype.onCRNViewClick_ = function(event) {
+  var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
+  this.dispatchEvent(event);
+};
 
 /**
  * @param {?goog.events.BrowserEvent=} opt_event
@@ -244,6 +258,4 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
 ToolbarView.prototype.onSearchQueryChanged_ = function(query) {
   this.searchView_.setQuery(query);
 };
-
-
 }); // goog.scope
