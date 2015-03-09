@@ -73,12 +73,23 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
 
 /**
  * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+<<<<<<< HEAD
  * @param {goog.events.BrowserEvent} event
  * @private
  */
 SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
   var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
   modalView.disposeOnHide().show();
+=======
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
+  if (this.userModel_ != null){
+    var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
+    modalView.disposeOnHide().show();
+  }
+>>>>>>> origin/rkaushik-dev
 };
 
 /**
@@ -394,10 +405,13 @@ SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
 SchedulePlannerController.prototype.start = function() {
   this.view_.render();
   this.view_.getLoadingInterruptView().show();
+<<<<<<< HEAD
 
   //var crnView = new org.riceapps.views.CRNView();
   //window.console.log(this.view_);
   window.console.log(this.view_.toolbarView_.crnView_.element_);
+=======
+>>>>>>> origin/rkaushik-dev
   
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
