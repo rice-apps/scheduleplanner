@@ -26,32 +26,13 @@ goog.inherits(org.riceapps.views.CRNModalView,
               org.riceapps.views.ModalView);
 var CRNModalView = org.riceapps.views.CRNModalView;
 
-<<<<<<< HEAD
-
-/** @enum {string} */
-/*CourseModalView.Messages = {
-  OPEN_EVALUATIONS: 'View Course Evaluations',
-  OPEN_COURSES: 'View On Rice Course Catalog',
-  TAUGHT_BY: 'Taught By: ',
-  SECTIONS: 'Sections',
-  OFFERED: 'Offered: ',
-  CROSSLISTED_AS: 'Crosslisted As: '
-};*/
-
-
-=======
->>>>>>> origin/rkaushik-dev
 /** @enum {string} */
 CRNModalView.Theme = {
   BASE: 'crn-modal-view',
   TITLE: 'title',
   SUBTITLE: 'subtitle',
   CONTAINER: 'container',
-<<<<<<< HEAD
-  TEXT: 'text',
-=======
   TEXT: 'text'
->>>>>>> origin/rkaushik-dev
 };
 
 
@@ -69,34 +50,16 @@ CRNModalView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), CRNModalView.Theme.BASE);
   
-<<<<<<< HEAD
-  var element, i, crn, coursename, courses
-	
-  element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.TITLE);
-  goog.dom.setTextContent(element, "CRNs");
-=======
   var element, i, crn, coursename, courses;
 	
   element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.TITLE);
   goog.dom.setTextContent(element, 'CRNs');
->>>>>>> origin/rkaushik-dev
   goog.dom.appendChild(this.getElement(), element);
   
   var container = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.CONTAINER);
   goog.dom.appendChild(this.getElement(), container);
   
   element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.SUBTITLE);
-<<<<<<< HEAD
-  goog.dom.setTextContent(element, "CRNs in Schedule");
-  goog.dom.appendChild(container, element);
-  
-  courses = this.userModel_.schedule_;
-
-  for (i=0, n=courses.length; i<n; i++) {
-	  
-	  crn = courses[i].data_.crn;
-	  coursename = courses[i].data_.subject + " " + courses[i].data_.courseNumber;
-=======
   goog.dom.setTextContent(element, 'CRNs in Schedule');
   goog.dom.appendChild(container, element);
   
@@ -106,24 +69,12 @@ CRNModalView.prototype.createDom = function() {
 	  
 	  crn = courses[i].getCrn();
 	  coursename = courses[i].getCourseCategory();
->>>>>>> origin/rkaushik-dev
 	  element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.TEXT);
 	  goog.dom.setTextContent(element, crn);
 	  goog.dom.appendChild(container, element);
 	}
   
   element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.SUBTITLE);
-<<<<<<< HEAD
-  goog.dom.setTextContent(element, "CRNs in Drawer");
-  goog.dom.appendChild(container, element);
-  
-  courses = this.userModel_.playground_;
-
-  for (i=0, n=courses.length; i<n; i++) {
-	  
-	  crn = courses[i].data_.crn;
-	  coursename = courses[i].data_.subject + " " + courses[i].data_.courseNumber;
-=======
   goog.dom.setTextContent(element, 'CRNs in Drawer');
   goog.dom.appendChild(container, element);
   
@@ -133,7 +84,6 @@ CRNModalView.prototype.createDom = function() {
 	  
 	  crn = courses[i].getCrn();
 	  coursename = courses[i].getCourseCategory();
->>>>>>> origin/rkaushik-dev
 	  element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.TEXT);
 	  goog.dom.setTextContent(element, crn);
 	  goog.dom.appendChild(container, element);

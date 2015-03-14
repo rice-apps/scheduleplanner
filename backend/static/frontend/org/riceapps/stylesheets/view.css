@@ -612,8 +612,9 @@ html, body {
   position: absolute !important;
   padding: 15px 25px;
   height: auto !important;
-  min-height: 400px;
-  left: calc(10% - 26px) !important;
+  width: 40px;
+  min-height: 70px;
+  left: calc(40% - 20px) !important;
   min-width: 400px;
 }
 

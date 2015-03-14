@@ -12,7 +12,6 @@ goog.require('goog.events.EventType');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.TrashView');
-goog.require('org.riceapps.views.CRNView');
 goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.views.DraggableView');
 
@@ -36,14 +35,6 @@ org.riceapps.views.ToolbarView = function(searchView) {
   this.trashView_ = new org.riceapps.views.TrashView();
   this.addChild(this.trashView_);
   
-<<<<<<< HEAD
-  this.crnView_ = new org.riceapps.views.CRNView();
-  this.addChild(this.crnView_);
-
-  this.userModel_ = org.riceapps.models.UserModel;
-  
-=======
->>>>>>> origin/rkaushik-dev
   /** @private {Element} */
   this.searchInput_ = null;
 
@@ -98,14 +89,6 @@ ToolbarView.prototype.getTrashView = function() {
   return this.trashView_;
 };
 
-<<<<<<< HEAD
-
-ToolbarView.prototype.getCRNView = function() {
-	return this.crnView_;
-}
-
-=======
->>>>>>> origin/rkaushik-dev
 /**
  * @return {Element}
  */
@@ -120,7 +103,6 @@ ToolbarView.prototype.getSearchInput = function() {
 ToolbarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), ToolbarView.Theme.BASE);
-  this.crnView_.render(this.getElement());
   this.trashView_.render(this.getElement());
 
   this.searchInput_ = goog.dom.createDom(goog.dom.TagName.INPUT, ToolbarView.Theme.INPUT);
@@ -191,11 +173,7 @@ ToolbarView.prototype.enterDocument = function() {
     listen(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     listen(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
     listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-<<<<<<< HEAD
-	listen(this.crnView_.element_, goog.events.EventType.CLICK, this.onCRNViewClick_);
-=======
     listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
->>>>>>> origin/rkaushik-dev
 };
 
 
@@ -209,11 +187,7 @@ ToolbarView.prototype.exitDocument = function() {
     unlisten(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     unlisten(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
     unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-<<<<<<< HEAD
-	unlisten(this.crnView_.element_, goog.events.EventType.CLICK, this.onCRNViewClick_);
-=======
 	unlisten(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
->>>>>>> origin/rkaushik-dev
 };
 
 /**
@@ -222,15 +196,10 @@ ToolbarView.prototype.exitDocument = function() {
  * @private
  */
 ToolbarView.prototype.onCRNViewClick_ = function(event) {
-<<<<<<< HEAD
-  var event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
-  this.dispatchEvent(event);
-=======
   if (event != null) {
     var new_event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CRN_CLICK);
     this.dispatchEvent(new_event);
   }
->>>>>>> origin/rkaushik-dev
 };
 
 /**
