@@ -76,7 +76,7 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
-  if (this.userModel_ != null){
+  if (this.userModel_ != null && event.type == "sp_crn_click"){
     var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
     modalView.disposeOnHide().show();
   }
