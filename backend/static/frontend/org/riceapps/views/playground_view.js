@@ -5,10 +5,17 @@ goog.require('goog.style');
 goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.View');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventType');
+goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('goog.events.BrowserEvent');
 
 goog.scope(function() {
 var ViewEvent = org.riceapps.events.ViewEvent;
+var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var DraggableView = org.riceapps.views.DraggableView;
 
 
 
@@ -83,6 +90,9 @@ PlaygroundView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), PlaygroundView.Theme.BASE);
 
+  this.clearPlaygroundElement_ = goog.dom.createDom(goog.dom.TagName.DIV, 'clear-playground');
+  goog.dom.appendChild(this.getElement(), this.clearPlaygroundElement_);
+
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, PlaygroundView.Theme.DIRECTIONS);
   goog.dom.setTextContent(this.directionsElement_, 'Staging Area');
@@ -155,7 +165,8 @@ PlaygroundView.prototype.hideDirections_ = function() {
 PlaygroundView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
   this.getHandler().listen(this,
-      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_).
+      listen(this.clearPlaygroundElement_, goog.events.EventType.CLICK, this.onClearPlaygroundClick_);
 };
 
 
@@ -165,7 +176,8 @@ PlaygroundView.prototype.enterDocument = function() {
 PlaygroundView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
   this.getHandler().unlisten(this,
-      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+      [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_).
+      unlisten(this.clearPlaygroundElement_, goog.events.EventType.CLICK, this.onClearPlaygroundClick_);
 };
 
 
@@ -180,5 +192,25 @@ PlaygroundView.prototype.handleChildrenChanged_ = function(event) {
   }
 }
 
+/**
+ * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+ * @param {goog.events.BrowserEvent} event
+ * @private
+ */
+PlaygroundView.prototype.onClearPlaygroundClick_ = function(event) {
+  if (event != null) {
+    var new_event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK);
+    this.dispatchEvent(new_event);
+  }
+}
+
+/**
+ * return the courses (children) in the playground
+ * @override
+ * @return {array}
+ */
+PlaygroundView.prototype.getChildren = function() {
+  return this.children_;
+}
 
 }); // goog.scope
