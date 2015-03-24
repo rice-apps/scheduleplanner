@@ -90,14 +90,16 @@ SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
  */
 SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
   if (this.userModel_ != null && event.type == SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK){
-    var course_views = this.view_.getPlaygroundView().getChildren().slice();
-    for (var i = 0; i < course_views.length; i++) {
+    var playground_view = this.view_.getPlaygroundView();
+    var course_count = playground_view.getChildCount();
+    for (var i = 0; i < course_count; i++) {
+      var first_child = playground_view.getChildAt(0);
       // Update the user model.
-      this.userModel_.removeCoursesFromPlayground([course_views[i].getCourseModel()]);
+      this.userModel_.removeCoursesFromPlayground([first_child.getCourseModel()]);
 
       // Dispose of the view.
-      event.target.removeChild(course_views[i], true);
-      course_views[i].dispose();
+      this.view_.getPlaygroundView().removeChild(first_child, true);
+      first_child.dispose();
     }
   }
 };
@@ -421,7 +423,7 @@ SchedulePlannerController.prototype.start = function() {
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
 	  listen(this.view_, DraggableView.EventType.CLICK, this.onCRNViewClick_).
-    listen(this.view_, DraggableView.EventType.CLICK, this.onClearPlaygroundClick_).
+    listen(this.view_, goog.events.EventType.CLICK, this.onClearPlaygroundClick_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
     listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).

@@ -204,13 +204,4 @@ PlaygroundView.prototype.onClearPlaygroundClick_ = function(event) {
   }
 }
 
-/**
- * return the courses (children) in the playground
- * @override
- * @return {array}
- */
-PlaygroundView.prototype.getChildren = function() {
-  return this.children_;
-}
-
 }); // goog.scope
