@@ -689,7 +689,7 @@ CourseModel.prototype.isCrosslistedWith = function(otherCourse) {
 
 /**
  * Returns all crosslisted sections of the current course (including this one).
- * @param {boolean} opt_hideSelf
+ * @param {boolean=} opt_hideSelf
  * @return {!Array.<!CourseModel>}
  */
 CourseModel.prototype.getAllCrosslistedSections = function(opt_hideSelf) {
@@ -705,7 +705,7 @@ CourseModel.prototype.getAllCrosslistedSections = function(opt_hideSelf) {
 
 /**
  * Returns titles of all crosslisted sections of the current course (excluding this one) as a string.
- * @return {!Array.<string>}
+ * @return {string}
  */
 CourseModel.prototype.getAllCrosslistedSectionsAsString = function() {
   var data = this.getAllCrosslistedSections();

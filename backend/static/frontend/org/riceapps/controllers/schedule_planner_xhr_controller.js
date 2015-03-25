@@ -109,6 +109,7 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
   }, this);
 
   return promise.then(function(userModel) {
+    userModel = /** @type {!org.riceapps.models.UserModel} */ (userModel);
     this.userModel_ = userModel;
     this.getHandler().
       listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.onPlaygroundCoursesAdded_).
@@ -118,6 +119,7 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
       listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.onUserModelChanged_);
     return userModel;
   }, function(errorType) {
+    errorType = /** @type {SchedulePlannerXhrEvent.ErrorType} */ (errorType);
     window.console.log('[XhrEvent] An error occured retrieving user model.', errorType);
     this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
   }, this);
@@ -164,9 +166,11 @@ SchedulePlannerXhrController.prototype.getAllCourses = function() {
       resolve(new org.riceapps.models.CoursesModel(data));
     }, this), 'GET', undefined, undefined, SchedulePlannerXhrController.DEFAULT_TIMEOUT);
   }, this).then(function(coursesModel) {
+    coursesModel = /** @type {!org.riceapps.models.CoursesModel} */ (coursesModel);
     this.coursesModel_ = coursesModel;
     return coursesModel;
   }, function(errorType) {
+    errorType = /** @type {SchedulePlannerXhrEvent.ErrorType} */ (errorType);
     window.console.log('[XhrEvent] An error occured retrieving courses model.', errorType);
     this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
   }, this);
@@ -277,6 +281,7 @@ SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
   }, this).then(function(a) {
     return a;
   }, function(errorType) {
+    errorType = /** @type {SchedulePlannerXhrEvent.ErrorType} */ (errorType);
     window.console.log('[XhrEvent] An error occured pushing user model.', errorType);
     this.dispatchEvent(new SchedulePlannerXhrEvent(SchedulePlannerXhrEvent.Type.XHR_FAILED, errorType));
   }, this);
