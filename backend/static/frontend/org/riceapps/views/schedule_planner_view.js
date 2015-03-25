@@ -185,7 +185,6 @@ SchedulePlannerView.prototype.getTrashView = function() {
   return this.toolbarView_.getTrashView();
 };
 
-
 /**
  * @override
  */

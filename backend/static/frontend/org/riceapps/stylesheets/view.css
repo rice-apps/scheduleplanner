@@ -479,6 +479,26 @@ html, body {
   background-color: rgba(241,231,103,0.7);
 }
 
+.crn-view {
+  position: absolute;
+  top: 0px;
+  right: 90px;
+  width: 80px;
+  height: 80px;
+  background-repeat: no-repeat;
+  background-image: url('./crn.png');
+  background-size: 60% 60%;
+  background-position: center;
+  border-radius: 50%;
+  transition: background-color 0.5s ease;
+  z-index: 1;
+}
+
+.crn-view.crn-view-hover {
+  cursor: pointer;
+  background-color: rgba(241,231,103,0.7);
+}
+
 .search-view {
   position: absolute;
   top: 0;
@@ -588,25 +608,44 @@ html, body {
   min-width: 800px;
 }
 
+.crn-modal-view {
+  position: absolute !important;
+  padding: 15px 25px;
+  height: auto !important;
+  width: 40px;
+  min-height: 70px;
+  left: calc(40% - 20px) !important;
+  min-width: 400px;
+}
+
 .course-modal-view .title:first-child {
   margin-top: 0px;
 }
 
-.course-modal-view .title {
+.course-modal-view .title, .crn-modal-view .title {
   font-size: 26px;
   line-height: 32px;
   margin-top: 12px;
 }
 
-.course-modal-view .subtitle {
+.course-modal-view .subtitle, .crn-modal-view .subtitle {
   font-size: 18px;
   line-height: 22px;
 }
 
-.course-modal-view .text {
+.crn-modal-view .container,  {
+  width: auto;
+  height: auto;
+  position: absolute;
+  padding-top: 15px;
+  margin-top: 20px;
+}
+
+.course-modal-view .text, .crn-modal-view .text {
   font-size: 14px;
   line-height: 18px;
 }
+
 
 .course-modal-view table {
   width: 100%;
@@ -627,7 +666,7 @@ html, body {
 
 .course-modal-view a,
 .course-modal-view a:visited,
-.course-modal-view a:link
+.course-modal-view a:link,
 {
   text-decoration: none;
   border-bottom-style: dotted;
