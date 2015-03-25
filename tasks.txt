@@ -39,3 +39,4 @@ FRONT-END:
 
     - Search View: better looking hide (cancel) button
 
+    - Integration with RiceApps Atlas for course locations
