@@ -121,8 +121,9 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
     if (!course.passesFilters(filters, opt_userModel))
       continue;
 
-    if (course.getMatchScore(query,queryNumber) === 0)
+    if (course.getMatchScore(query,queryNumber) <= 0) {
       continue;
+    }
 
     var category = course.getCourseCategory();
     if (used.contains(category)) {
