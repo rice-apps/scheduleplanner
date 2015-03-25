@@ -80,7 +80,9 @@ class CourseDataParser {
 	public static $TERMS = array(
 		"Fall" => "10",
 		"Spring" => "20",
-		"Summer" => "30"
+		"Summer" => "30",
+    "F" => "10", // Fall
+    "S" => "20" // Spring
 	);
 	public static $TERMLIST = ["10", "20", "30"];
 	const FallTerm = "10";
@@ -108,6 +110,10 @@ class CourseDataParser {
 		} else {
 			throw new CourseDataParserException("Invalid term.");
 		}
+
+    if ($this->term == static::FallTerm) {
+      $year += 1; // ...Because courses.rice.edu is dumb.
+    }
 
 		$this->db = $db;
 		$this->year = $year;
