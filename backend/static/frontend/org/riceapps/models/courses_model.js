@@ -95,9 +95,12 @@ CoursesModel.prototype.getAllCrosslistedSections = function(course) {
  * @return {!Array.<!org.riceapps.models.CourseModel>}
  */
 CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userModel, opt_limit) {
+  /*
+  // NOTE(mschurr): To enable "browsing" courses in search window, comment this out.
   if (query.length == 0) {
     return [];
   }
+  */
 
   var numberRegularExpression = /(?:^|\D)(\d\d?\d?)/;
 
@@ -107,7 +110,7 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
   if (queryNumbersMatch)
     queryNumber = queryNumbersMatch[1];
 
-  var limit = opt_limit || 100;
+  var limit = opt_limit || 250;
   var results = [];
   var keys = this.courses_.getKeys();
   var used = new goog.structs.Set();
@@ -118,8 +121,9 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
     if (!course.passesFilters(filters, opt_userModel))
       continue;
 
-    if (course.getMatchScore(query,queryNumber) === 0)
+    if (course.getMatchScore(query,queryNumber) <= 0) {
       continue;
+    }
 
     var category = course.getCourseCategory();
     if (used.contains(category)) {

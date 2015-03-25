@@ -14,6 +14,7 @@ goog.scope(function() {
 var DomUtils = org.riceapps.utils.DomUtils;
 
 
+
 /**
  * @param {!org.riceapps.models.CourseModel} courseModel
  * @extends {org.riceapps.views.AbstractCourseView}
@@ -22,7 +23,6 @@ var DomUtils = org.riceapps.utils.DomUtils;
 org.riceapps.views.CourseSearchView = function(courseModel) {
   goog.base(this, courseModel);
 };
-
 goog.inherits(org.riceapps.views.CourseSearchView,
               org.riceapps.views.AbstractCourseView);
 var CourseSearchView = org.riceapps.views.CourseSearchView;
@@ -66,10 +66,10 @@ CourseSearchView.prototype.createDom = function() {
   goog.dom.setTextContent(div, text);
   goog.dom.appendChild(this.getElement(), div);
 
+  // Add location and days
   /*var div = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.setTextContent(div, course.getMeetingTimes()[0]['location']);
   goog.dom.appendChild(this.getElement(), div);*/
-  // Add location + days, credit hour, distribution
 };
 
 
