@@ -34,7 +34,7 @@ org.riceapps.views.ToolbarView = function(searchView) {
   /** @private {!org.riceapps.views.TrashView} */
   this.trashView_ = new org.riceapps.views.TrashView();
   this.addChild(this.trashView_);
-  
+
   /** @private {Element} */
   this.searchInput_ = null;
 
@@ -116,7 +116,7 @@ ToolbarView.prototype.createDom = function() {
   var titleElement = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.TITLE);
   goog.dom.setTextContent(titleElement, 'Schedule Planner');
   goog.dom.appendChild(this.getElement(), titleElement);
-  
+
   var crnElement = goog.dom.createDom(goog.dom.TagName.DIV, 'crn-view');
   goog.dom.appendChild(this.getElement(), crnElement);
   this.crnElement_ = crnElement;
@@ -208,8 +208,8 @@ ToolbarView.prototype.onCRNViewClick_ = function(event) {
 ToolbarView.prototype.onSearchInputBlur_ = function(opt_event) {
   if (this.searchInput_.value == '') {
     this.searchInput_.value = ToolbarView.DEFAULT_QUERY;
-    goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
-    this.searchView_.hide();
+    //goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+    //this.searchView_.hide();
   }
 };
 

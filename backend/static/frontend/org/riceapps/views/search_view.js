@@ -280,9 +280,11 @@ SearchView.prototype.onChildDragEnd_ = function(event) {
 SearchView.prototype.onCloseSearch = function() {
   this.hide();
 
+  /*
   if (this.toolbarView_) {
     this.toolbarView_.resetInput();
   }
+  */
 }
 
 
@@ -312,6 +314,10 @@ SearchView.prototype.updateSearch = function() {
 SearchView.prototype.show = function(opt_preventAnimation) {
   if (this.isShown()) {
     return;
+  }
+
+  if (!this.hasChildren()) {
+    this.updateSearch();
   }
 
   if (this.hideTimer_ != -1) {
