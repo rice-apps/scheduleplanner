@@ -232,7 +232,7 @@ SearchView.prototype.enterDocument = function() {
 
   this.getHandler().
     listen(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
-    listen(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearch).
+    listen(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
     listen(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
     listen(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
     listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
@@ -247,7 +247,7 @@ SearchView.prototype.exitDocument = function() {
 
   this.getHandler().
     unlisten(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
-    unlisten(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearch).
+    unlisten(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
     unlisten(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
     unlisten(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
     unlisten(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
@@ -277,14 +277,22 @@ SearchView.prototype.onChildDragEnd_ = function(event) {
 /**
  *
  */
-SearchView.prototype.onCloseSearch = function() {
+SearchView.prototype.onCloseSearchWithReset = function() {
+  this.onCloseSearch(true);
+}
+
+
+/**
+ * @param {boolean=} opt_reset
+ */
+SearchView.prototype.onCloseSearch = function(opt_reset) {
   this.hide();
 
-  /*
-  if (this.toolbarView_) {
+  if (opt_reset && this.toolbarView_) {
     this.toolbarView_.resetInput();
+  } else if (this.toolbarView_) {
+    this.toolbarView_.blurInput();
   }
-  */
 }
 
 

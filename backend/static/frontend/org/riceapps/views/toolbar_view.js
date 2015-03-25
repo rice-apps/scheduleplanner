@@ -230,6 +230,15 @@ ToolbarView.prototype.resetInput = function() {
 
 
 /**
+ *
+ */
+ToolbarView.prototype.blurInput = function() {
+  goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+  this.searchInput_.blur();
+};
+
+
+/**
  * @param {?goog.events.BrowserEvent=} opt_event
  */
 ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
