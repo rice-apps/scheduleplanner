@@ -93,14 +93,12 @@ SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
     var playground_view = this.view_.getPlaygroundView();
     var course_count = playground_view.getChildCount();
     for (var i = 0; i < course_count; i++) {
-      var first_child = playground_view.getChildAt(0);
+      var first_child = playground_view.getChildAt(i);
       // Update the user model.
       this.userModel_.removeCoursesFromPlayground([first_child.getCourseModel()]);
-
-      // Dispose of the view.
-      this.view_.getPlaygroundView().removeChild(first_child, true);
-      first_child.dispose();
     }
+    // Dispose of the view.
+    playground_view.removeChildren(true);
   }
 };
 
