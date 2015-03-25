@@ -82,6 +82,10 @@ ToolbarView.Theme = {
 ToolbarView.DEFAULT_QUERY = 'Find Courses...';
 
 
+/** @const {number} */
+ToolbarView.STOPPED_TYPING_DELAY = 400;
+
+
 /**
  * @return {!org.riceapps.views.TrashView}
  */
@@ -241,6 +245,7 @@ ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
 
 /**
  * @param {goog.events.KeyEvent} event
+ * @private
  */
 ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (event.keyCode == goog.events.KeyCodes.ESC) {
@@ -249,8 +254,22 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (goog.events.KeyCodes.isTextModifyingKeyEvent(event) &&
       /*this.searchInput_.value.length > 2 &&*/
       this.searchInput_.value != ToolbarView.DEFAULT_QUERY) {
-    this.onSearchQueryChanged_(this.searchInput_.value);
+
+    if (this.updateSearchTimer_ != -1) {
+      goog.Timer.clear(this.updateSearchTimer_);
+      this.updateSearchTimer_ = -1;
+    }
+
+    this.updateSearchTimer_ = goog.Timer.callOnce(this.userDidStopTyping_, ToolbarView.STOPPED_TYPING_DELAY, this);
   }
+};
+
+
+/**
+ * @private
+ */
+ToolbarView.prototype.userDidStopTyping_ = function() {
+  this.onSearchQueryChanged_(this.searchInput_.value);
 };
 
 
@@ -258,6 +277,12 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
  * @param {string} query
  */
 ToolbarView.prototype.onSearchQueryChanged_ = function(query) {
+  if (this.updateSearchTimer_ != -1) {
+    goog.Timer.clear(this.updateSearchTimer_);
+    this.updateSearchTimer_ = -1;
+  }
+
   this.searchView_.setQuery(query);
 };
+
 }); // goog.scope

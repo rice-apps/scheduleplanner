@@ -41,7 +41,7 @@ org.riceapps.controllers.SchedulePlannerController = function() {
 
   /** @private {!org.riceapps.views.SchedulePlannerView} */
   this.view_ = new org.riceapps.views.SchedulePlannerView();
-  
+
   /** @private {!org.riceapps.controllers.SchedulePlannerXhrController} */
   this.xhrController_ = new org.riceapps.controllers.SchedulePlannerXhrController();
 
@@ -267,7 +267,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
 	listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_);
-	
+
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
   this.view_.getLoadingInterruptView().hide();
@@ -305,6 +305,8 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
   if (!this.coursesModel_) {
     return;
   }
+
+  window.console.log('SchedulePlannerController.handleUpdateSearch_');
 
   this.view_.getSearchView().setLoading(true);
 
@@ -395,7 +397,7 @@ SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
 SchedulePlannerController.prototype.start = function() {
   this.view_.render();
   this.view_.getLoadingInterruptView().show();
-  
+
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
