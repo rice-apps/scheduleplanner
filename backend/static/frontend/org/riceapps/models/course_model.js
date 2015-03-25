@@ -371,9 +371,11 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
 
   if (goog.string.caseInsensitiveContains(this.data_['title'], query)) {
     total += 1;
+  }
 
-  if (goog.string.caseInsensitiveContains(this.data_['title'], this.data_['subject']))
+  if (goog.string.caseInsensitiveContains(this.data_['title'], this.data_['subject'])) {
     total -= 1;
+  }
 
   return total;
 };
