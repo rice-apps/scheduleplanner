@@ -32,10 +32,8 @@ FooterView.Theme = {
 
 /** @const {!Object.<string, string>} */
 FooterView.LINKS = {
-  'Source Code': 'https://github.com/mschurr/rice-schedule-planner',
-  'Feedback' : 'mailto:mschurr@rice.edu',
-  'Bugs' : 'mailto:mschurr@rice.edu',
-  'Feature Requests' : 'mailto:mschurr@rice.edu'
+  'Source Code': 'https://github.com/rice-apps/scheduleplanner',
+  'Bugs/Ideas/Questions' : 'http://riceapps.org/contact'
 };
 
 
@@ -45,7 +43,7 @@ FooterView.LINKS = {
 FooterView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), FooterView.Theme.BASE);
-  this.getElement().innerHTML = '&copy; 2014 Rice University Computer Science Club';
+  this.getElement().innerHTML = '&copy; 2015 Rice Apps';
 
   var footerLinks = goog.dom.createDom(goog.dom.TagName.SPAN, FooterView.Theme.LINKS);
   goog.dom.appendChild(this.getElement(), footerLinks);

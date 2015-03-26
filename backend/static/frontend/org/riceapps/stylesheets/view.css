@@ -200,7 +200,7 @@ html, body {
 
 .tool-bar-view .tool-bar-view-input.tool-bar-view-input-active {
   outline: none;
-  width: calc(100% - 370px);
+  width: calc(100% - 500px);
   color: rgb(85, 85, 85);
 }
 
