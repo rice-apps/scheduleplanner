@@ -23,5 +23,10 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-61282211-1', 'auto');
+
+  @if (App::getRequest()->session->auth->loggedIn())
+    ga('set', '&uid', '{{ App::getRequest()->session->auth->user->username() }}');
+  @endif
+
   ga('send', 'pageview');
 </script>
