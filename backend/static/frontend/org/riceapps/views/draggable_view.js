@@ -212,7 +212,57 @@ DraggableView.prototype.enterDocument = function() {
   this.getHandler().
     listen(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
     listen(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
-    listen(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_);
+    listen(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
+    listen(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
+    listen(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
+    listen(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
+    listen(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
+};
+
+
+/**
+ * Handler that captures touch events and re-dispatches them as mouse events.
+ * @param {!goog.events.BrowserEvent} event
+ * @private
+ * @suppress {visibility}
+ */
+DraggableView.prototype.handleTouchEvent_ = function(event) {
+  var touch = event.event_.changedTouches[0];
+  var touchTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+  var types = {};
+  types[goog.events.EventType.TOUCHSTART] = goog.events.EventType.MOUSEDOWN;
+  types[goog.events.EventType.TOUCHMOVE] = goog.events.EventType.MOUSEMOVE;
+  types[goog.events.EventType.TOUCHEND] = goog.events.EventType.MOUSEUP;
+  types[goog.events.EventType.TOUCHCANCEL] = goog.events.EventType.MOUSEUP;
+
+  // Create a simulated mouse event.
+  var simulatedEvent = document.createEvent("MouseEvent");
+  simulatedEvent.initMouseEvent(
+      /* type= */ types[event.type],
+      /* canBubble= */ true,
+      /* cancelable= */ true,
+      /* view= */ window,
+      /* detail= */ 1,
+      /* screenX = */ touch.screenX,
+      /* screenY= */ touch.screenY,
+      /* clientX= */ touch.clientX - (this.pageScroll_ ? this.pageScroll_.x : 0),
+      /* clientY= */ touch.clientY - (this.pageScroll_ ? this.pageScroll_.y : 0),
+      /* ctrlKey= */ false,
+      /* altKey= */false,
+      /* shiftKey= */false,
+      /* metaKey= */false,
+      /* button= */ 0,
+      /* relatedTarget= */ null);
+
+  if (event.type == goog.events.EventType.TOUCHSTART || touchTarget == null) {
+    // TOUCHSTART (MOUSEDOWN) should be dispatched from the triggering element.
+    touch.target.dispatchEvent(simulatedEvent);
+  } else {
+    // All other events should be dispatched from element being hovered over.
+    touchTarget.dispatchEvent(simulatedEvent);
+  }
+
+  event.preventDefault();
 };
 
 
@@ -229,7 +279,11 @@ DraggableView.prototype.exitDocument = function() {
   this.getHandler().
     unlisten(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
     unlisten(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
-    unlisten(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_);
+    unlisten(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
+    unlisten(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
+    unlisten(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
+    unlisten(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
+    unlisten(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
 };
 
 
@@ -409,21 +463,75 @@ DraggableView.prototype.handleScroll_ = function(opt_event) {
  */
 DraggableView.prototype.moveDragTooltipTo_ = function(position) {
   var viewport = goog.dom.getViewportSize();
+
   if (!this.dragTooltip_) // Verify that dragTooltip is non-null for the type checker
     throw new Error();
-  var tooltip = goog.style.getTransformedSize(this.dragTooltip_);
-  goog.style.setPosition(this.dragTooltip_,
-      Math.min(10 + position.x + this.pageScroll_.x, viewport.width - tooltip.width - 30),
-      Math.min(10 + position.y + this.pageScroll_.y, DomUtils.getDocumentHeight() - 30 - tooltip.height));
-  this.dragTooltipPosition_ = position;
 
-  if (viewport.height - position.y < DraggableView.SCROLL_TRIGGER_DISTANCE) {
-    DomUtils.setDocumentScroll(this.pageScroll_.y +
-        (DraggableView.SCROLL_TRIGGER_DISTANCE - (viewport.height - position.y)));
+  var tooltip = goog.style.getTransformedSize(this.dragTooltip_);
+
+  // Calculate the real coordinates (origin of viewpoint + position within viewport).
+  var real_x = this.pageScroll_.x + position.x;
+  var real_y = this.pageScroll_.y + position.y;
+
+  // Bound within the document.
+  if (real_x < 30) {
+    real_x = 30;
+  } else if (real_x > DomUtils.getDocumentWidth() - 30 - tooltip.width) {
+    real_x = DomUtils.getDocumentWidth() - 30 - tooltip.width;
   }
 
-  if (position.y < DraggableView.SCROLL_TRIGGER_DISTANCE) {
-    DomUtils.setDocumentScroll(this.pageScroll_.y - (DraggableView.SCROLL_TRIGGER_DISTANCE - position.y));
+  // Bound within the document.
+  if (real_y < 30) {
+    real_y = 30;
+  } else if (real_y > DomUtils.getDocumentHeight() - 30 - tooltip.height) {
+    real_y = DomUtils.getDocumentHeight() - 30 - tooltip.height;
+  }
+
+  goog.style.setPosition(this.dragTooltip_, real_x, real_y);
+  this.dragTooltipPosition_ = position;
+
+  /*/ Debug text.
+  window.console.log('====== EVENT FIRED ======');
+  window.console.log('document=', {
+    width: DomUtils.getDocumentWidth(),
+    height: DomUtils.getDocumentHeight()
+  });
+  window.console.log('viewport=', viewport);
+  window.console.log('scroll=', this.pageScroll_);
+  window.console.log('position=', position);
+  window.console.log('draw_at=', {x: real_x, y: real_y});*/
+
+  // Determine whether or not the new tooltip position should trigger a page scroll.
+  var newScroll = {
+    x: this.pageScroll_.x,
+    y: this.pageScroll_.y
+  };
+
+  // Scroll Horizontally: RIGHT
+  if (position.x + tooltip.width + DraggableView.SCROLL_TRIGGER_DISTANCE > this.pageScroll_.x + viewport.width) {
+    newScroll.x = this.pageScroll_.x + (DraggableView.SCROLL_TRIGGER_DISTANCE - (viewport.width - position.x));
+  }
+
+  // Scroll Horizontally: LEFT
+  else if (position.x - DraggableView.SCROLL_TRIGGER_DISTANCE < this.pageScroll_.x) {
+    newScroll.x = this.pageScroll_.x - (DraggableView.SCROLL_TRIGGER_DISTANCE - position.x);
+  }
+
+  // Scroll Vertically: DOWN
+  if (viewport.height - position.y < DraggableView.SCROLL_TRIGGER_DISTANCE) {
+    //newScroll.y = this.pageScroll_.y + (DraggableView.SCROLL_TRIGGER_DISTANCE - (viewport.height - position.y));
+    newScroll.y = this.pageScroll_.y + 30;
+  }
+
+  // Scroll Vertically: UP
+  else if (position.y < DraggableView.SCROLL_TRIGGER_DISTANCE) {
+    //newScroll.y = this.pageScroll_.y - (DraggableView.SCROLL_TRIGGER_DISTANCE - position.y);
+    newScroll.y = this.pageScroll_.y - 30;
+  }
+
+  // Apply any changes to scroll location.
+  if (newScroll.x != this.pageScroll_.x || newScroll.y != this.pageScroll_.y) {
+    DomUtils.setDocumentScrollLocation(newScroll.x, newScroll.y);
   }
 };
 
