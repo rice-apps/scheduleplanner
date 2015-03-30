@@ -41,7 +41,8 @@ var PlaygroundView = org.riceapps.views.PlaygroundView;
 /** @enum {string} */
 PlaygroundView.Theme = {
   BASE: 'playground-view',
-  DIRECTIONS: 'playground-view-directions'
+  DIRECTIONS: 'playground-view-directions',
+  CLEAR_ITEMS: 'clear-playground'
 };
 
 
@@ -90,8 +91,10 @@ PlaygroundView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), PlaygroundView.Theme.BASE);
 
-  this.clearPlaygroundElement_ = goog.dom.createDom(goog.dom.TagName.DIV, 'clear-playground');
+  this.clearPlaygroundElement_ = goog.dom.createDom(goog.dom.TagName.DIV, PlaygroundView.Theme.CLEAR_ITEMS);
   goog.dom.appendChild(this.getElement(), this.clearPlaygroundElement_);
+  goog.dom.setTextContent(this.clearPlaygroundElement_, 'Remove All Courses');
+  goog.style.setElementShown(this.clearPlaygroundElement_, false);
 
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, PlaygroundView.Theme.DIRECTIONS);
@@ -194,6 +197,10 @@ PlaygroundView.prototype.handleChildrenChanged_ = function(event) {
     this.hideDirections_();
   } else {
     this.showDirections_();
+  }
+
+  if (this.clearPlaygroundElement_) {
+    goog.style.setElementShown(this.clearPlaygroundElement_, this.hasChildren());
   }
 }
 
