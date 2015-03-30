@@ -34,6 +34,12 @@ org.riceapps.views.CalendarView = function() {
 
   /** @type {Element} */
   this.directionsElement_ = null;
+
+  /** @private {boolean} */
+  this.showSaturday_ = false;
+
+  /** @private {boolean} */
+  this.showSunday_ = false;
 };
 goog.inherits(org.riceapps.views.CalendarView,
               org.riceapps.views.View);
@@ -51,7 +57,7 @@ CalendarView.Theme = {
 
 
 /** @const {!Array.<string>} */
-CalendarView.DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+CalendarView.DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 
 /** @const {!Array.<string>} */
@@ -83,6 +89,26 @@ CalendarView.prototype.exitDocument = function() {
 
 
 /**
+ * @param {number} day
+ * @return {boolean}
+ */
+CalendarView.prototype.hasCoursesOnDay = function(day) {
+  var items = this.getCalendarItems();
+  for (var i = 0; i < items.length; i++) {
+    var times = items[i].getCalendarTimes();
+
+    for (var j = 0; j < times.length; j++) {
+      if (times[j]['day'] == day)  {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+
+/**
  * @param {!org.riceapps.events.ViewEvent} event
  */
 CalendarView.prototype.handleChildrenChanged_ = function(event) {
@@ -90,6 +116,15 @@ CalendarView.prototype.handleChildrenChanged_ = function(event) {
     this.hideDirections_();
   } else {
     this.showDirections_();
+  }
+
+  var oldShowSunday = this.showSunday_;
+  var oldShowSaturday = this.showSaturday_;
+  this.showSunday_ = this.hasCoursesOnDay(0);
+  this.showSaturday_ = this.hasCoursesOnDay(6);
+
+  if (oldShowSunday != this.showSunday_ || oldShowSaturday != this.showSaturday_) {
+    this.relayout();
   }
 }
 
@@ -137,11 +172,14 @@ CalendarView.prototype.createDom = function() {
   // Create the header row.
   row = goog.dom.createDom(goog.dom.TagName.TR);
   cell = goog.dom.createDom(goog.dom.TagName.TH, CalendarView.Theme.HOUR);
+  goog.dom.classlist.add(cell, 'cal-header-hour');
   goog.dom.appendChild(row, cell);
 
   for (i = 0; i < CalendarView.DAYS.length; i++) {
     cell = goog.dom.createDom(goog.dom.TagName.TH, CalendarView.Theme.DAY);
     goog.dom.setTextContent(cell, CalendarView.DAYS[i]);
+    goog.dom.classlist.add(cell, 'cal-toggle-day-' + i);
+    goog.dom.classlist.add(cell, 'cal-header-day-' + i);
     goog.dom.appendChild(row, cell);
   }
 
@@ -164,8 +202,10 @@ CalendarView.prototype.createDom = function() {
 
     // Add other columns.
     for (j = 0; j < CalendarView.DAYS.length; j++) {
+
       cell = goog.dom.createDom(goog.dom.TagName.TD);
       goog.dom.classlist.add(cell, 'cal-day-' + j);
+      goog.dom.classlist.add(cell, 'cal-toggle-day-' + j);
       goog.dom.appendChild(row, cell);
     }
 
@@ -176,6 +216,7 @@ CalendarView.prototype.createDom = function() {
 
     for (j = 0; j < CalendarView.DAYS.length; j++) {
       cell = goog.dom.createDom(goog.dom.TagName.TD);
+      goog.dom.classlist.add(cell, 'cal-toggle-day-' + j);
       goog.dom.appendChild(row, cell);
     }
 
@@ -203,8 +244,45 @@ CalendarView.prototype.createDom = function() {
  * @override
  */
 CalendarView.prototype.relayout = function(opt_preventAnimation) {
-  window.console.log('CalendarView.relayout');
+  window.console.log('CalendarView.relayout', {
+    'sunday' : this.showSunday_,
+    'saturday' : this.showSaturday_
+  });
+  var nodes;
+
+  // Hide/show columns as needed.
+  nodes = this.getElement().querySelectorAll('.cal-toggle-day-0');
+  for (var i = 0; i < nodes.length; i++) {
+    goog.style.setElementShown(nodes[i], this.showSunday_);
+  }
+
+  nodes = this.getElement().querySelectorAll('.cal-toggle-day-6');
+  for (var i = 0; i < nodes.length; i++) {
+    goog.style.setElementShown(nodes[i], this.showSaturday_);
+  }
+
+  var dayWidth = 18;
+  var hourWidth = 10;
+
+  if (this.showSunday_ && this.showSaturday_) {
+    dayWidth = 13;
+    hourWidth = 9;
+  } else if (this.showSunday_ || this.showSaturday_) {
+    dayWidth = 15;
+    hourWidth = 10;
+  }
+
+  goog.style.setStyle(this.getElement().querySelector('.cal-header-hour'), {'width': hourWidth + '%'});
+
+  for (var i = 0; i < CalendarView.DAYS.length; i++) {
+    goog.style.setStyle(this.getElement().querySelector('.cal-header-day-' + i),
+        {'width': dayWidth + '%'});
+  }
+
+  // Re-draw items on the calendar.
   this.calendarLayout_.relayout();
+
+  // Call the superclass.
   goog.base(this, 'relayout', opt_preventAnimation);
 };
 
@@ -222,6 +300,9 @@ CalendarView.prototype.addChildAt = function(child, index, opt_render) {
  * @override
  */
 CalendarView.prototype.getCalendarItemRect = function(day, start, end, offset, total) {
+  if (day == 0 && !this.showSunday_) return null;
+  if (day == 6 && !this.showSaturday_) return null;
+
   goog.asserts.assert(offset < total);
   goog.asserts.assert(start < end);
   var dom = this.getDomHelper();

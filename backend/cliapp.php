@@ -94,3 +94,19 @@ CLIApplication::listen('courses', function($args) {
   }
 });
 
+/**
+ * Regenerates the cache of course data.
+ */
+CLIApplication::listen('recache', function($args) {
+  $utility = new SchedulePlannerProtocolMessageUtility(App::getDatabase());
+  $response = $utility->createCoursesResponse(null);
+  $json = ProtocolMessage::serialize($response);
+
+  try {
+    $file = new File(FILE_ROOT.'/cache/courses.json');
+    $file->content = "')]}\n".$json;
+  } catch (FileException $e) {
+    fprintf(STDOUT, "Failed to write file cache, continuing.\n");
+  }
+  fprintf(STDOUT, "Done!\n");
+});

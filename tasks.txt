@@ -37,5 +37,4 @@ FRONT-END:
 
     - Integration with RiceApps Atlas for course locations
 
-    - Support for Saturday and Sunday classes on calendar (by dynamically showing those days if and only if a course meeting on those days is being dragged or a course on the calendar meets on those days)
 

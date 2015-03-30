@@ -163,15 +163,11 @@ CourseModel.prototype.getCalendarMeetingTimes = function() {
     // the other front-end components.
     var time = this.data_['meetingTimes'][i];
     var t = {
-      'day' : time['day'] - 1,
+      'day' : time['day'],
       'start' : time['start'] / 60,
       'end' : time['end'] / 60,
       'location' : time['building'] + ' ' + time['room']
     };
-
-    if (t['day'] < 0 || t['day'] > 4) {
-      continue;
-    }
 
     times.push(t);
   }

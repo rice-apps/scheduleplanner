@@ -136,6 +136,11 @@ CourseCalendarView.prototype.makeBoxesInRects_ = function(rects) {
 
   for (var i = 0; i < times.length; i++) {
     var rect = rects[i];
+
+    if (rect == null) {
+      continue;
+    }
+
     var numberOfDetails = Math.floor(rect.height / 15);
 
     var element = goog.dom.createDom(goog.dom.TagName.DIV, CourseCalendarView.Theme.BASE);

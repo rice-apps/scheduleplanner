@@ -41,7 +41,9 @@ CalendarLayout.prototype.naiveRelayout_ = function() {
     var rects = [];
 
     for (var j = 0; j < times.length; j++) {
-      rects.push(this.calendar_.getCalendarItemRect(times[j]['day'], times[j]['start'], times[j]['end'], 0 , 1));
+      var rect = this.calendar_.getCalendarItemRect(times[j]['day'], times[j]['start'], times[j]['end'], 0 , 1);
+
+      rects.push(rect);
     }
 
     items[i].drawInRects(rects);
@@ -82,13 +84,16 @@ CalendarLayout.prototype.relayout = function() {
 
     for (var j = 0; j < times.length; j++) {
       var place = this.getLimit_(matrix, item, times[j]['day'], times[j]['start'], times[j]['end'], offsets[i][j]);
-      rects.push(this.calendar_.getCalendarItemRect(
+
+      var rect = this.calendar_.getCalendarItemRect(
         times[j]['day'],
         times[j]['start'],
         times[j]['end'],
         place.offset,
         place.limit
-      ));
+      );
+
+      rects.push(rect);
     }
 
     items[i].drawInRects(rects);
@@ -275,7 +280,8 @@ org.riceapps.layouts.CalendarLayout.Item = function() {};
 /**
  * Informs the item of the positions and dimensions in which it should render itself.
  * The rectangles are in order corresponding to the order provided by the last call to getCalendarTimes().
- * @param {!Array.<!goog.math.Rect>} rects
+ * The rectangles MAY BE NULL (if unable to display that time).
+ * @param {!Array.<goog.math.Rect>} rects
  */
 org.riceapps.layouts.CalendarLayout.Item.prototype.drawInRects = function(rects) {};
 
