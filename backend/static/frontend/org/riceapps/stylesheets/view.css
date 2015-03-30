@@ -530,6 +530,20 @@ html, body {
   cursor: pointer;
 }
 
+.clear-playground {
+  position: relative;
+  left: 25%;
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-image: url('./delete.png');
+  background-size: 60% 60%;
+  background-position: center;
+  border-radius: 50%;
+  transition: background-color 0.5s ease;
+  z-index: 1;
+}
+
 .crn-view.crn-view-hover {
   cursor: pointer;
   background-color: rgba(241,231,103,0.7);

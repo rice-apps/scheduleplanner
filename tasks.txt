@@ -1,4 +1,5 @@
 FRONT-END:
+
   MEDIUM PRIORITY (launch blockers):
 
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
@@ -30,11 +31,9 @@ FRONT-END:
 
     - Search Functionality: support for conflicts and hide full filters. See SearchView, CoursesModel.
 
-    - Search Functionality: improvement to sorting (e.g. a search for "COMP" should yield all CS courses in order by ascending course number)
-
     - Search View: better looking hide (cancel) button
 
-    - Search View: scroll results to top when they change, sorting still a bit gross (e.g. "COMP" doesnt list by ascending course number)
+    - Search View: scroll results to top when they change
 
     - Integration with RiceApps Atlas for course locations
 
