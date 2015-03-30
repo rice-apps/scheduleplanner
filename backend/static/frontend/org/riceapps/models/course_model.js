@@ -172,6 +172,19 @@ CourseModel.prototype.getCalendarMeetingTimes = function() {
     times.push(t);
   }
 
+  // Courses that are not scheduled should be able to be placed on the calendar.
+  // TODO(mschurr): Remove this once better UI has been found.
+  if (times.length == 0) {
+    var t = {
+      'day' : 0,
+      'start' : 12,
+      'end' : 13,
+      'location' : 'INDEP. STUDY'
+    };
+
+    times.push(t);
+  }
+
   return times;
 };
 
