@@ -215,6 +215,7 @@ CourseModel.prototype.getMeetingTimesAsString = function() {
 
 /**
 * Returns time as a string in standard hh:mm format.
+* @param {string} time
 * @return {string}
 */
 CourseModel.prototype.timeToString = function(time) {
@@ -225,7 +226,7 @@ CourseModel.prototype.timeToString = function(time) {
   } else {
   return '' + hour + ":" + min;
   }
-}
+};
 
 /**
  * Returns the names of all instructors as a string.
