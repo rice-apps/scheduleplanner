@@ -338,22 +338,21 @@ CourseModel.prototype.getTitle = function() {
 };
 
 /**
- * This function gives you the score for how well this course matches the query.
- * Correct number is a score of 3, correct subject is a score of 2, correct title is a score of 1.
+ * Returns a score indicating how well a given course matches a query string.
  * @param {string} query
  * @return {number}
  */
-CourseModel.prototype.getMatchScore = function(query, queryNumber) {
-  var total = 0;
+CourseModel.prototype.getMatchScore = function(query) {
+  var queryNumbersMatch = query.match(/(?:^|\D)(\d\d?\d?)/);
+  var queryNumber = null;
 
-  if (queryNumber === this.data_['courseNumber'] + '') {
-    total += 3;
-  } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,2)) {
-    total += 2.5;
-  } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,1)) {
-    total += 2.2;
+  if (queryNumbersMatch) {
+    queryNumber = queryNumbersMatch[1];
   }
 
+  var total = 0;
+
+  // Assign points for matching the instructor.
   var foundInstructor = false;
   for (var i = 0; i < this.instructorModels_.length; i++) {
     if (goog.string.caseInsensitiveContains(this.instructorModels_[i].getName(), query)) {
@@ -365,13 +364,27 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
     total += 0.8;
   }
 
-
+  // Assign points for matching the subject.
   if (goog.string.caseInsensitiveContains(query, this.data_['subject'])) {
     total += 2;
   }
 
-  if (goog.string.caseInsensitiveContains(this.data_['title'], query)) {
+  // Assign points for matchig the title (but not if already got points from subject).
+  else if (goog.string.caseInsensitiveContains(this.data_['title'], query)) {
     total += 1;
+  }
+
+  // Assign points based on course number (but only if something else was matched).
+  if (total > 0 && queryNumber != null) {
+    if (queryNumber === this.data_['courseNumber'] + '') {
+      total += 3;
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,2)) {
+      total += 2.5;
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,1)) {
+      total += 2.2;
+    } else {
+      total -= 2; // For matching subject or title but not matching number.
+    }
   }
 
   return total;

@@ -102,55 +102,64 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
   }
   */
 
-  var numberRegularExpression = /(?:^|\D)(\d\d?\d?)/;
-
-  var queryNumbersMatch = query.match(numberRegularExpression);
-  var queryNumber = null;
-
-  if (queryNumbersMatch)
-    queryNumber = queryNumbersMatch[1];
-
   var limit = opt_limit || 250;
   var results = [];
   var keys = this.courses_.getKeys();
   var used = new goog.structs.Set();
 
+  // To search, loop through all courses...
   for (var i = 0; i < keys.length; i++) {
     var course = this.courses_.get(keys[i]);
 
-    if (!course.passesFilters(filters, opt_userModel))
-      continue;
-
-    if (course.getMatchScore(query,queryNumber) <= 0) {
+    // Ensure that the course passes the filters.
+    if (!course.passesFilters(filters, opt_userModel)) {
       continue;
     }
 
+    // Ensure that the course matches the query in some way.
+    if (course.getMatchScore(query) <= 0) {
+      continue;
+    }
+
+    // Ensure that another section of the course is not already in the result set.
     var category = course.getCourseCategory();
     if (used.contains(category)) {
       continue;
     }
 
+    // Ensure that the course (or some section of it) is not already present on the user's calendar or playground.
     if (opt_userModel) {
       if (this.userModelContainsCourse_(opt_userModel, course)) {
         continue;
       }
     }
 
+    // If we get here, the course matched the query so append it to the results.
     results.push(course);
+
+    // And make sure to add the category so additional sections of the course will not be added to the result set.
     used.add(category);
   }
 
+  // Lastly, sort the results in order by how well they matched the query.
+  // Sorting Order: SCORE DESC, SUBJ ASC, COURSE NUMBER ASC
   results.sort(function(a,b) {
-    if (a.getMatchScore(query,queryNumber) > b.getMatchScore(query,queryNumber)) {
+    if (a.getMatchScore(query) > b.getMatchScore(query)) {
       return -1;
-    } else if (a.getMatchScore(query,queryNumber) < b.getMatchScore(query,queryNumber)) {
+    } else if (a.getMatchScore(query) < b.getMatchScore(query)) {
       return 1;
     } else {
-      return a.getCourseNumber() - b.getCourseNumber();
+      if (a.getSubject() == b.getSubject()) {
+        return a.getCourseNumber() - b.getCourseNumber();
+      } else {
+        return goog.string.caseInsensitiveCompare(a.getSubject(), b.getSubject());
+      }
     }
   });
 
-  return results.slice(0,limit);
+  // Lastly, cut the results to match the user-requested limit.
+  results = results.slice(0, limit);
+  return results;
 };
 
 
