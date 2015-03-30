@@ -1,3 +1,8 @@
+/**
+ * A course model is a class that represents a single course and provides convenient methods to access information about
+ * that course.
+ */
+
 goog.provide('org.riceapps.models.CourseModel');
 
 goog.require('goog.Promise');
@@ -42,6 +47,7 @@ org.riceapps.models.CourseModel = function(data, coursesModel) {
 goog.inherits(org.riceapps.models.CourseModel,
               org.riceapps.models.Model);
 var CourseModel = org.riceapps.models.CourseModel;
+
 
 /**
  * Represents the state of the filters for a given query.
@@ -91,6 +97,9 @@ CourseModel.prototype.getId = function() {
 };
 
 
+/**
+ * @return {boolean}
+ */
 CourseModel.prototype.assertDistribution = function(type) {
   return this.getDistributionType() === type;
 }
@@ -110,14 +119,15 @@ CourseModel.prototype.passesFilters = function(filters, opt_userModel) {
   };
 
   return (
-    (filters.normal && this.assertDistribution(0)) ||
-    (filters.d1 && this.assertDistribution(1)) ||
-    (filters.d2 && this.assertDistribution(2)) ||
-    (filters.d3 && this.assertDistribution(3)));
+      (filters.normal && this.assertDistribution(0)) ||
+      (filters.d1 && this.assertDistribution(1)) ||
+      (filters.d2 && this.assertDistribution(2)) ||
+      (filters.d3 && this.assertDistribution(3)));
 };
 
 
 /**
+ * Returns all of the meeting times for the course.
  * @return {!Array.<!CourseModel.MeetingTime>}
  */
 CourseModel.prototype.getMeetingTimes = function() {
@@ -218,6 +228,7 @@ CourseModel.prototype.timeToString = function(time) {
 }
 
 /**
+ * Returns the names of all instructors as a string.
  * @return {string}
  */
 CourseModel.prototype.getInstructorNames = function() {
@@ -236,6 +247,16 @@ CourseModel.prototype.getInstructorNames = function() {
 
 
 /**
+ * Returns all instructors for the course.
+ * @return {!Array.<!org.riceapps.models.InstructorModel>}
+ */
+CourseModel.prototype.getInstructors = function() {
+  return this.instructorModels_;
+};
+
+
+/**
+ * Returns the first instructor for the course.
  * @return {!org.riceapps.models.InstructorModel}
  */
 CourseModel.prototype.getInstructor = function() {
@@ -312,26 +333,25 @@ CourseModel.prototype.getSubjectAndCourseNumber = function() {
  * @return {string}
  */
 CourseModel.prototype.getTitle = function() {
-  //return '[' + this.data_['courseId'] + '] ' + this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
   return this.data_['subject'] + ' ' + this.data_['courseNumber'] + ': ' + this.data_['title'];
 };
 
 /**
- * This function gives you the score for how well this course matches the query.
- * Correct number is a score of 3, correct subject is a score of 2, correct title is a score of 1.
+ * Returns a score indicating how well a given course matches a query string.
  * @param {string} query
  * @return {number}
  */
-CourseModel.prototype.getMatchScore = function(query, queryNumber) {
+CourseModel.prototype.getMatchScore = function(query) {
+  var queryNumbersMatch = query.match(/(?:^|\D)(\d\d?\d?)/);
+  var queryNumber = null;
+
+  if (queryNumbersMatch) {
+    queryNumber = queryNumbersMatch[1];
+  }
+
   var total = 0;
 
-  if (queryNumber === this.data_['courseNumber']+'')
-    total += 3;
-  else if (queryNumber === (this.data_['courseNumber']+'').substring(0,2))
-    total += 2.5;
-  else if (queryNumber === (this.data_['courseNumber']+'').substring(0,1))
-    total += 2.2;
-
+  // Assign points for matching the instructor.
   var foundInstructor = false;
   for (var i = 0; i < this.instructorModels_.length; i++) {
     if (goog.string.caseInsensitiveContains(this.instructorModels_[i].getName(), query)) {
@@ -339,16 +359,32 @@ CourseModel.prototype.getMatchScore = function(query, queryNumber) {
     }
   }
 
-  if (foundInstructor)
+  if (foundInstructor) {
     total += 0.8;
+  }
 
-
-  if (goog.string.caseInsensitiveContains(query,this.data_['subject']))
+  // Assign points for matching the subject.
+  if (goog.string.caseInsensitiveContains(query, this.data_['subject'])) {
     total += 2;
-  if (goog.string.caseInsensitiveContains(this.data_['title'], query))
+  }
+
+  // Assign points for matchig the title (but not if already got points from subject).
+  else if (goog.string.caseInsensitiveContains(this.data_['title'], query)) {
     total += 1;
-  if (goog.string.caseInsensitiveContains(this.data_['title'], this.data_['subject']))
-    total -= 1;
+  }
+
+  // Assign points based on course number (but only if something else was matched).
+  if (total > 0 && queryNumber != null) {
+    if (queryNumber === this.data_['courseNumber'] + '') {
+      total += 3;
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,2)) {
+      total += 2.5;
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,1)) {
+      total += 2.2;
+    } else {
+      total -= 2; // For matching subject or title but not matching number.
+    }
+  }
 
   return total;
 };
@@ -454,6 +490,7 @@ CourseModel.prototype.getAllSections = function() {
 
 
 /**
+ * An array from which to assign colors to courses; each are [R,G,B] tuples.
  * @const {!Array.<!goog.color.Rgb>}
  */
 CourseModel.COLORS = [ // from http://www.google.com/design/spec/style/color.html#color-color-palette
@@ -485,6 +522,7 @@ CourseModel.NEXT_COLOR = 0;
 
 
 /**
+ * Returns color that should be used to represent this course on the UI.
  * @return {!goog.color.Rgb}
  */
 CourseModel.prototype.getColor = function() {
@@ -535,7 +573,6 @@ CourseModel.prototype.getTermAsString = function() {
       return 'Unknown';
   }
 };
-
 
 
 /**
@@ -661,7 +698,7 @@ CourseModel.prototype.isCrosslistedWith = function(otherCourse) {
 
 /**
  * Returns all crosslisted sections of the current course (including this one).
- * @param {boolean} opt_hideSelf
+ * @param {boolean=} opt_hideSelf
  * @return {!Array.<!CourseModel>}
  */
 CourseModel.prototype.getAllCrosslistedSections = function(opt_hideSelf) {
@@ -677,7 +714,7 @@ CourseModel.prototype.getAllCrosslistedSections = function(opt_hideSelf) {
 
 /**
  * Returns titles of all crosslisted sections of the current course (excluding this one) as a string.
- * @return {!Array.<string>}
+ * @return {string}
  */
 CourseModel.prototype.getAllCrosslistedSectionsAsString = function() {
   var data = this.getAllCrosslistedSections();
@@ -756,6 +793,7 @@ CourseModel.prototype.getEnrollment = function() {
 CourseModel.prototype.getWaitlisted = function() {
   return this.data_['waitlisted'];
 };
+
 
 /**
  * @return {string}

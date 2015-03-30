@@ -34,6 +34,17 @@ DomUtils.getComputedInnerSize = function(element) {
 
 
 /**
+ * @param {number} x
+ * @param {number} y
+ */
+DomUtils.setDocumentScrollLocation = function(x, y) {
+  x = Math.max(Math.min(x, DomUtils.getDocumentWidth()), 0);
+  y = Math.max(Math.min(y, DomUtils.getDocumentHeight()), 0);
+  window.scroll(x, y);
+};
+
+
+/**
  * @param {number} distance
  */
 DomUtils.setDocumentScroll = function(distance) {
@@ -41,6 +52,30 @@ DomUtils.setDocumentScroll = function(distance) {
 
   var scroll = goog.dom.getDocumentScroll();
   window.scroll(scroll.x, distance);
+};
+
+
+/**
+ * @param {number} distance
+ */
+DomUtils.setDocumentScrollHorizontal = function(distance) {
+  distance = Math.max(Math.min(distance, DomUtils.getDocumentWidth()), 0);
+
+  var scroll = goog.dom.getDocumentScroll();
+  window.scroll(distance, scroll.y);
+};
+
+
+/**
+ * @return {number}
+ */
+DomUtils.getDocumentWidth = function() {
+  return Math.max(
+      document.documentElement['clientWidth'],
+      document.body['scrollWidth'],
+      document.documentElement['scrollWidth'],
+      document.body['offsetWidth'],
+      document.documentElement['offsetWidth']);
 };
 
 

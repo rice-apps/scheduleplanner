@@ -34,7 +34,7 @@ org.riceapps.views.ToolbarView = function(searchView) {
   /** @private {!org.riceapps.views.TrashView} */
   this.trashView_ = new org.riceapps.views.TrashView();
   this.addChild(this.trashView_);
-  
+
   /** @private {Element} */
   this.searchInput_ = null;
 
@@ -82,6 +82,10 @@ ToolbarView.Theme = {
 ToolbarView.DEFAULT_QUERY = 'Find Courses...';
 
 
+/** @const {number} */
+ToolbarView.STOPPED_TYPING_DELAY = 400;
+
+
 /**
  * @return {!org.riceapps.views.TrashView}
  */
@@ -116,7 +120,7 @@ ToolbarView.prototype.createDom = function() {
   var titleElement = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.TITLE);
   goog.dom.setTextContent(titleElement, 'Schedule Planner');
   goog.dom.appendChild(this.getElement(), titleElement);
-  
+
   var crnElement = goog.dom.createDom(goog.dom.TagName.DIV, 'crn-view');
   goog.dom.appendChild(this.getElement(), crnElement);
   this.crnElement_ = crnElement;
@@ -208,8 +212,8 @@ ToolbarView.prototype.onCRNViewClick_ = function(event) {
 ToolbarView.prototype.onSearchInputBlur_ = function(opt_event) {
   if (this.searchInput_.value == '') {
     this.searchInput_.value = ToolbarView.DEFAULT_QUERY;
-    goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
-    this.searchView_.hide();
+    //goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+    //this.searchView_.hide();
   }
 };
 
@@ -222,6 +226,15 @@ ToolbarView.prototype.resetInput = function() {
   goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
   this.searchInput_.blur();
   this.onSearchQueryChanged_('');
+};
+
+
+/**
+ *
+ */
+ToolbarView.prototype.blurInput = function() {
+  goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+  this.searchInput_.blur();
 };
 
 
@@ -241,6 +254,7 @@ ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
 
 /**
  * @param {goog.events.KeyEvent} event
+ * @private
  */
 ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (event.keyCode == goog.events.KeyCodes.ESC) {
@@ -249,8 +263,22 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (goog.events.KeyCodes.isTextModifyingKeyEvent(event) &&
       /*this.searchInput_.value.length > 2 &&*/
       this.searchInput_.value != ToolbarView.DEFAULT_QUERY) {
-    this.onSearchQueryChanged_(this.searchInput_.value);
+
+    if (this.updateSearchTimer_ != -1) {
+      goog.Timer.clear(this.updateSearchTimer_);
+      this.updateSearchTimer_ = -1;
+    }
+
+    this.updateSearchTimer_ = goog.Timer.callOnce(this.userDidStopTyping_, ToolbarView.STOPPED_TYPING_DELAY, this);
   }
+};
+
+
+/**
+ * @private
+ */
+ToolbarView.prototype.userDidStopTyping_ = function() {
+  this.onSearchQueryChanged_(this.searchInput_.value);
 };
 
 
@@ -258,6 +286,12 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
  * @param {string} query
  */
 ToolbarView.prototype.onSearchQueryChanged_ = function(query) {
+  if (this.updateSearchTimer_ != -1) {
+    goog.Timer.clear(this.updateSearchTimer_);
+    this.updateSearchTimer_ = -1;
+  }
+
   this.searchView_.setQuery(query);
 };
+
 }); // goog.scope

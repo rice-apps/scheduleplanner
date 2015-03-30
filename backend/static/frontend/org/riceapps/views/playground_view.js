@@ -108,6 +108,11 @@ PlaygroundView.prototype.createDom = function() {
     'To remove a course, drag it to the trash can.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(directionsSpan,
+    'You can click on any course to view additional information.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+
   this.showDirections_();
 };
 

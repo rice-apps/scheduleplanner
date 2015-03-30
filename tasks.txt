@@ -2,6 +2,7 @@ FRONT-END:
   MEDIUM PRIORITY (launch blockers):
 
     - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
+      NOTE: need to show both TITLE and CRN for ease.. possibly put them in text fields and have clicking the field select and copy the CRN for the user.
 
   LOW PRIORITY:
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
@@ -33,3 +34,6 @@ FRONT-END:
 
     - Search View: better looking hide (cancel) button
 
+    - Search View: scroll results to top when they change, sorting still a bit gross (e.g. "COMP" doesnt list by ascending course number)
+
+    - Integration with RiceApps Atlas for course locations
