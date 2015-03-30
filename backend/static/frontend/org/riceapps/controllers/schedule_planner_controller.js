@@ -19,6 +19,7 @@ goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.CourseModalView');
 goog.require('org.riceapps.views.CRNModalView');
 goog.require('org.riceapps.views.SchedulePlannerView');
+goog.require('org.riceapps.views.PlaygroundView');
 
 
 goog.scope(function() {
@@ -79,6 +80,25 @@ SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
   if (this.userModel_ != null && event.type == "sp_crn_click"){
     var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
     modalView.disposeOnHide().show();
+  }
+};
+
+/**
+ * Event handler; called when clear playground button is clicked. Clears all courses from the playground.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
+  if (this.userModel_ != null && event.type == SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK){
+    var playground_view = this.view_.getPlaygroundView();
+    var course_count = playground_view.getChildCount();
+    for (var i = 0; i < course_count; i++) {
+      var first_child = playground_view.getChildAt(i);
+      // Update the user model.
+      this.userModel_.removeCoursesFromPlayground([first_child.getCourseModel()]);
+    }
+    // Dispose of the view.
+    playground_view.removeChildren(true);
   }
 };
 
@@ -265,9 +285,9 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
     listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
-	listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
-    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_);
-
+	  listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
+    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
+    listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_);
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
   this.view_.getLoadingInterruptView().hide();
@@ -401,7 +421,8 @@ SchedulePlannerController.prototype.start = function() {
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
-	listen(this.view_, DraggableView.EventType.CLICK, this.onCRNViewClick_).
+	  listen(this.view_, DraggableView.EventType.CLICK, this.onCRNViewClick_).
+    listen(this.view_, goog.events.EventType.CLICK, this.onClearPlaygroundClick_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
     listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
