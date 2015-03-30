@@ -70,6 +70,7 @@ class UserRequestProtocolMessage extends ProtocolMessage {
   public /*int*/ $userId;
   public /*string*/ $xsrfToken;
   public /*boolean*/ $hasSeenTour;
+  public /*boolean*/ $hasAgreedToDisclaimer;
   public /*PlaygroundProtocolMessage*/ $playground;
   public /*ScheduleProtocolMessage */ $schedule;
 
@@ -86,6 +87,7 @@ class UserModelProtocolMessage extends ProtocolMessage {
   public /*string*/ $userName;
   public /*string*/ $xsrfToken;
   public /*boolean*/ $hasSeenTour;
+  public /*boolean*/ $hasAgreedToDisclaimer;
   public /*PlaygroundProtocolMessage*/ $playground;
   public /*ScheduleProtocolMessage */ $schedule;
 
@@ -102,6 +104,7 @@ class UserModelProtocolMessage extends ProtocolMessage {
            $this->userName !== null &&
            $this->xsrfToken !== null &&
            $this->hasSeenTour !== null &&
+           $this->hasAgreedToDisclaimer !== null &&
            $this->playground->validate() &&
            $this->schedule->validate() &&
            is_integer($this->userId);
@@ -263,6 +266,7 @@ class CourseModelProtocolMessage extends ProtocolMessage {
 class SchedulePlannerProtocolMessageUtility {
   const XSRF_PROPERTY = '_xsrf';
   const TOUR_PROPERTY = 'tour';
+  const DISCLAIMER_PROPERTY = 'disclaimer';
 
   protected /*Database*/ $db;
 
@@ -278,12 +282,15 @@ class SchedulePlannerProtocolMessageUtility {
     $user = $session->auth->user;
     $hasSeenTour = $user->hasProperty(static::TOUR_PROPERTY)
         ? $user->getProperty(static::TOUR_PROPERTY) : false;
+    $hasAgreedToDisclaimer = $user->hasProperty(static::DISCLAIMER_PROPERTY)
+        ? $user->getProperty(static::DISCLAIMER_PROPERTY) : false;
 
     $message = new UserModelProtocolMessage;
     $message->userId = (int) $user->id;
     $message->userName = $user->username;
     $message->xsrfToken = $this->createXsrfToken($session);
     $message->hasSeenTour = $hasSeenTour;
+    $message->hasAgreedToDisclaimer = $hasAgreedToDisclaimer;
     $message->playground = $this->createPlayground($user);
     $message->schedule = $this->createSchedule($user);
     return $message;

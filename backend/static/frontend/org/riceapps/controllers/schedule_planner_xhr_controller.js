@@ -217,6 +217,7 @@ SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
     'userId': this.userModel_.getUserId(),
     'xsrfToken': this.userModel_.getXsrfToken(),
     'hasSeenTour': this.userModel_.hasSeenTour(),
+    'hasAgreedToDisclaimer': this.userModel_.hasAgreedToDisclaimer(),
     'playground': {
       'courses': []
     },
