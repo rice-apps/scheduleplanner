@@ -76,7 +76,7 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
-  if (this.userModel_ != null && event.type == "sp_crn_click"){
+  if (this.userModel_ != null && event.type == SchedulePlannerEvent.Type.CRN_CLICK) {
     var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
     modalView.disposeOnHide().show();
   }
@@ -265,12 +265,17 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
     listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
-	listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
+    listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
+    listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_);
 
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
   this.view_.getLoadingInterruptView().hide();
+
+  if (!this.userModel_.hasAgreedToDisclaimer()) {
+    this.view_.getFerpaInterruptView().show();
+  }
 }
 
 
@@ -283,6 +288,14 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
     this.userModel_.getCreditHoursInSchedule(1),
     this.userModel_.getCreditHoursInSchedule(2),
     this.userModel_.getCreditHoursInSchedule(3));
+};
+
+
+/**
+ * @param {SchedulePlannerEvent=} opt_event
+ */
+SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
+  this.userModel_.setHasAgreedToDisclaimer(true);
 };
 
 

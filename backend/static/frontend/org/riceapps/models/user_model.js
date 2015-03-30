@@ -41,6 +41,9 @@ org.riceapps.models.UserModel = function(data) {
 
   /** @private {boolean} */
   this.hasSeenTour_ = data['hasSeenTour'];
+
+  /** @private {boolean} */
+  this.hasAgreedToDisclaimer_ = data['hasAgreedToDisclaimer'];
 };
 goog.inherits(org.riceapps.models.UserModel,
               org.riceapps.models.Model);
@@ -108,6 +111,27 @@ UserModel.prototype.setHasSeenTour = function(hasSeenTour) {
   this.hasSeenTour_ = hasSeenTour;
 
   if (oldHasSeenTour != hasSeenTour) {
+    this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
+  }
+}
+
+
+/**
+ * @return {boolean}
+ */
+UserModel.prototype.hasAgreedToDisclaimer = function() {
+  return this.hasAgreedToDisclaimer_;
+};
+
+
+/**
+ * @param {boolean} hasAgreedToDisclaimer
+ */
+UserModel.prototype.setHasAgreedToDisclaimer = function(hasAgreedToDisclaimer) {
+  var oldHasAgreedToDisclaimer = this.hasAgreedToDisclaimer_;
+  this.hasAgreedToDisclaimer_ = hasAgreedToDisclaimer;
+
+  if (oldHasAgreedToDisclaimer != hasAgreedToDisclaimer) {
     this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
   }
 }

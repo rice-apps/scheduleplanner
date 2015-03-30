@@ -87,6 +87,7 @@ Messages.CoursesRequest;
  *   userId: number,
  *   xsrfToken: string,
  *   hasSeenTour: boolean,
+ *   hasAgreedToDisclaimer: boolean,
  *   playground: Messages.SimpleCourseList,
  *   schedule: Messages.SimpleCourseList
  * }}
@@ -116,6 +117,7 @@ Messages.SimpleCourse;
  *   userName: string,
  *   xsrfToken: string,
  *   hasSeenTour: boolean,
+ *   hasAgreedToDisclaimer: boolean,
  *   playground: Messages.Playground,
  *   schedule: Messages.Schedule
  * }}

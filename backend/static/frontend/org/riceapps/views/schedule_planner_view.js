@@ -5,6 +5,7 @@ goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('org.riceapps.views.CalendarView');
 goog.require('org.riceapps.views.CourseView');
+goog.require('org.riceapps.views.FerpaInterruptView');
 goog.require('org.riceapps.views.FooterView');
 goog.require('org.riceapps.views.InterruptView');
 goog.require('org.riceapps.views.ModalView');
@@ -60,6 +61,9 @@ org.riceapps.views.SchedulePlannerView = function() {
 
   /** @private {!org.riceapps.views.InterruptView} */
   this.errorInterruptView_ = this.createErrorInterruptView_();
+
+  /** @private {!org.riceapps.views.FerpaInterruptView} */
+  this.ferpaInterruptView_ = new org.riceapps.views.FerpaInterruptView();
 };
 goog.inherits(org.riceapps.views.SchedulePlannerView,
               org.riceapps.views.View);
@@ -144,6 +148,14 @@ SchedulePlannerView.prototype.getErrorInterruptView = function() {
 
 
 /**
+ * @return {!org.riceapps.views.InterruptView}
+ */
+SchedulePlannerView.prototype.getFerpaInterruptView = function() {
+  return this.ferpaInterruptView_;
+};
+
+
+/**
  * @return {!org.riceapps.views.CalendarView}
  */
 SchedulePlannerView.prototype.getCalendarView = function() {
@@ -168,8 +180,6 @@ SchedulePlannerView.prototype.getSearchView = function() {
 };
 
 
-
-
 /**
  * @return {!org.riceapps.views.PlaygroundView}
  */
@@ -184,6 +194,7 @@ SchedulePlannerView.prototype.getPlaygroundView = function() {
 SchedulePlannerView.prototype.getTrashView = function() {
   return this.toolbarView_.getTrashView();
 };
+
 
 /**
  * @override

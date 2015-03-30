@@ -26,6 +26,8 @@ class UserController extends Controller {
 
     $this->user->setProperty(SchedulePlannerProtocolMessageUtility::TOUR_PROPERTY,
         $message->hasSeenTour === true);
+    $this->user->setProperty(SchedulePlannerProtocolMessageUtility::DISCLAIMER_PROPERTY,
+        $message->hasAgreedToDisclaimer === true);
 
     $this->db->prepare("DELETE FROM `playgrounds` WHERE `userid` = ?")->execute($this->user->id);
     $q = $this->db->prepare("INSERT INTO `playgrounds` (`userid`, `courseid`) VALUES (?, ?);");
