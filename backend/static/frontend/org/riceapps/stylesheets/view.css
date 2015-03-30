@@ -675,6 +675,7 @@ html, body {
   min-height: 70px;
   left: calc(40% - 20px) !important;
   min-width: 400px;
+  margin-bottom: 200px;
 }
 
 .course-modal-view .title:first-child {
@@ -690,6 +691,7 @@ html, body {
 .course-modal-view .subtitle, .crn-modal-view .subtitle {
   font-size: 18px;
   line-height: 22px;
+  margin-top: 8px;
 }
 
 .crn-modal-view .container,  {

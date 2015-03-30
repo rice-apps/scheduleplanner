@@ -1,10 +1,5 @@
 FRONT-END:
 
-  MEDIUM PRIORITY (launch blockers):
-
-    - Add an option to export courses for registration (just a pop-up with a list of CRNs that ESTHER requires, inherit from ModalView). This option should be clickable from the Toolbar.
-      NOTE: need to show both TITLE and CRN for ease.. possibly put them in text fields and have clicking the field select and copy the CRN for the user.
-
   LOW PRIORITY:
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 
@@ -25,7 +20,7 @@ FRONT-END:
 
     - Drag and Drop should support touch screen; need to add support for touch events.
 
-    - Add button to toolbar to clear calendar and playground.
+    - Add button to toolbar to clear calendar.
 
     - Compatability testing with IE, Firefox, Safari, Opera, mobile.
 
