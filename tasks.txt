@@ -3,7 +3,8 @@ FRONT-END:
   LOW PRIORITY:
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 
-    - Implement TourView, an interactive slideshow that explains how to use the application. The tour should be shown to each user automatically the first time they view the application, and should not be shown on subsequent visits (use UserModel hasSeenTour and setHasSeenTour). Add link to open tour on navigation bar as "Help".
+    - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
+      NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
 
     - Add right-click context menu to all course views in calendar, search, and playground w/ options:
       * Switch Sections (from calendar to calendar)
@@ -20,8 +21,6 @@ FRONT-END:
       NOTE: Currently these can just be placed Sunday @ NOON, but that's a temporary fix.
 
     - For courses that have only one section: allow the course to just be dropped straight onto the calendar so that the user doesn't actually have to aim and drop it on the guide views.
-
-    - Drag and Drop should support touch screen; need to add support for touch events.
 
     - Add button to toolbar to clear calendar.
 
