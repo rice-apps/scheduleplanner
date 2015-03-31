@@ -41,6 +41,7 @@ SchedulePlannerEvent.Type = {
   UPDATE_SEARCH: 'sp_update_search',
   CRN_CLICK: 'sp_crn_click',
   AGREE_DISCLAIMER: 'sp_disclaimer_agree',
+  EXIT_TOUR: 'sp_tour_exit',
   CLEAR_PLAYGROUND_CLICK: 'sp_clear_playground_click'
 };
 

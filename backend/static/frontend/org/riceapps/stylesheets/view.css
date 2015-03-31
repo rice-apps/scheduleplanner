@@ -643,12 +643,64 @@ html, body {
   z-index: 1000;
 }
 
-.tour-view-frame {
+.tour-view-exit, .tour-view-next, .tour-view-prev {
   position: fixed;
+  border: 1px solid #000;
+  background-color: #FFF;
+  z-index: 1001;
+  box-shadow: 0px 0px 40px 13px rgba(0,0,0,0.6);
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  border-radius: 5px;
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.tour-view-exit {
+  position: absolute;
+  padding: 10px 30px;
+  text-align: center;
+  width: 100px;
+  top: 1%;
+  left: calc(50% - 81px);
+}
+
+.tour-view-next, .tour-view-prev {
+  top: 25%;
+  width: 30px;
+  text-align: center;
+  padding: 40px 0px;
+  font-size: 40px;
+}
+
+.tour-view-next {
+  right: 1%;
+}
+
+.tour-view-prev {
+  left: 1%;
+}
+
+.tour-view-exit:hover,
+.tour-view-next:hover,
+.tour-view-prev:hover {
+  color: #FFF;
+  background-color: #000;
+  border-color: #FFF;
+}
+
+.tour-view-frame {
+  position: absolute;
   top: calc(10% - 1px);
-  left: calc(10% - 1px);
-  width: 80%;
-  height: 80%;
+  left: calc(50% - 401px);
+  width: 800px;
+  height: 500px;
   border: 1px solid #000;
   background-color: #FFF;
   z-index: 1001;

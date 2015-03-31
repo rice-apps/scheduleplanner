@@ -114,6 +114,14 @@ SchedulePlannerView.prototype.getLoadingInterruptView = function() {
 
 
 /**
+ * @return {!org.riceapps.views.TourView}
+ */
+SchedulePlannerView.prototype.getTourView = function() {
+  return this.tourView_;
+};
+
+
+/**
  * @return {!org.riceapps.views.InterruptView}
  * @private
  */

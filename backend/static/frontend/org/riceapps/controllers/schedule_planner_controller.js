@@ -3,6 +3,7 @@ goog.provide('org.riceapps.controllers.SchedulePlannerController');
 goog.require('goog.Promise');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
+goog.require('org.riceapps.SchedulePlannerConfig');
 goog.require('org.riceapps.controllers.Controller');
 goog.require('org.riceapps.controllers.SchedulePlannerXhrController');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
@@ -22,11 +23,13 @@ goog.require('org.riceapps.views.SchedulePlannerView');
 goog.require('org.riceapps.views.PlaygroundView');
 
 
+
 goog.scope(function() {
 var CourseModel = org.riceapps.models.CourseModel;
 var CourseView = org.riceapps.views.CourseView;
 var DraggableView = org.riceapps.views.DraggableView;
 var ModalView = org.riceapps.views.ModalView;
+var SchedulePlannerConfig = org.riceapps.SchedulePlannerConfig;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 var SchedulePlannerXhrEvent = org.riceapps.events.SchedulePlannerXhrEvent;
 var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrController;
@@ -289,6 +292,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
     listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
     listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
+    listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
     listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_);
 
@@ -298,6 +302,8 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
 
   if (!this.userModel_.hasAgreedToDisclaimer()) {
     this.view_.getFerpaInterruptView().show();
+  } else if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
+    this.view_.getTourView().show();
   }
 }
 
@@ -319,6 +325,18 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
  */
 SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
   this.userModel_.setHasAgreedToDisclaimer(true);
+
+  if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
+    this.view_.getTourView().show();
+  }
+};
+
+
+/**
+ * @param {SchedulePlannerEvent=} opt_event
+ */
+SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
+  this.userModel_.setHasSeenTour(true);
 };
 
 

@@ -4,6 +4,7 @@ goog.require('goog.Promise');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.dom.classlist');
+goog.require('goog.events');
 goog.require('goog.object');
 goog.require('goog.style');
 
@@ -239,7 +240,7 @@ Animation.BASE_CLASS = 'animated';
 /**
  * @const {number}
  */
-Animation.DEFAULT_DURATION = 1000;
+Animation.DEFAULT_DURATION = 300;
 
 
 /**
@@ -281,6 +282,57 @@ Animation.Mode = {
  * @const {Animation.Mode}
  */
 Animation.DEFAULT_MODE = Animation.Mode.INTERRUPT;
+
+
+/**
+ * Hides a given element and returns that same element.
+ * @param {!Element} element
+ * @return {!goog.Promise.<!Element>}
+ */
+Animation.hideElement = function(element) {
+  goog.style.setElementShown(element, false);
+  return goog.Promise.resolve(element);
+};
+
+
+/**
+ * Applies the given preset animation(s) (from Animation.Preset) to an
+ * element over the given time period (or uses the default if not specified).
+ * Returns a promise that resolves when the animation completes.
+ * @param {!Element} element
+ * @param {string|!Array.<string>} animations
+ * @param {number=} opt_animationTimeMs
+ * @return {!goog.Promise.<!Element>}
+ */
+Animation.start = function(element, animations, opt_animationTimeMs) {
+  var animationTimeMs = opt_animationTimeMs || Animation.DEFAULT_DURATION;
+
+  // Ensure animations is always an array.
+  if (typeof animations == 'string') {
+    animations = [animations];
+  }
+
+  // Add base class to list of presets.
+  animations.unshift(Animation.BASE_CLASS);
+
+  // Remove any preset animation classes.
+  goog.dom.classlist.removeAll(element, Object.keys(Animation.Preset).map(function(key) {
+      return Animation.Preset[key];
+  }));
+
+  // Add classes to perform animation.
+  goog.dom.classlist.addAll(element, animations);
+
+  for (var i = 0; i < Animation.END_EVENTS.length; i++) {
+    goog.events.removeAll(element, Animation.END_EVENTS[i]);
+  }
+
+  return new goog.Promise(function(resolve, reject) {
+    goog.events.listenOnce(element, Animation.END_EVENTS, function(event) {
+      resolve(element);
+    });
+  });
+};
 
 
 /**

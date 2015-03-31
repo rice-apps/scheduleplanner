@@ -1,15 +1,18 @@
 goog.provide('org.riceapps.views.TourView');
 
 goog.require('goog.Timer');
+goog.require('goog.events.EventType');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('goog.style');
+goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.fx.Animation');
 goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
+var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 
 
 
@@ -27,6 +30,15 @@ org.riceapps.views.TourView = function(schedulePlannerView) {
   /** @private {!Element} */
   this.transparentOverlay_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.OVERLAY);
 
+  /** @private {!Element} */
+  this.exitButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.EXIT);
+
+  /** @private {!Element} */
+  this.nextButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.NEXT);
+
+  /** @private {!Element} */
+  this.prevButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.PREV);
+
   /** @private {!Array.<!Element>} */
   this.explanations_ = [];
 
@@ -34,7 +46,10 @@ org.riceapps.views.TourView = function(schedulePlannerView) {
   this.stage_ = 0;
 
   /** @private {number} */
-  this.transitionTimer_ = -1;
+  this.activeStage_ = -1;
+
+  // DO NOT SUBMIT!
+  window.tourView = this;
 };
 goog.inherits(org.riceapps.views.TourView,
               org.riceapps.views.View);
@@ -45,7 +60,10 @@ var TourView = org.riceapps.views.TourView;
 TourView.Theme = {
   BASE: 'tour-view',
   OVERLAY: 'tour-view-overlay',
-  FRAME: 'tour-view-frame'
+  FRAME: 'tour-view-frame',
+  EXIT: 'tour-view-exit',
+  NEXT: 'tour-view-next',
+  PREV: 'tour-view-prev'
 };
 
 
@@ -55,9 +73,19 @@ TourView.Theme = {
 TourView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), TourView.Theme.BASE);
+  goog.dom.setTextContent(this.exitButton_, 'Exit Tour');
+  goog.dom.appendChild(this.getElement(), this.exitButton_);
+  goog.dom.setTextContent(this.nextButton_, '>');
+  goog.dom.appendChild(this.getElement(), this.nextButton_);
+  goog.dom.setTextContent(this.prevButton_, '<');
+  goog.dom.appendChild(this.getElement(), this.prevButton_);
 
+  var item;
 
-  var item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
+  // TODO(mschurr): To implement tour view, we must build the frames in the tour here
+  // and push them onto the explanations array.
+
+  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
   goog.dom.setTextContent(item, 'Test1');
   goog.style.setElementShown(item, false);
   goog.dom.appendChild(this.getElement(), item);
@@ -83,7 +111,82 @@ TourView.prototype.createDom = function() {
 TourView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
   this.hide(true);
-  //this.show();
+
+  this.getHandler().
+      listen(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
+      listen(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
+      listen(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_);
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent=} opt_event
+ */
+TourView.prototype.handleExitButtonClick_ = function(opt_event) {
+  this.hide();
+  this.dispatchEvent(new SchedulePlannerEvent(SchedulePlannerEvent.Type.EXIT_TOUR));
+}
+
+
+/**
+ * @param {goog.events.BrowserEvent=} opt_event
+ */
+TourView.prototype.handleNextButtonClick_ = function(opt_event) {
+  if (this.stage_ < this.explanations_.length - 1) {
+    this.next();
+  }
+}
+
+
+/**
+ * @param {goog.events.BrowserEvent=} opt_event
+ */
+TourView.prototype.handlePrevButtonClick_ = function(opt_event) {
+  if (this.stage_ > 0) {
+    this.prev();
+  }
+}
+
+
+/**
+ * @override
+ */
+TourView.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+
+  this.getHandler().
+      unlisten(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
+      unlisten(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
+      unlisten(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_)
+};
+
+
+/**
+ * Updates the stage it which the tour is at.
+ * @param {number} stage
+ */
+TourView.prototype.setStage = function(stage) {
+  if (!this.isShown()) {
+    return;
+  }
+
+  this.stage_ = stage;
+  this.renderStage_();
+};
+
+
+/**
+ * Increments the stage by one.
+ */
+TourView.prototype.next = function() {
+  this.setStage(this.stage_ + 1);
+};
+
+/**
+ * Decrements the stage by one.
+ */
+TourView.prototype.prev = function() {
+  this.setStage(this.stage_ - 1);
 };
 
 
@@ -92,68 +195,78 @@ TourView.prototype.enterDocument = function() {
  */
 TourView.prototype.show = function(opt_preventAnimation) {
   goog.base(this, 'show', opt_preventAnimation);
-
-
   goog.style.setElementShown(this.getElement(), true);
+  goog.style.setElementShown(this.nextButton_, false);
+  goog.style.setElementShown(this.prevButton_, false);
   goog.dom.appendChild(document.body, this.transparentOverlay_);
 
   if (!opt_preventAnimation) {
-    goog.dom.classlist.removeAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN, Animation.Preset.FADE_OUT]);
-    goog.dom.classlist.addAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN]);
+    Animation.start(this.exitButton_, Animation.Preset.FADE_IN);
+    Animation.start(this.transparentOverlay_, Animation.Preset.FADE_IN);
   }
 
   this.stage_ = 0;
+  this.activeStage_ = -1;
   this.renderStage_();
 };
 
 
 /**
- */
-TourView.prototype.advanceStage = function() {
-  this.stage_ = Math.max(0, Math.min(this.stage_ + 1 , this.explanations_.length));
-  this.renderStage_();
-};
-
-
-/**
- * @param {boolean=} opt_preventAnimation
  * @private
  */
-TourView.prototype.renderStage_ = function(opt_preventAnimation) {
-  if (this.stage_ > 0) {
-    goog.dom.classlist.removeAll(this.explanations_[this.stage_ - 1],
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT, Animation.Preset.FADE_OUT_LEFT]);
-    goog.dom.classlist.addAll(this.explanations_[this.stage_ - 1],
-      [Animation.BASE_CLASS, Animation.Preset.FADE_OUT_LEFT]);
-    var stage = this.stage_ - 1;
-    goog.Timer.callOnce(function() {
-      goog.style.setElementShown(this.explanations_[stage], false);
-    }, 300, this);
-  }
+TourView.prototype.renderStage_ = function() {
+  var nextStage = this.stage_;
+  var activeStage = this.activeStage_;
+  var animation;
+  this.activeStage_ = this.stage_;
 
-  if (this.stage_ == this.explanations_.length) {
-    this.hide();
+  // If the stage has not changed, do nothing.
+  if (nextStage == activeStage) {
     return;
-  } else {
-    goog.style.setElementShown(this.explanations_[this.stage_], true);
-    goog.dom.classlist.removeAll(this.explanations_[this.stage_],
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT, Animation.Preset.FADE_OUT_LEFT]);
-    goog.dom.classlist.addAll(this.explanations_[this.stage_],
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT]);
   }
-};
 
+  // If the active stage is valid:
+  if (activeStage >= 0 && activeStage < this.explanations_.length) {
+    animation = Animation.Preset.ZOOM_OUT;
+    if (nextStage >= 0 && nextStage < this.explanations_.length) {
+      animation = (nextStage > activeStage ? Animation.Preset.FADE_OUT_LEFT : Animation.Preset.FADE_OUT_RIGHT);
+    }
 
-/**
- * @enum {number}
- */
-TourView.Alignment = {
-  TOP: 1,
-  BOTTOM: 2,
-  LEFT: 3,
-  RIGHT: 4
+    // Animate out the active stage.
+    Animation.start(this.explanations_[activeStage], animation).then(Animation.hideElement);
+  }
+
+  // If the next stage is valid:
+  if (nextStage >= 0 && nextStage < this.explanations_.length) {
+    animation = Animation.Preset.ZOOM_IN;
+    if (activeStage >= 0 && activeStage < this.explanations_.length) {
+      animation = (nextStage > activeStage ? Animation.Preset.FADE_IN_RIGHT : Animation.Preset.FADE_IN_LEFT);
+    }
+
+    // Animate in the next stage.
+    goog.style.setElementShown(this.explanations_[nextStage], true);
+    Animation.start(this.explanations_[nextStage], animation);
+  } else {
+    Animation.start(this.exitButton_, Animation.Preset.FADE_OUT);
+    Animation.start(this.transparentOverlay_, Animation.Preset.FADE_OUT).then(goog.bind(function() {
+      this.hide(true);
+    }, this));
+  }
+
+  // Determine button state.
+  if (nextStage > 0 && nextStage < this.explanations_.length) {
+    goog.style.setElementShown(this.prevButton_, true);
+    Animation.start(this.prevButton_, Animation.Preset.FADE_IN);
+  } else {
+    Animation.start(this.prevButton_, Animation.Preset.FADE_OUT).then(Animation.hideElement);
+  }
+
+  if (nextStage >= 0 && nextStage < this.explanations_.length - 1) {
+    goog.style.setElementShown(this.nextButton_, true);
+    Animation.start(this.nextButton_, Animation.Preset.FADE_IN);
+  } else {
+    Animation.start(this.nextButton_, Animation.Preset.FADE_OUT).then(Animation.hideElement);
+  }
 };
 
 
@@ -167,19 +280,8 @@ TourView.prototype.hide = function(opt_preventAnimation) {
     goog.style.setElementShown(this.getElement(), false);
     goog.dom.removeNode(this.transparentOverlay_);
   } else {
-    goog.dom.classlist.removeAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN, Animation.Preset.FADE_OUT]);
-    goog.dom.classlist.addAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_OUT]);
-
-    if (this.transitionTimer_ != -1) {
-      goog.Timer.clear(this.transitionTimer_);
-    }
-
-    this.transitionTimer_ = goog.Timer.callOnce(function() {
-      goog.style.setElementShown(this.getElement(), false);
-      goog.dom.removeNode(this.transparentOverlay_);
-    }, 300, this);
+    this.stage_ = -1;
+    this.renderStage_();
   }
 };
 
