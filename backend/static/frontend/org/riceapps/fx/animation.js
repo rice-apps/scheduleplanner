@@ -1,12 +1,48 @@
+/**
+ * A library that aims to greatly simplify animation in Javascript.
+ *
+ * Example Usage:
+ * var element = goog.dom.createDom(goog.dom.TagName.DIV);
+ * goog.dom.appendChild(document.body, element);
+ * goog.style.setElementShown(element, false);
+ * goog.style.setStyle(element, {
+ *   'position': 'absolute',
+ *   'top': 'calc(50% - 50px)',
+ *   'left': 'calc(50% - 50px)',
+ *   'width': '100px',
+ *   'height': '100px',
+ *   'background-color': 'red'
+ * });
+ *
+ * Animation.
+ *  showElement(element).
+ *  then(Animation.create(Animation.Preset.FADE_IN)).
+ *  then(Animation.create(Animation.Preset.BOUNCE)).
+ *  then(Animation.create(Animation.Preset.FADE_OUT)).
+ *  then(Animation.hideElement).
+ *  then(function(element) { window.console.log('Finished animating: ', element); });
+ *
+ */
+
+
+goog.provide('org.riceapps.fx.Animator');
 goog.provide('org.riceapps.fx.Animation');
+goog.provide('org.riceapps.fx.Animation.Direction');
+goog.provide('org.riceapps.fx.Animation.Fill');
+goog.provide('org.riceapps.fx.Animation.Preset');
+goog.provide('org.riceapps.fx.Animation.Repeat');
+goog.provide('org.riceapps.fx.Animation.State');
+goog.provide('org.riceapps.fx.Animation.Timing');
 
 goog.require('goog.Promise');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.dom.classlist');
 goog.require('goog.events');
+goog.require('goog.events.BrowserEvent');
 goog.require('goog.object');
 goog.require('goog.style');
+goog.require('goog.ui.IdGenerator');
 
 goog.scope(function() {
 
@@ -50,9 +86,18 @@ org.riceapps.fx.Animation = function(element) {
 var Animation = org.riceapps.fx.Animation;
 
 
+
+/**
+ * @param {!Element} element
+ * @constructor
+ */
+org.riceapps.fx.Animator = function(element) {};
+var Animator = org.riceapps.fx.Animator;
+
+
 /**
  * An enumeration of pre-defined animation timing functions.
- * This enumeration can be extended using CSS3's cubic-bezier().
+ * This enumeration can be extended using CSS3's cubic-bezier(n,n,n,n).
  * @enum {string}
  */
 Animation.Timing = {
@@ -72,9 +117,9 @@ Animation.DEFAULT_TIMING = Animation.Timing.EASE;
 
 /**
  * @typedef {{
- *   x: (number|undefined),
- *   y: (number|undefined),
- *   z: (number|undefined),
+ *   translateX: (number|undefined),
+ *   translateY: (number|undefined),
+ *   translateZ: (number|undefined),
  *   opacity: (number|undefined),
  *   rotateX: (number|undefined),
  *   rotateY: (number|undefined),
@@ -93,8 +138,9 @@ Animation.DEFAULT_TIMING = Animation.Timing.EASE;
  *
  * Note: The following properties may be useful to add later:
  *  text-shadow
- *  perspective
- *  perspective-origin
+ *  perspective: length;
+ *  perspective-origin: x y;
+ *  backgace-visibility: visible|hidden;
  *  padding
  *  outline
  *  margin
@@ -102,6 +148,18 @@ Animation.DEFAULT_TIMING = Animation.Timing.EASE;
  *  box-shadow
  *  border
  *  background
+ *  transform-origin: x y z;
+ *  transform-style: flat|preserve-3d
+ *  matrix(n,n,n,n,n,n)
+ *  matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n)
+ *  translate(x,y)
+ *  scale(x,y)
+ *  scale3d(x,y,z)
+ *  rotate3d(x,y,z,angle)
+ *  skew(x-ang, y-ang)
+ *  translate3d(x,y,z)
+ *  perspective(n)
+ *  will-change
  */
 Animation.Transform;
 
@@ -199,7 +257,7 @@ Animation.Repeat = {
 /**
  * @enum {string}
  */
-Animation.FillMode = {
+Animation.Fill = {
   FORWARDS: 'forwards',
   BACKWARDS: 'backwards',
   BOTH: 'both',
@@ -219,13 +277,48 @@ Animation.Direction = {
 
 
 /**
+ * @enum {string}
+ */
+Animation.State = {
+  RUNNING: 'running',
+  PAUSED: 'paused'
+};
+
+
+/**
+ * @enum {number}
+ */
+Animation.Mode = {
+  /** Animation will be queued after anything else queued on the element. */
+  //QUEUE: 1,
+
+  /** Animation will cancel (interrupt) any existing (queued or in-progress) animations and occur immediately. */
+  INTERRUPT: 2,
+
+  /** Animation will only occur if no other animation is in progress. */
+  AVAILABLE: 3
+};
+
+
+/**
+ * @const {Animation.Mode}
+ */
+Animation.DEFAULT_MODE = Animation.Mode.INTERRUPT;
+
+
+/**
+ * NOTE: All times are in milliseconds.
  * @typedef {{
  *   name: (string|Animation.Preset),
  *   timing: (Animation.Timing|undefined),
  *   delay: (number|undefined),
- *   iterations: (number|Animation.Repeat|undefined),
- *   fill: (Animation.FillMode|undefined),
- *   duration: (number|undefined)
+ *   repeat: (number|Animation.Repeat|undefined),
+ *   fill: (Animation.Fill|undefined),
+ *   duration: (number|undefined),
+ *   state: (Animation.State|undefined),
+ *   direction: (Animation.Direction|undefined),
+ *   addClass: (string|!Array.<string>|undefined),
+ *   mode: (Animation.Mode|undefined)
  * }}
  */
 Animation.Animation;
@@ -250,13 +343,18 @@ Animation.ANIMATION_DEFAULTS = {
   name: Animation.Preset.FLASH,
   timing: Animation.DEFAULT_TIMING,
   delay: 0,
-  iterations: 1,
-  fill: Animation.FillMode.FORWARDS,
-  duration: Animation.DEFAULT_DURATION
+  repeat: Animation.Repeat.ONCE,
+  fill: Animation.Fill.BOTH,
+  duration: Animation.DEFAULT_DURATION,
+  state: Animation.State.RUNNING,
+  direction: Animation.Direction.NORMAL,
+  addClass: undefined,
+  mode: Animation.DEFAULT_MODE
 };
 
 
 /**
+ * NOTE: Events have animationName, elapsedTime properties.
  * @const {!Array.<string>}
  */
 Animation.END_EVENTS = [
@@ -269,29 +367,265 @@ Animation.END_EVENTS = [
 
 
 /**
- * @enum {number}
+ * @const {!Array.<string>}
  */
-Animation.Mode = {
-  QUEUE: 1,
-  INTERRUPT: 2,
-  AVAILABLE: 3
+Animation.START_EVENTS = [
+  'webkitAnimationStart',
+  'mozAnimationStart',
+  'MSAnimationStart',
+  'oanimationstart',
+  'animationstart'
+];
+
+
+/**
+ * @const {!Array.<string>}
+ */
+Animation.ITERATION_EVENTS = [
+  'webkitAnimationIteration',
+  'mozAnimationIteration',
+  'MSAnimationIteration',
+  'oanimationiteration',
+  'animationiteration'
+];
+
+
+/**
+ * @const {!Array.<string>}
+ */
+Animation.PROPERTY_PREFIXES = [
+  '',
+  '-moz-',
+  '-webkit-',
+  '-o-'
+];
+
+
+/**
+ * @enum {string}
+ */
+Animation.CSS = {
+  NAME: 'animation-name', /* refers to keyframe */
+  DURATION: 'animation-duration', /* e.g. 200ms */
+  TIMING: 'animation-timing-function', /* see Animation.Timing */
+  DELAY: 'animation-delay', /* e.g. 200ms */
+  REPEAT: 'animation-iteration-count', /* number|infinite */
+  DIRECTION: 'animation-direction', /* see Animation.Direction */
+  FILL: 'animation-fill-mode', /* see Animation.Fill */
+  STATE: 'animation-play-state' /* see Animation.State */
 };
 
 
 /**
- * @const {Animation.Mode}
+ * @enum {string}
  */
-Animation.DEFAULT_MODE = Animation.Mode.INTERRUPT;
+Animation.TransitionCSS = {
+  DELAY: 'transition-delay', /* e.g. 200ms */
+  DURATION: 'transition-duration', /* e.g. 200ms */
+  PROPERTY: 'transition-property', /* e.g. none|all|property */
+  TIMING: 'transition-timing-function' /* see Animation.Timing */
+};
 
 
 /**
- * Hides a given element and returns that same element.
+ * NOTE: Events have propertyName and elapsedTime properties.
+ * @const {!Array.<string>}
+ */
+Animation.TransitionEndEvents = [
+  'oTransitionEnd',
+  'otransitionend',
+  'webkitTransitionEnd',
+  'transitionend'
+];
+
+
+/**
+ * @type {!goog.ui.IdGenerator}
+ */
+Animation.ID_GENERATOR = new goog.ui.IdGenerator();
+
+
+/**
+ * @const {string}
+ */
+Animation.ACTIVE_PROPERTY = '__active_animation_id';
+
+
+/**
+ * Hides a given element and returns a promise that immediately resolves to that element.
  * @param {!Element} element
  * @return {!goog.Promise.<!Element>}
  */
 Animation.hideElement = function(element) {
   goog.style.setElementShown(element, false);
   return goog.Promise.resolve(element);
+};
+
+
+/**
+ * Shows a given element and returns a promise that immediately resolves to that element.
+ * @param {!Element} element
+ * @return {!goog.Promise.<!Element>}
+ */
+Animation.showElement = function(element) {
+  goog.style.setElementShown(element, true);
+  return goog.Promise.resolve(element);
+};
+
+
+/**
+ * Applies an animation to an element and returns a promise that resolves when the animation completes.
+ * @param {!Element} element
+ * @param {!Animation.Animation|string} animation
+ * @return {!goog.Promise.<!Element>}
+ */
+Animation.perform = function(element, animation) {
+  if (typeof animation == 'string') {
+    animation = /** @type {!Animation.Animation} */ ({ name: animation });
+  }
+
+  if (animation.name == null || animation.name == undefined) {
+    throw Error('You must specify an animation name.');
+  }
+
+  if (typeof element[Animation.ACTIVE_PROPERTY] == 'string' &&
+      animation.mode == Animation.Mode.AVAILABLE) {
+    return new goog.Promise(function(resolve,reject){});
+  }
+
+  var uid = Animation.ID_GENERATOR.getNextUniqueId();
+  element[Animation.ACTIVE_PROPERTY] = uid;
+
+  if (animation.addClass && typeof animation.addClass == 'string') {
+    animation.addClass = [animation.addClass];
+  } else if (!animation.addClass) {
+    animation.addClass = [];
+  }
+
+  if (goog.object.containsValue(Animation.Preset, animation.name)) {
+    animation.addClass.unshift(Animation.BASE_CLASS);
+    animation.addClass.push(animation.name);
+  }
+
+  // Fill in any missing animation properties with the default values.
+  for (var key in Animation.ANIMATION_DEFAULTS) {
+    if (animation[key] === undefined) {
+      animation[key] = Animation.ANIMATION_DEFAULTS[key];
+    }
+  }
+
+  window.console.log('Animation.perform(): ', uid, animation);
+
+  // Remove any existing animation end listeners.
+  for (var i = 0; i < Animation.END_EVENTS.length; i++) {
+    //goog.events.dispatchEvent();
+    //goog.events.removeAll(element, Animation.END_EVENTS[i]);
+  }
+
+  // Remove any existing animations.
+  goog.dom.classlist.removeAll(element, Object.keys(Animation.Preset).map(function(key) {
+      return Animation.Preset[key];
+  }));
+
+  /*var styles = {};
+  for (var key in Animation.PROPERTY_PREFIXES) {
+    var p = Animation.PROPERTY_PREFIXES[key];
+    styles[p+'animation'] = 'none';
+  }
+  goog.style.setStyle(element, styles);*/
+
+  // Create the promise.
+  var promise = new goog.Promise(function(resolve, reject) {
+    // Resolve the promise when the animation has completed.
+    goog.events.listenOnce(element, Animation.END_EVENTS, function(event) {
+
+      if (element[Animation.ACTIVE_PROPERTY] == uid) {
+        // Remove any animations.
+        if (animation.addClass.length > 0) {
+          goog.dom.classlist.removeAll(element, /** @type {!Array.<string>} */ (animation.addClass));
+        }
+
+        var styles = {};
+        for (var key in Animation.PROPERTY_PREFIXES) {
+          var p = Animation.PROPERTY_PREFIXES[key];
+          styles[p+'animation'] = 'none';
+        }
+        goog.style.setStyle(element, styles);
+
+        // Resolve the promise.
+        element[Animation.ACTIVE_PROPERTY] = undefined;
+        resolve(element);
+      } else {
+        // Reject the promise (pre-empted).
+        window.console.log('Animation.completed pre-empted: ', uid, '(active=', element[Animation.ACTIVE_PROPERTY], ')');
+        //reject(element);
+      }
+    });
+  });
+
+  // Update the CSS properties to apply the animation.
+  // NOTE: For some reason this needs to be done asynchronous, otherwise if two animations are
+  // queued in a row with the same name then the animationend event won't fire.
+  //goog.Timer.callOnce(function(){
+    if (animation.addClass.length > 0) {
+      goog.dom.classlist.addAll(element, /** @type {!Array.<string>} */ (animation.addClass));
+    }
+
+    var styles = {};
+    for (var key in Animation.PROPERTY_PREFIXES) {
+      var p = Animation.PROPERTY_PREFIXES[key];
+      styles[p+Animation.CSS.DURATION] = animation.duration + 'ms';
+      styles[p+Animation.CSS.TIMING] = animation.timing;
+      styles[p+Animation.CSS.DELAY] = animation.delay + 'ms';
+      styles[p+Animation.CSS.REPEAT] = animation.repeat;
+      styles[p+Animation.CSS.DIRECTION] = animation.direction;
+      styles[p+Animation.CSS.FILL] = animation.fill;
+      styles[p+Animation.CSS.STATE] = animation.state;
+      styles[p+Animation.CSS.NAME] = animation.name;
+    }
+    goog.style.setStyle(element, styles);
+  //}, 0);
+
+  // Create a new promise.
+  return promise;
+};
+
+
+/**
+ * Creates a function that applies the given animation to a given element.
+ * The returned function can be called at a later point in time (useful for chaining in Promises).
+ * @param {!Animation.Animation|string} animation
+ * @return {function(!Element): !goog.Promise.<!Element>}
+ */
+Animation.create = function(animation) {
+  return function(element) {
+    return Animation.perform(element, animation);
+  };
+};
+
+
+
+/**
+ * @param {number} delay
+ * @return {function(!Element): !goog.Promise.<!Element>}
+ */
+Animation.wait = function(delay) {
+  return function(element) {
+    //var uid = Animation.ID_GENERATOR.getNextUniqueId();
+    //element[Animation.ACTIVE_PROPERTY] = uid;
+    //window.console.log('Animation.wait start=', uid);
+    return new goog.Promise(function(resolve, reject) {
+      goog.Timer.callOnce(function() {
+        //window.console.log('Animation.wait complete=', uid, 'active=', element[Animation.ACTIVE_PROPERTY]);
+        //if (element[Animation.ACTIVE_PROPERTY] == uid) {
+        //  element[Animation.ACTIVE_PROPERTY] = undefined;
+          resolve(element);
+        //} else {
+          //reject(null);
+        //}
+      }, delay);
+    });
+  };
 };
 
 
