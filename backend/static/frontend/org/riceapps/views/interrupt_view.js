@@ -100,17 +100,9 @@ InterruptView.prototype.show = function(opt_preventAnimation) {
   goog.style.setElementShown(this.getElement(), true);
   goog.style.setElementShown(this.transparentOverlay_, true);
 
-
-  goog.dom.classlist.removeAll(this.getElement(),
-      [Animation.BASE_CLASS, Animation.Preset.ZOOM_IN, Animation.Preset.ZOOM_OUT]);
-  goog.dom.classlist.removeAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN, Animation.Preset.FADE_OUT]);
-
   if (!opt_preventAnimation) {
-    goog.style.setElementShown(this.getElement(), true);
-    goog.style.setElementShown(this.transparentOverlay_, true);
-    goog.dom.classlist.addAll(this.getElement(), [Animation.BASE_CLASS, Animation.Preset.ZOOM_IN]);
-    goog.dom.classlist.addAll(this.transparentOverlay_, [Animation.BASE_CLASS, Animation.Preset.FADE_IN]);
+    Animation.perform(this.getElementStrict(), Animation.Preset.ZOOM_IN);
+    Animation.perform(this.transparentOverlay_, Animation.Preset.FADE_IN);
   }
 };
 
@@ -125,24 +117,22 @@ InterruptView.prototype.hide = function(opt_preventAnimation) {
 
   goog.base(this, 'hide', opt_preventAnimation);
 
-  goog.dom.classlist.removeAll(this.getElement(),
-      [Animation.BASE_CLASS, Animation.Preset.ZOOM_IN, Animation.Preset.ZOOM_OUT]);
-  goog.dom.classlist.removeAll(this.transparentOverlay_,
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN, Animation.Preset.FADE_OUT]);
-
   if (opt_preventAnimation) {
     goog.style.setElementShown(this.getElement(), false);
     goog.style.setElementShown(this.transparentOverlay_, false);
   } else {
-    goog.dom.classlist.addAll(this.getElement(), [Animation.BASE_CLASS, Animation.Preset.ZOOM_OUT]);
-    goog.dom.classlist.addAll(this.transparentOverlay_, [Animation.BASE_CLASS, Animation.Preset.FADE_OUT]);
-    goog.Timer.callOnce(function() {
-      goog.style.setElementShown(this.getElement(), false);
-      goog.style.setElementShown(this.transparentOverlay_, false);
-      if (this.disposeOnHide_) {
-        this.dispose();
-      }
-    }, Animation.DEFAULT_DURATION, this);
+    Animation.
+        perform(this.transparentOverlay_, Animation.Preset.FADE_OUT).
+        then(Animation.hideElement);
+
+    Animation.
+        perform(this.getElementStrict(), Animation.Preset.ZOOM_OUT).
+        then(Animation.hideElement).
+        then(goog.bind(function(element) {
+          if (this.disposeOnHide_) {
+            this.dispose();
+          }
+        }, this));
   }
 };
 

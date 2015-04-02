@@ -333,7 +333,7 @@ Animation.BASE_CLASS = 'animated';
 /**
  * @const {number}
  */
-Animation.DEFAULT_DURATION = 300;
+Animation.DEFAULT_DURATION = 500;
 
 
 /**

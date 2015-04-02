@@ -31,9 +31,6 @@ var ViewEvent = org.riceapps.events.ViewEvent;
 org.riceapps.views.SearchView = function() {
   goog.base(this);
 
-  /** @private {number} */
-  this.hideTimer_ = -1;
-
   /** @private {Element} */
   this.resultsContainer_ = null;
 
@@ -107,7 +104,6 @@ SearchView.prototype.registerToolbarView = function(toolbarView) {
  */
 SearchView.prototype.setQuery = function(query) {
   this.lastQuery_ = query;
-
   this.updateSearch();
 };
 
@@ -156,11 +152,11 @@ SearchView.prototype.createDom = function() {
   this.showDirections_();
 };
 
+
 /**
  * @return {CourseModel.Filter}
  */
 SearchView.prototype.getFilterValues = function(){
-
   function getFilterValue(element){
     return goog.dom.getChildren(element)[0].checked;
   }
@@ -173,7 +169,6 @@ SearchView.prototype.getFilterValues = function(){
     conflicts: getFilterValue(this.filterElements_.conflicts),
     full: getFilterValue(this.filterElements_.full)
   };
-
 }
 
 
@@ -181,7 +176,6 @@ SearchView.prototype.getFilterValues = function(){
  * @param {!Element} container
  */
 SearchView.prototype.createFiltersDom = function(container) {
-
   /** @type {!goog.structs.Map.<string, Array>} */
   var filterDetails = new goog.structs.Map();
   filterDetails.set("normal",['nd' , '1', 'Non-Distribution',true]);
@@ -228,7 +222,6 @@ SearchView.prototype.createFiltersDom = function(container) {
 SearchView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
   this.hide(true);
-
 
   this.getHandler().
     listen(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
@@ -328,19 +321,11 @@ SearchView.prototype.show = function(opt_preventAnimation) {
     this.updateSearch();
   }
 
-  if (this.hideTimer_ != -1) {
-    goog.Timer.clear(this.hideTimer_);
-    this.hideTimer_ = -1;
-  }
-
   goog.base(this, 'show', opt_preventAnimation);
-  goog.style.setElementShown(this.getElement(), true);
-
-  goog.dom.classlist.removeAll(this.getElement(),
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT_BIG, Animation.Preset.FADE_OUT_RIGHT_BIG]);
+  goog.style.setElementShown(this.getElementStrict(), true);
 
   if(!opt_preventAnimation) {
-    goog.dom.classlist.addAll(this.getElement(), [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT_BIG]);
+    Animation.perform(this.getElementStrict(), Animation.Preset.FADE_IN_RIGHT_BIG);
   }
 };
 
@@ -355,17 +340,11 @@ SearchView.prototype.hide = function(opt_preventAnimation) {
 
   goog.base(this, 'hide', opt_preventAnimation);
 
-  goog.dom.classlist.removeAll(this.getElement(),
-      [Animation.BASE_CLASS, Animation.Preset.FADE_IN_RIGHT_BIG, Animation.Preset.FADE_OUT_RIGHT_BIG]);
-
   if(!opt_preventAnimation) {
-    goog.dom.classlist.addAll(this.getElement(), [Animation.BASE_CLASS, Animation.Preset.FADE_OUT_RIGHT_BIG]);
-    this.hideTimer_ = goog.Timer.callOnce(function() {
-      goog.style.setElementShown(this.getElement(), false);
-      this.hideTimer_ = -1;
-    }, 300, this);
+    Animation.perform(this.getElementStrict(), Animation.Preset.FADE_OUT_RIGHT_BIG).
+        then(Animation.hideElement);
   } else {
-    goog.style.setElementShown(this.getElement(), false);
+    goog.style.setElementShown(this.getElementStrict(), false);
   }
 };
 
@@ -438,4 +417,4 @@ SearchView.prototype.hideDirections_ = function() {
 };
 
 
-});
+});  // goog.scope
