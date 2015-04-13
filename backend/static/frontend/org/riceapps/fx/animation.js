@@ -452,6 +452,16 @@ Animation.ACTIVE_PROPERTY = '__active_animation_id';
 
 
 /**
+ * Returns a promise that immediately resolves to an element (syntatic sugar).
+ * @param {!Element} element
+ * @return {!goog.Promise.<!Element>}
+ */
+Animation.createAnimator = function(element) {
+  return goog.Promise.resolve(element);
+};
+
+
+/**
  * Hides a given element and returns a promise that immediately resolves to that element.
  * @param {!Element} element
  * @return {!goog.Promise.<!Element>}

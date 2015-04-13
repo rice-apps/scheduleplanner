@@ -130,7 +130,11 @@ ModalView.prototype.show = function(opt_preventAnimation) {
   goog.style.setElementShown(this.transparentOverlay_, true);
 
   if (!opt_preventAnimation) {
-    Animation.perform(this.getElementStrict(), Animation.Preset.ZOOM_IN);
+    Animation.perform(this.getElementStrict(), {
+      name: Animation.Preset.ZOOM_IN,
+      duration: 400
+    });
+
     Animation.perform(this.transparentOverlay_, Animation.Preset.FADE_IN);
   }
 };
@@ -155,7 +159,10 @@ ModalView.prototype.hide = function(opt_preventAnimation) {
         then(Animation.hideElement);
 
     Animation.
-        perform(this.getElementStrict(), Animation.Preset.ZOOM_OUT).
+        perform(this.getElementStrict(), {
+          name: Animation.Preset.ZOOM_OUT,
+          duration: 400
+        }).
         then(Animation.hideElement).
         then(goog.bind(function(element) {
           this.dispatchEvent(new goog.events.Event(ModalView.EventType.DISMISSED));

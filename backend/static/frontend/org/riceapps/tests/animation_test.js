@@ -56,8 +56,24 @@ AnimationTest.prototype.createElement = function(x, y) {
  * Runs the test.
  */
 AnimationTest.prototype.start = function() {
+  // Test window animation.
 
-  // Test animating a grid of items.
+  var element = this.createElement(500, 500);
+  Animation.showElement(element).
+    then(Animation.create({
+      name: 'windowEnter',
+      duration: 1000
+    })).
+    then(Animation.wait(1000)).
+    then(Animation.create({
+      name: 'windowExit',
+      duration: 1000
+    }));
+
+  // End Test */
+
+
+  /*/ Test animating a grid of items.
   for (var r = 0; r < 5; r++) {
     for (var c = 0; c < 10; c++) {
       var element = this.createElement(10 + (110 * c), 10 + (110 * r));
@@ -71,7 +87,7 @@ AnimationTest.prototype.start = function() {
           duration: 1000,
           delay: (i > 0 ? 0 : c*50 + r*50)
         })).
-        then(Animation.wait(2000)).
+        then(Animation.wait(10000)).
         then(Animation.create({
           name: Animation.Preset.ZOOM_OUT,
           duration: 1000,
@@ -82,9 +98,9 @@ AnimationTest.prototype.start = function() {
 
       goog.events.listen(element, goog.events.EventType.CLICK, function(event) {
         Animation.perform(event.target, {
-          name: Animation.Preset.SHAKE,
+          name: Animation.Preset.ZOOM_OUT,
           mode: Animation.Mode.AVAILABLE
-        });
+        }).then(Animation.hideElement);
       });
     }
   }

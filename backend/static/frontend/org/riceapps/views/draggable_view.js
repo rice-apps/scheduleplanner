@@ -56,6 +56,9 @@ org.riceapps.views.DraggableView = function() {
 
   /** @private {goog.math.Coordinate} */
   this.dragStartCoordinate_ = null;
+
+  /** @private {!Element} */
+  this.dropIndicatorElement_ = goog.dom.createDom(goog.dom.TagName.DIV, 'mouse-pointer-focus');
 };
 goog.inherits(org.riceapps.views.DraggableView,
               org.riceapps.views.View);
@@ -209,6 +212,9 @@ DraggableView.prototype.createDom = function() {
 DraggableView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
 
+  goog.dom.appendChild(document.body, this.dropIndicatorElement_);
+  goog.style.setElementShown(this.dropIndicatorElement_, false);
+
   this.getHandler().
     listen(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
     listen(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
@@ -271,6 +277,8 @@ DraggableView.prototype.handleTouchEvent_ = function(event) {
  */
 DraggableView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
+
+  goog.dom.removeNode(this.dropIndicatorElement_);
 
   if (this.isBeingDragged_) {
     this.stopDragging_();
@@ -383,6 +391,12 @@ DraggableView.prototype.dragOver_ = function(target) {
     target.dragEnter(this);
   }
 
+  if (target) {
+    this.startMouseInTargetAnimation_();
+  } else {
+    this.stopMouseInTargetAnimation_();
+  }
+
   this.lastTarget_ = target;
 };
 
@@ -472,6 +486,8 @@ DraggableView.prototype.moveDragTooltipTo_ = function(position) {
   // Calculate the real coordinates (origin of viewpoint + position within viewport).
   var real_x = this.pageScroll_.x + position.x;
   var real_y = this.pageScroll_.y + position.y;
+
+  goog.style.setPosition(this.dropIndicatorElement_, real_x - 5, real_y - 5);
 
   // Bound within the document.
   if (real_x < 30) {
@@ -589,6 +605,24 @@ DraggableView.prototype.clearMaybeDrag_ = function() {
   this.debugLog_('clearMaybeDrag_');
   this.getHandler().unlisten(window, goog.events.EventType.MOUSEMOVE, this.maybeStartDrag_);
   this.dragStartCoordinate_ = null;
+};
+
+
+/**
+ * @private
+ */
+DraggableView.prototype.startMouseInTargetAnimation_ = function() {
+  window.console.log('DraggableView.startMouseInTargetAnimation_');
+  goog.style.setElementShown(this.dropIndicatorElement_, true);
+};
+
+
+/**
+ * @private
+ */
+DraggableView.prototype.stopMouseInTargetAnimation_ = function() {
+  window.console.log('DraggableView.stopMouseInTargetAnimation_');
+  goog.style.setElementShown(this.dropIndicatorElement_, false);
 };
 
 
