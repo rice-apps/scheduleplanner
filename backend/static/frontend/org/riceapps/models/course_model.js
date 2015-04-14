@@ -206,11 +206,11 @@ CourseModel.prototype.getCourseCategory = function() {
  * @return {string}
  */
 CourseModel.prototype.getMeetingTimesAsString = function() {
-  var days = {0: 'M', 1: 'T', 2: 'W', 3: 'R', 4: 'F', 5: 'S', 6: 'U'};
+  var days = ['U', 'M', 'T', 'W', 'R', 'F', 'S'];
 
   // First, compress the times (e.g. group same times and locations on separate days into one component of the string).
   var elongatedTimes = goog.array.map(this.getMeetingTimes(), function(time, idx, arr) {
-    time['day'] = days[time['day']];
+    time['day'] = days[time['day']+1] || "" + time['day'];
     return time;
   });
   var times = [];

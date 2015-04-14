@@ -78,10 +78,10 @@ CourseListView.COLUMN_RENDERER = {
       goog.dom.appendChild(element, div);
     }
   },
-  'ENR' : function(element, course) {
+  'Enrollment' : function(element, course) {
     goog.dom.setTextContent(element, course.getTotalEnrollmentAsString());
   },
-  'WL' : function(element, course) {
+  'Waitlisted' : function(element, course) {
     goog.dom.setTextContent(element, course.getTotalWaitlistedAsString());
   }
 };
@@ -129,6 +129,15 @@ CourseListView.prototype.removeCourses = function(courses) {
  * @private
  */
 CourseListView.prototype.handleChildrenChanged_ = function() {
+  this.courses_.sort(function(a,b) {
+    if (a.getSubject() == b.getSubject()) {
+      return a.getCourseNumber() - b.getCourseNumber();
+    } else {
+      return goog.string.caseInsensitiveCompare(a.getSubject(), b.getSubject());
+    }
+  });
+
+
   this.relayout();
 };
 

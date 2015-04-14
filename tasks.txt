@@ -31,6 +31,8 @@ FRONT-END:
 
     - Integration with RiceApps Atlas for course locations
 
+    - Extend list view functionality with evaluations data or click for course info.
+
     - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
 
