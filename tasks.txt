@@ -14,13 +14,10 @@ FRONT-END:
       * View Evaluations (brings up the course evalations page within ESTHER)
       * View Information (brings a course modal view for the given course)
 
-    - Add a list view (similar to the previous schedule planner) so that students can use either view. The list view should appear beneath the calendar view.
-      subj, crn, title, cr, dist, room, instructor, enrollment/waitlist for normal and xlist, restrictions
-
     - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled. These courses also usually have variable credit hours.
       NOTE: Currently these can just be placed Sunday @ NOON, but that's a temporary fix.
 
-    - For courses that have only one section: allow the course to just be dropped straight onto the calendar so that the user doesn't actually have to aim and drop it on the guide views.
+    - For courses that have only one section: allow the course to just be dropped straight onto the calendar and/or list view so that the user doesn't actually have to aim and drop it on the guide views.
 
     - Add button to toolbar to clear calendar.
 
@@ -33,5 +30,7 @@ FRONT-END:
     - Search View: scroll results to top when they change
 
     - Integration with RiceApps Atlas for course locations
+
+    - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
 

@@ -206,21 +206,49 @@ CourseModel.prototype.getCourseCategory = function() {
  * @return {string}
  */
 CourseModel.prototype.getMeetingTimesAsString = function() {
-  var times = this.getMeetingTimes();
+  var days = {0: 'M', 1: 'T', 2: 'W', 3: 'R', 4: 'F', 5: 'S', 6: 'U'};
 
-  var days = {0: 'M', 1: 'T', 2:'W', 3:'R', 4:'F', 5:'S', 6:'U'}
+  // First, compress the times (e.g. group same times and locations on separate days into one component of the string).
+  var elongatedTimes = goog.array.map(this.getMeetingTimes(), function(time, idx, arr) {
+    time['day'] = days[time['day']];
+    return time;
+  });
+  var times = [];
 
+  for (var i = 0; i < elongatedTimes.length; i++) {
+    var found = false;
+
+    for (var j = 0; j < times.length; j++) {
+      if (elongatedTimes[i]['start'] == times[j]['start'] &&
+          elongatedTimes[i]['end'] == times[j]['end'] &&
+          elongatedTimes[i]['location'] == times[j]['location']) {
+        times[j]['day'] += elongatedTimes[i]['day'];
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      goog.array.insert(times, elongatedTimes[i]);
+    }
+  }
+
+  // Next, assemble the string.
   if (times.length == 0) {
     return 'TBD';
   }
-  var meeting_times_string = ''
+
+  var meeting_times_string = '';
 
   for (var i = 0; i < times.length; i++) {
-    meeting_times_string += days[times[i]['day']] + ' ' + this.timeToString(times[i]['start']) + '-' + this.timeToString(times[i]['end']) + ' (' + times[i]['location'] + ')' + ' / ';
+    meeting_times_string += times[i]['day'] + ' ' +
+        this.timeToString(times[i]['start']) + ' - ' + this.timeToString(times[i]['end']) +
+        ' (' + (times[i]['location'].length > 1 ? times[i]['location'] : 'TBD') + ')' + ' , ';
   }
 
-  return meeting_times_string.substring(0,meeting_times_string.length -2);
+  return meeting_times_string.substring(0, meeting_times_string.length - 2);
 };
+
 
 /**
 * Returns time as a string in standard hh:mm format.
@@ -230,11 +258,8 @@ CourseModel.prototype.getMeetingTimesAsString = function() {
 CourseModel.prototype.timeToString = function(time) {
   var hour = Math.floor(time);
   var min = Math.floor((time - hour) * 60);
-  if (min < 10) {
-    return '' + hour + ':0' + min;
-  } else {
-  return '' + hour + ":" + min;
-  }
+  var ampm = (hour < 12 || hour == 23 ? ' AM' : ' PM');
+  return '' + (hour > 12 ? hour - 12 : hour) + ':' + (min < 10 ? '0' : '')  + min + ampm;
 };
 
 /**

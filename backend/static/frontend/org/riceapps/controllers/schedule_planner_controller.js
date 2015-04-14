@@ -317,6 +317,8 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
     this.userModel_.getCreditHoursInSchedule(1),
     this.userModel_.getCreditHoursInSchedule(2),
     this.userModel_.getCreditHoursInSchedule(3));
+
+  this.view_.getCourseListView().setCourses(this.userModel_.getCoursesInSchedule());
 };
 
 

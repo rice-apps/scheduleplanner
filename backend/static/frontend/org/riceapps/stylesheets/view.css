@@ -5,7 +5,6 @@ html, body {
   font-family: 'Roboto';
   min-height: 100%;
   background-color: #FFF;
-  overflow: hidden;
 }
 
 .interrupt-view-overlay {
@@ -926,4 +925,69 @@ html, body {
     transform: scale3d(5, 5, 5);
     opacity: 0;
   }
+}
+
+.course-list-view {
+  margin: 20px;
+}
+
+.course-list-view-table {
+  color: #252626;
+  background-color: #FFF;
+  font-size: 16px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.course-list-view-table > tr > td,
+.course-list-view-table > tr > th {
+  margin: 0;
+  vertical-align: top;
+  line-height: 22px;
+  /*white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;*/
+  font-size: 11px;
+  border-right: 1px solid #000;
+}
+
+.course-list-view-table > tr:first-child {
+  background-color: #666;
+  border: 1px solid #333;
+}
+
+.course-list-view-table > tr:nth-child(2) {
+  border-top: 1px solid rgb(218, 222, 229);
+}
+
+.course-list-view-table > tr:last-child {
+  border-bottom: 1px solid #333;
+}
+
+.course-list-view-table > tr {
+  border-bottom: 1px solid rgb(218, 222, 229);
+  border-right: 1px solid #333;
+  border-left: 1px solid #333;
+  background-color: rgb(252,252,250);
+}
+
+.course-list-view-table > tr:nth-child(2n) {
+  background-color: #F0F0F4;
+}
+
+.course-list-view-table > tr > th {
+  padding: 5px 10px;
+  color: #FFF;
+  font-weight: bold;
+  text-align: left;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.course-list-view-table > tr > td {
+  padding: 10px;
+  text-align: left;
 }

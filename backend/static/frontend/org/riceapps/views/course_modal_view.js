@@ -31,7 +31,7 @@ var CourseModalView = org.riceapps.views.CourseModalView;
 
 /** @enum {string} */
 CourseModalView.Messages = {
-  OPEN_EVALUATIONS: 'View Course Evaluations',
+  OPEN_EVALUATIONS: 'View Course Evaluations (You must already be logged in to ESTHER)',
   OPEN_COURSES: 'View On Rice Course Catalog',
   TAUGHT_BY: 'Taught By: ',
   SECTIONS: 'Sections',
@@ -158,14 +158,14 @@ CourseModalView.prototype.createDom = function() {
 
   cell = goog.dom.createDom(goog.dom.TagName.TH);
   goog.style.setStyle(cell, {
-    'width': '40px'
+    'width': '50px'
   });
   goog.dom.setTextContent(cell, 'Enrolled');
   goog.dom.appendChild(row, cell);
 
   cell = goog.dom.createDom(goog.dom.TagName.TH);
   goog.style.setStyle(cell, {
-    'width': '40px'
+    'width': '50px'
   });
   goog.dom.setTextContent(cell, 'Waitlisted');
   goog.dom.appendChild(row, cell);

@@ -4,6 +4,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('org.riceapps.views.CalendarView');
+goog.require('org.riceapps.views.CourseListView');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.FerpaInterruptView');
 goog.require('org.riceapps.views.FooterView');
@@ -55,6 +56,10 @@ org.riceapps.views.SchedulePlannerView = function() {
   /** @private {!org.riceapps.views.TourView} */
   this.tourView_ = new org.riceapps.views.TourView(this);
   this.addChild(this.tourView_);
+
+  /** @private {!org.riceapps.views.CourseListView} */
+  this.courseListView_ = new org.riceapps.views.CourseListView();
+  this.addChild(this.courseListView_);
 
   /** @private {!org.riceapps.views.InterruptView} */
   this.loadingInterruptView_ = this.createLoadingInterruptView_();
@@ -197,6 +202,14 @@ SchedulePlannerView.prototype.getPlaygroundView = function() {
 
 
 /**
+ * @return {!org.riceapps.views.CourseListView}
+ */
+SchedulePlannerView.prototype.getCourseListView = function() {
+  return this.courseListView_;
+};
+
+
+/**
  * @return {!org.riceapps.views.TrashView}
  */
 SchedulePlannerView.prototype.getTrashView = function() {
@@ -222,6 +235,7 @@ SchedulePlannerView.prototype.createDom = function() {
   this.playgroundView_.render(container);
   this.calendarView_.render(columns);
   this.searchView_.render(this.calendarView_.getElement());
+  this.courseListView_.render(this.getElement());
   this.footerView_.render(this.getElement());
   this.tourView_.render(this.getElement());
 };
