@@ -57,8 +57,8 @@ var CourseModel = org.riceapps.models.CourseModel;
  *   d1: boolean,
  *   d2: boolean,
  *   d3: boolean,
- *   conflicts: boolean,
- *   full: boolean
+ *   hideConflicts: boolean,
+ *   hideFull: boolean
  * }}
  */
 CourseModel.Filter;
@@ -111,15 +111,11 @@ CourseModel.prototype.assertDistribution = function(type) {
  * @return {boolean}
  */
 CourseModel.prototype.passesFilters = function(filters, opt_userModel) {
-  var distributionResponses = {
-    "normal": 0,
-    "d1": 1,
-    "d2": 2,
-    "d3": 3
-  };
+  if (filters.hideFull && this.isFull()) {
+    return false;
+  }
 
-  return (
-      (filters.normal && this.assertDistribution(0)) ||
+  return ((filters.normal && this.assertDistribution(0)) ||
       (filters.d1 && this.assertDistribution(1)) ||
       (filters.d2 && this.assertDistribution(2)) ||
       (filters.d3 && this.assertDistribution(3)));
@@ -134,12 +130,12 @@ CourseModel.prototype.getMeetingTimes = function() {
   var times = [];
 
   for (var i = 0; i < this.data_['meetingTimes'].length; i++) {
-    // NOTICE: The reason for subtraction and division here is because the
+    // NOTICE: The reason for division here is because the
     // format returned by the back-end differs from the values expected by
     // the other front-end components.
     var time = this.data_['meetingTimes'][i];
     var t = {
-      'day' : time['day'] - 1,
+      'day' : time['day'],
       'start' : time['start'] / 60,
       'end' : time['end'] / 60,
       'location' : time['building'] + ' ' + time['room']
@@ -210,7 +206,7 @@ CourseModel.prototype.getMeetingTimesAsString = function() {
 
   // First, compress the times (e.g. group same times and locations on separate days into one component of the string).
   var elongatedTimes = goog.array.map(this.getMeetingTimes(), function(time, idx, arr) {
-    time['day'] = days[time['day']+1] || "" + time['day'];
+    time['day'] = days[time['day']] || "" + time['day'];
     return time;
   });
   var times = [];
@@ -839,6 +835,14 @@ CourseModel.prototype.getTotalEnrollmentAsString = function() {
   }
 
   return this.data_['enrollment'] + ' / ' + this.data_['maxEnrollment'];
+};
+
+
+/**
+ * @return {boolean}
+ */
+CourseModel.prototype.isFull = function() {
+  return this.data_['waitlisted'] > 0;
 };
 
 

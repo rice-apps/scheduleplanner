@@ -128,17 +128,20 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
 
 /**
  * Retrieves the courses model from the server.
+ * @param {?string=} opt_pathOverride
  * @return {!goog.Promise.<!org.riceapps.models.CoursesModel>}
  */
-SchedulePlannerXhrController.prototype.getAllCourses = function() {
+SchedulePlannerXhrController.prototype.getAllCourses = function(opt_pathOverride) {
   // If we already have a courses model, re-use it.
   if (this.coursesModel_) {
     return goog.Promise.resolve(this.coursesModel_);
   }
 
+  var coursesPath = opt_pathOverride || SchedulePlannerXhrController.Path.COURSES;
+
   // Otherwise, pull the information from the server.
   return new goog.Promise(function(resolve, reject) {
-    var url = this.buildXhrUrl(SchedulePlannerXhrController.Path.COURSES, {});
+    var url = this.buildXhrUrl(coursesPath, {});
 
     goog.net.XhrIo.send(url, goog.bind(function(event) {
       var xhr = event.target;

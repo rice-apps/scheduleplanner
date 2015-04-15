@@ -7,6 +7,7 @@ goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.protocol.Messages');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.util.CourseScheduleMatrix');
 
 goog.scope(function() {
 var CourseModel = org.riceapps.models.CourseModel;
@@ -106,6 +107,12 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
   var results = [];
   var keys = this.courses_.getKeys();
   var used = new goog.structs.Set();
+  var matrix = null;
+
+  if (opt_userModel && filters.hideConflicts) {
+    matrix = new org.riceapps.util.CourseScheduleMatrix();
+    matrix.setCourses(opt_userModel.getCoursesInSchedule());
+  }
 
   // To search, loop through all courses...
   for (var i = 0; i < keys.length; i++) {
@@ -132,6 +139,11 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
       if (this.userModelContainsCourse_(opt_userModel, course)) {
         continue;
       }
+    }
+
+    // Ensure that the course does not create conflicts.
+    if (opt_userModel && filters.hideConflicts && matrix.hasConflictWith(course)) {
+      continue;
     }
 
     // If we get here, the course matched the query so append it to the results.

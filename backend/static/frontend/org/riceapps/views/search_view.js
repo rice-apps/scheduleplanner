@@ -166,8 +166,8 @@ SearchView.prototype.getFilterValues = function(){
     d1: getFilterValue(this.filterElements_.d1),
     d2: getFilterValue(this.filterElements_.d2),
     d3: getFilterValue(this.filterElements_.d3),
-    conflicts: getFilterValue(this.filterElements_.conflicts),
-    full: getFilterValue(this.filterElements_.full)
+    hideConflicts: getFilterValue(this.filterElements_.conflicts),
+    hideFull: getFilterValue(this.filterElements_.full)
   };
 }
 

@@ -1,4 +1,12 @@
 FRONT-END:
+  MED PRIORITY:
+    - Search View: better looking hide (cancel) button
+
+    - Search View: scroll results to top when they change. Results not scrollable when re-shown.
+
+    - Extend list view functionality with evaluations data or click for course info.
+
+    - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
   LOW PRIORITY:
     - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
@@ -23,16 +31,6 @@ FRONT-END:
 
     - Compatability testing with IE, Firefox, Safari, Opera, mobile.
 
-    - Search Functionality: support for conflicts and hide full filters. See SearchView, CoursesModel.
-
-    - Search View: better looking hide (cancel) button
-
-    - Search View: scroll results to top when they change
-
     - Integration with RiceApps Atlas for course locations
-
-    - Extend list view functionality with evaluations data or click for course info.
-
-    - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
 
