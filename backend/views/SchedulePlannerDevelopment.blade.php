@@ -1,4 +1,4 @@
-@title('Schedule Planner [DEVELOPER VERSION]')
+@title('Schedule Planner [DEVELOPER BUILD]')
 
 @script(URL::asset('closure-library/closure/goog/base.js'))
 @script(URL::asset('frontend/deps.js'))

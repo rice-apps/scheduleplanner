@@ -306,6 +306,47 @@ SchedulePlannerController.prototype.handleMoveToPlayground_ = function(event) {
 
 
 /**
+ * Event handler; called when a course should be moved to the calendar.
+ * NOTE: Course may be present in search/playground or not at all.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleMoveToCalendar_ = function(event) {
+  window.console.log('SchedulePlannerController.handleMoveToPlayground_', event.model);
+  var course = event.model;
+  var views;
+
+  // Figure out if the view is in the search view.
+  views = this.view_.getSearchView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.addCoursesToSchedule([course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  // Figure out if the view is in the calendar and remove it.
+  views = this.view_.getPlaygroundView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.moveCoursesFromPlaygroundToSchedule([course], [course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  this.view_.getCalendarView().relayout();
+};
+
+
+/**
  * Adds given coruses to schedule as views.
  * @param {!Array.<!org.riceapps.models.CourseModel>} courses
  * @param {number=} opt_index
@@ -565,6 +606,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_EVALS, this.handleShowCourseEvals_).
     listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
     listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
+    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_CALENDAR, this.handleMoveToCalendar_).
     listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
 
   this.handleUserModelChange_();

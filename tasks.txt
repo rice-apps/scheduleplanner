@@ -1,36 +1,36 @@
-FRONT-END:
-  MED PRIORITY:
-    - Search View: better looking hide (cancel) button
+LONG TERM GOALS:
+  TBD
 
-    - Search View: scroll results to top when they change. Results not scrollable when re-shown.
+MED PRIORITY:
+  - Search View: better looking hide (cancel) button
 
-    - Extend list view functionality with evaluations data or click for course info.
+  - Search View: scroll results to top when they change.
 
-    - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
+  - Search View: Results not scrollable when re-shown. Possibly resulting from a bug in Chrome.
 
-  LOW PRIORITY:
-    - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
+  - Extend list view functionality with evaluations data or click for course info.
 
-    - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
-      NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
+  - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
-    - Add right-click context menu to all course views in calendar, search, and playground w/ options:
-      * Switch Sections (from calendar to calendar)
-      * Add/Move To Playground (from search or calendar)
-      * Add/Move To Calendar (from search or playground)
-      * Remove (removes the course from either the calendar or playground) (only for cal/search)
-      * View Evaluations (brings up the course evalations page within ESTHER)
-      * View Information (brings a course modal view for the given course)
+LOW PRIORITY:
+  - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
 
-    - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled. These courses also usually have variable credit hours.
-      NOTE: Currently these can just be placed Sunday @ NOON, but that's a temporary fix.
+  - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
+    NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
 
-    - For courses that have only one section: allow the course to just be dropped straight onto the calendar and/or list view so that the user doesn't actually have to aim and drop it on the guide views.
+  - Add right-click context menu to all course views in calendar, search, and playground w/ options:
+    * Switch Sections (from calendar to calendar)
+    * Add/Move To Calendar (from search or playground): needs support for multiple sections
 
-    - Add button to toolbar to clear calendar.
+  - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled by the user. These courses also usually have variable credit hours. Pretty gross.
+    NOTE: Currently these can just be placed Sunday @ NOON, but that's a temporary fix.
 
-    - Compatability testing with IE, Firefox, Safari, Opera, mobile.
+  - For courses that have only one section: allow the course to just be dropped straight onto the calendar and/or list view so that the user doesn't actually have to aim and drop it on the guide views.
 
-    - Integration with RiceApps Atlas for course locations
+  - Add button to toolbar to clear calendar.
+
+  - Compatability testing with IE, Firefox, Safari, Opera, iOS Safari, Android Chrome.
+
+  - Integration with RiceApps Atlas for course locations
 
 

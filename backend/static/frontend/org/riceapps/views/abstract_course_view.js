@@ -51,7 +51,8 @@ AbstractCourseView.Option = {
   VIEW_INFO: 1,
   VIEW_EVALS: 2,
   MOVE_TO_PLAYGROUND: 3,
-  REMOVE: 4
+  REMOVE: 4,
+  MOVE_TO_CALENDAR: 5
 };
 
 
@@ -136,14 +137,18 @@ AbstractCourseView.prototype.handleContextMenu_ = function(event) {
   this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_EVALS, 'View Evaluations');
 
   if (!this.isInPlayground()) {
-    this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_PLAYGROUND, 'Move to Playground');
+    this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_PLAYGROUND, 'Move to Staging Area');
+  }
+
+  if (!this.isInCalendar() && this.getCourseModel().getAllSections().length == 1) {
+    this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_CALENDAR, 'Move to Calendar');
   }
 
   if (!this.isInSearch()) {
     this.contextMenu_.setOption(AbstractCourseView.Option.REMOVE, 'Remove');
   }
 
-  // TODO(mschurr): Add/move to calendar (from search or playground).
+  // TODO(mschurr): Add/move to calendar (from search or playground): support for multiple sections.
   // TODO(mschurr): Switch sections (from calendar).
 
   // Display the view.
@@ -197,6 +202,10 @@ AbstractCourseView.prototype.handleContextMenuOptionClick_ = function(event) {
       newEvent.model = this.getCourseModel();
       this.dispatchEvent(newEvent);
       break;
+    case AbstractCourseView.Option.MOVE_TO_CALENDAR:
+      var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.MOVE_TO_CALENDAR);
+      newEvent.model = this.getCourseModel();
+      this.dispatchEvent(newEvent);
     default:
       break;
   }

@@ -36,9 +36,14 @@ var FerpaInterruptView = org.riceapps.views.FerpaInterruptView;
 /** @const {string} */
 FerpaInterruptView.DISCLAIMER_TEXT = 'Schedule Planner is not affiliated with or endorsed by Rice University in any way. '
   + 'By using this application, you agree to grant the Rice Apps student organization permission to store information '
-  + 'about you that you enter into this application. You also acknowledge that the methods used by Rice Apps to store '
+  + 'about you. You also acknowledge that the methods used by Rice Apps to store '
   + 'any of your information may not be compliant with the Family Educational Rights and Privacy Act (FERPA).';
 
+/** @const {string} */
+FerpaInterruptView.CONDITIONS_TEXT = 'Course evaluations are intended to be available only to Rice students, faculty, '
+ + 'and staff on Rice\'s internal computer network. Evaluation information should be considered confidential and is '
+ + 'to be used solely by, within, and amongst the Rice University community and its members.  Failure to follow this '
+ + 'rule may result in a student\'s access to the evaluations being restricted or in other disciplinary action.';
 
 /** @enum {string} */
 FerpaInterruptView.Theme = {
@@ -55,17 +60,21 @@ FerpaInterruptView.prototype.createDom = function() {
   goog.base(this, 'createDom');
 
   goog.style.setStyle(this.getElement(), {
-    'height': '270px'
+    'height': '400px'
   });
 
   var element;
   var container = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(container, FerpaInterruptView.Theme.LOADING_CONTAINER);
-  goog.dom.setTextContent(container, 'FERPA Disclaimer');
+  goog.dom.setTextContent(container, 'Terms and Conditions');
   goog.dom.appendChild(this.getElement(), container);
 
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(element, FerpaInterruptView.DISCLAIMER_TEXT);
+  goog.dom.appendChild(container, element);
+
+  element = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.setTextContent(element, FerpaInterruptView.CONDITIONS_TEXT);
   goog.dom.appendChild(container, element);
 
   goog.dom.classlist.add(this.getElement(), FerpaInterruptView.Theme.ERROR_CONTAINER);

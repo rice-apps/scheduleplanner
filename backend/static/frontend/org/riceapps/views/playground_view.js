@@ -93,7 +93,7 @@ PlaygroundView.prototype.createDom = function() {
 
   this.clearPlaygroundElement_ = goog.dom.createDom(goog.dom.TagName.DIV, PlaygroundView.Theme.CLEAR_ITEMS);
   goog.dom.appendChild(this.getElement(), this.clearPlaygroundElement_);
-  goog.dom.setTextContent(this.clearPlaygroundElement_, 'Remove All Courses');
+  goog.dom.setTextContent(this.clearPlaygroundElement_, 'Clear Staging Area');
   goog.style.setElementShown(this.clearPlaygroundElement_, false);
 
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
@@ -123,7 +123,7 @@ PlaygroundView.prototype.createDom = function() {
 
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(directionsSpan,
-    'You can click on any course to view additional information.');
+    'You can click on any course to view additional information, or right click any course for additional options.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
   this.showDirections_();

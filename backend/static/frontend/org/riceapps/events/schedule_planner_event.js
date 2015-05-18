@@ -49,6 +49,7 @@ SchedulePlannerEvent.Type = {
   SHOW_COURSE_EVALS: 'sp_show_course_evals', // model
   REMOVE_COURSE: 'sp_remove_course', // model
   MOVE_TO_PLAYGROUND: 'sp_move_to_playground', // model
+  MOVE_TO_CALENDAR: 'sp_move_to_calendar', // model
   ADD_GUIDE_VIEWS: 'sp_add_guide_views' // courses
 };
 
