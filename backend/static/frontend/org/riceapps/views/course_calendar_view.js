@@ -117,6 +117,15 @@ CourseCalendarView.prototype.getCalendarTimes = function() {
 
 
 /**
+ * @return {boolean}
+ * @override
+ */
+CourseCalendarView.prototype.isInCalendar = function() {
+  return true;
+};
+
+
+/**
  * @override
  */
 CourseCalendarView.prototype.drawInRects = function(rects) {

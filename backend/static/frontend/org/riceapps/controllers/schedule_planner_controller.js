@@ -80,7 +80,7 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
-  if (this.userModel_ != null && event.type == SchedulePlannerEvent.Type.CRN_CLICK) {
+  if (this.userModel_ != null) {
     var modalView = new org.riceapps.views.CRNModalView(this.userModel_);
     modalView.disposeOnHide().show();
   }
@@ -92,7 +92,7 @@ SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
-  if (this.userModel_ != null && event.type == SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK) {
+  if (this.userModel_ != null) {
     var playground_view = this.view_.getPlaygroundView();
     var course_count = playground_view.getChildCount();
     var courses = [];
@@ -108,6 +108,7 @@ SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
 };
 
 /**
+ * Event handler; called when a AbstractCourseView is being dragged to add guide views to the calendar.
  * @param {SchedulePlannerEvent} event
  * @private
  */
@@ -242,6 +243,7 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
 
 
 /**
+ * Event handler; called when courses are added to the user model playground.
  * @param {UserModelEvent} event
  * @private
  */
@@ -251,6 +253,7 @@ SchedulePlannerController.prototype.handlePlaygroundCoursesAdded_ = function(eve
 
 
 /**
+ * Event handler; called when courses are added to the user model schedule.
  * @param {UserModelEvent} event
  * @private
  */
@@ -260,6 +263,7 @@ SchedulePlannerController.prototype.handleScheduleCoursesAdded_ = function(event
 
 
 /**
+ * Event handler; called when courses database is fully loaded from backend.
  * @param {!org.riceapps.models.CoursesModel} coursesModel
  * @private
  */
@@ -271,11 +275,12 @@ SchedulePlannerController.prototype.onCoursesReady_ = function(coursesModel) {
 
 
 /**
+ * Event handler; called when both courses database and user model are fully loaded from backend.
  * @private
  */
 SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
   if (!(this.userModel_ && this.coursesModel_)) {
-    return;
+    return; // Only proceed if both are ready.
   }
 
   window.console.log('SchedulePlannerController.onUserModelAndCoursesReady_');
@@ -298,8 +303,11 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
 
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
+
+  // Remove the loading view.
   this.view_.getLoadingInterruptView().hide();
 
+  // Proceed: Disclaimer > Tour > Main UI
   if (!this.userModel_.hasAgreedToDisclaimer()) {
     this.view_.getFerpaInterruptView().show();
   } else if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
@@ -309,25 +317,30 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
 
 
 /**
+ * Event handler; called when the user model changes.
  * @param {org.riceapps.events.UserModelEvent=} opt_event
  */
 SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event) {
+  // Update credit counter in toolbar.
   this.view_.getToolbarView().setCredits(
     this.userModel_.getCreditHoursInSchedule(),
     this.userModel_.getCreditHoursInSchedule(1),
     this.userModel_.getCreditHoursInSchedule(2),
     this.userModel_.getCreditHoursInSchedule(3));
 
+  // Update the list view.
   this.view_.getCourseListView().setCourses(this.userModel_.getCoursesInSchedule());
 };
 
 
 /**
+ * Event Handler; called when user agrees to disclaimer.
  * @param {SchedulePlannerEvent=} opt_event
  */
 SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
   this.userModel_.setHasAgreedToDisclaimer(true);
 
+  // Proceed: Tour > Main UI
   if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
     this.view_.getTourView().show();
   }
@@ -335,6 +348,7 @@ SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
 
 
 /**
+ * Event handler; called when user marks tour as seen.
  * @param {SchedulePlannerEvent=} opt_event
  */
 SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
@@ -343,6 +357,7 @@ SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
 
 
 /**
+ * Event handler; called when user model is fully loaded from backend.
  * @param {!org.riceapps.models.UserModel} userModel
  * @private
  */
@@ -354,6 +369,7 @@ SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
 
 
 /**
+ * Event handler; called when search view should be updated.
  * @param {!SchedulePlannerEvent} event
  * @private
  */
@@ -397,6 +413,7 @@ SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
 
 
 /**
+ * Adds the given courses to playground as views.
  * @param {!Array.<!org.riceapps.models.CourseModel>} courses
  */
 SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
@@ -410,6 +427,7 @@ SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
 
 
 /**
+ * Adds given coruses to schedule as views.
  * @param {!Array.<!org.riceapps.models.CourseModel>} courses
  * @param {number=} opt_index
  */
@@ -430,6 +448,7 @@ SchedulePlannerController.prototype.addCoursesToSchedule = function(courses, opt
 
 
 /**
+ * Event handler; called when a course view is no longer being dragged.
  * @param {goog.events.Event} event
  */
 SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
@@ -438,9 +457,11 @@ SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
 };
 
 /**
+ * Event handler; called when a course view starts to be dragged.
  * @param {goog.events.Event} event
  */
 SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
+  // Close the search view when dragging from playground.
   if (event.target.getParent() === this.view_.getPlaygroundView()) {
     this.view_.getSearchView().onCloseSearch();
   }
@@ -457,17 +478,18 @@ SchedulePlannerController.prototype.start = function() {
   this.getHandler().
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
-	  listen(this.view_, DraggableView.EventType.CLICK, this.onCRNViewClick_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
     listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
     listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
+
   this.xhrController_.getUserModel().then(this.onUserModelReady_, this.onXhrError_, this);
   this.xhrController_.getAllCourses().then(this.onCoursesReady_, this.onXhrError_, this);
 };
 
 
 /**
+ * Event handler; called when an XHR request fails.
  * @param {!SchedulePlannerXhrEvent} event
  */
 SchedulePlannerController.prototype.handleXhrFailed_ = function(event) {

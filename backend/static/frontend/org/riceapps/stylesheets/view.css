@@ -991,3 +991,39 @@ html, body {
   padding: 10px;
   text-align: left;
 }
+
+.context-menu-view {
+  position: absolute;
+  z-index: 10000;
+  top: 0px;
+  left: 0px;
+  border: 1px solid #BABABA;
+  box-shadow: 2px 2px 3px #8E8E8E;
+  background-color: #FFF;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  width: 230px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.context-menu-view-option {
+  padding: 7px 35px;
+  font-size: 14px;
+  line-height: 14px;
+  /*border-bottom: 1px solid #E9E9E9;*/
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  background-position: 10px center;
+  /*background-image: url('http://www.w3schools.com/images/compatible_chrome.gif');*/
+}
+
+.context-menu-view-option:hover {
+  background-color: #4281F4;
+  color: #FFF;
+}

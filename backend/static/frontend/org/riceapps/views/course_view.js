@@ -36,4 +36,13 @@ CourseView.prototype.createDom = function() {
   goog.dom.setTextContent(this.getElement(), this.getCourseModel().getTitle());
 };
 
+
+/**
+ * @return {boolean}
+ * @override
+ */
+CourseView.prototype.isInPlayground = function() {
+  return true;
+};
+
 }); // goog.scope

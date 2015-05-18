@@ -93,4 +93,13 @@ CourseSearchView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
 };
 
+
+/**
+ * @return {boolean}
+ * @override
+ */
+CourseSearchView.prototype.isInSearch = function() {
+  return true;
+};
+
 }); // goog.scope

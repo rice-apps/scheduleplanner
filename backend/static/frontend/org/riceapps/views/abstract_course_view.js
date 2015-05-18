@@ -2,14 +2,20 @@ goog.provide('org.riceapps.views.AbstractCourseView');
 
 goog.require('goog.color');
 goog.require('goog.color.Rgb');
+goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
+goog.require('goog.events.EventType');
 goog.require('goog.style');
+goog.require('org.riceapps.events.ContextMenuEvent');
+goog.require('org.riceapps.events.ContextMenuEvent.Type');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.models.CourseModel');
+goog.require('org.riceapps.views.ContextMenuView');
 goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.CourseCalendarGuideView');
 
 goog.scope(function() {
+var ContextMenuEvent = org.riceapps.events.ContextMenuEvent;
 var DraggableView = org.riceapps.views.DraggableView;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 
@@ -28,6 +34,9 @@ org.riceapps.views.AbstractCourseView = function(courseModel) {
 
   /** @private {!Array.<!org.riceapps.views.CourseCalendarGuideView>} */
   this.guideViews_ = [];
+
+  /** @private {org.riceapps.views.ContextMenuView} */
+  this.contextMenu_ = null;
 
   /** @type {string} */
   this.debug = this.courseModel_.getTitle();
@@ -71,7 +80,8 @@ AbstractCourseView.prototype.enterDocument = function() {
 
   this.getHandler().
     listen(this, DraggableView.EventType.DRAGSTART, this.handleDragStart_).
-    listen(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_);
+    listen(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_).
+    listen(this.getElement(), goog.events.EventType.CONTEXTMENU, this.handleContextMenu_);
 };
 
 
@@ -83,7 +93,103 @@ AbstractCourseView.prototype.exitDocument = function() {
 
   this.getHandler().
     unlisten(this, DraggableView.EventType.DRAGSTART, this.handleDragStart_).
-    unlisten(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_);
+    unlisten(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_).
+    unlisten(this.getElement(), goog.events.EventType.CONTEXTMENU, this.handleContextMenu_);
+};
+
+
+/**
+ * @param {!goog.events.BrowserEvent} event
+ * @private
+ */
+AbstractCourseView.prototype.handleContextMenu_ = function(event) {
+  window.console.log('AbstractCourseView.handleContextMenu_');
+
+  // Override the browser context menu from displaying.
+  event.preventDefault();
+
+  // Clean existing context menu (if any).
+  if (this.contextMenu_) {
+    this.handleContextMenuClosed_();
+  }
+
+  // Create the view.
+  var scroll = goog.dom.getDomHelper().getDocumentScroll();
+  this.contextMenu_ = new org.riceapps.views.ContextMenuView(scroll.x + event.clientX - 1, scroll.y + event.clientY - 1);
+
+  // Install event handlers.
+  this.getHandler().
+      listen(this.contextMenu_, ContextMenuEvent.Type.CLOSE, this.handleContextMenuClosed_).
+      listen(this.contextMenu_, ContextMenuEvent.Type.OPTION_CLICK, this.handleContextMenuOptionClick_);
+
+  // Add options.
+  this.contextMenu_.setOption(1, 'View Information');
+  this.contextMenu_.setOption(2, 'View Evaluations');
+
+  if (!this.isInPlayground()) {
+    this.contextMenu_.setOption(4, 'Move to Playground');
+  }
+
+  if (!this.isInSearch()) {
+    this.contextMenu_.setOption(3, 'Remove');
+  }
+
+  // TODO(mschurr): Add/move to calendar (from search or playground).
+  // TODO(mschurr): Switch sections (from calendar).
+
+  // Display the view.
+  this.contextMenu_.show();
+};
+
+
+/**
+ * @param {ContextMenuEvent=} opt_event
+ * @private
+ */
+AbstractCourseView.prototype.handleContextMenuClosed_ = function(opt_event) {
+  window.console.log('AbstractCourseView.handleContextMenuClosed_');
+
+  // Uninstall event handlers.
+  this.getHandler().
+      unlisten(this.contextMenu_, ContextMenuEvent.Type.CLOSE, this.handleContextMenuClosed_).
+      unlisten(this.contextMenu_, ContextMenuEvent.Type.OPTION_CLICK, this.handleContextMenuOptionClick_);
+
+  // Free the memory for garbage collection.
+  this.contextMenu_ = null;
+};
+
+
+/**
+ * @param {ContextMenuEvent} event
+ * @private
+ */
+AbstractCourseView.prototype.handleContextMenuOptionClick_ = function(event) {
+  var optionId = event.getOptionId();
+  window.console.log('AbstractCourseView.handleContextMenuOptionClick_', optionId);
+};
+
+
+/**
+ * @return {boolean}
+ */
+AbstractCourseView.prototype.isInCalendar = function() {
+  return false;
+};
+
+
+/**
+ * @return {boolean}
+ */
+AbstractCourseView.prototype.isInPlayground = function() {
+  return false;
+};
+
+
+/**
+ * @return {boolean}
+ */
+AbstractCourseView.prototype.isInSearch = function() {
+  return false;
 };
 
 
