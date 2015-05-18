@@ -98,11 +98,24 @@ CourseModel.prototype.getId = function() {
 
 
 /**
+ * @param {?CourseModel} otherCourse
+ * @return {boolean}
+ */
+CourseModel.prototype.equals = function(otherCourse) {
+  if (otherCourse === null) {
+    return false;
+  }
+
+  return this.getId() == otherCourse.getId();
+};
+
+
+/**
  * @return {boolean}
  */
 CourseModel.prototype.assertDistribution = function(type) {
   return this.getDistributionType() === type;
-}
+};
 
 
 /**

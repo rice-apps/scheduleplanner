@@ -46,6 +46,15 @@ goog.inherits(org.riceapps.views.AbstractCourseView,
 var AbstractCourseView = org.riceapps.views.AbstractCourseView;
 
 
+/** @enum {number} */
+AbstractCourseView.Option = {
+  VIEW_INFO: 1,
+  VIEW_EVALS: 2,
+  MOVE_TO_PLAYGROUND: 3,
+  REMOVE: 4
+};
+
+
 /**
  * @param {!Array.<!Element>} elements
  */
@@ -123,15 +132,15 @@ AbstractCourseView.prototype.handleContextMenu_ = function(event) {
       listen(this.contextMenu_, ContextMenuEvent.Type.OPTION_CLICK, this.handleContextMenuOptionClick_);
 
   // Add options.
-  this.contextMenu_.setOption(1, 'View Information');
-  this.contextMenu_.setOption(2, 'View Evaluations');
+  this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_INFO, 'View Information');
+  this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_EVALS, 'View Evaluations');
 
   if (!this.isInPlayground()) {
-    this.contextMenu_.setOption(4, 'Move to Playground');
+    this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_PLAYGROUND, 'Move to Playground');
   }
 
   if (!this.isInSearch()) {
-    this.contextMenu_.setOption(3, 'Remove');
+    this.contextMenu_.setOption(AbstractCourseView.Option.REMOVE, 'Remove');
   }
 
   // TODO(mschurr): Add/move to calendar (from search or playground).
@@ -166,6 +175,31 @@ AbstractCourseView.prototype.handleContextMenuClosed_ = function(opt_event) {
 AbstractCourseView.prototype.handleContextMenuOptionClick_ = function(event) {
   var optionId = event.getOptionId();
   window.console.log('AbstractCourseView.handleContextMenuOptionClick_', optionId);
+
+  switch (optionId) {
+    case AbstractCourseView.Option.VIEW_INFO:
+      var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS);
+      newEvent.model = this.getCourseModel();
+      this.dispatchEvent(newEvent);
+      break;
+    case AbstractCourseView.Option.VIEW_EVALS:
+      var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.SHOW_COURSE_EVALS);
+      newEvent.model = this.getCourseModel();
+      this.dispatchEvent(newEvent);
+      break;
+    case AbstractCourseView.Option.MOVE_TO_PLAYGROUND:
+      var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND);
+      newEvent.model = this.getCourseModel();
+      this.dispatchEvent(newEvent);
+      break;
+    case AbstractCourseView.Option.REMOVE:
+      var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.REMOVE_COURSE);
+      newEvent.model = this.getCourseModel();
+      this.dispatchEvent(newEvent);
+      break;
+    default:
+      break;
+  }
 };
 
 

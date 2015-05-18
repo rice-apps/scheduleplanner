@@ -143,6 +143,33 @@ View.prototype.isShown = function() {
 
 
 /**
+ * @param {function(this:SCOPE, !org.riceapps.views.View): boolean} shouldRemove Function which indicates if given child should be removed
+ * @param {boolean=} opt_unrender Whether to unrender the view
+ * @param {SCOPE=} opt_scope Scope in which to execute comparator.
+ * @return {!Array.<!org.riceapps.views.View>} List of children removed
+ * @template SCOPE
+ */
+View.prototype.removeChildrenIf = function(shouldRemove, opt_unrender, opt_scope) {
+  var toRemove = [];
+  var scope = opt_scope || window;
+
+  for (var i = 0; i < this.getChildCount(); i++) {
+    var child = this.getChildAt(i);
+
+    if (child instanceof View && shouldRemove.call(scope, child)) {
+      toRemove.push(child);
+    }
+  }
+
+  for (var i = 0; i < toRemove.length; i++) {
+    this.removeChild(toRemove[i], opt_unrender);
+  }
+
+  return toRemove;
+};
+
+
+/**
  * @override
  */
 View.prototype.removeChild = function(child, opt_unrender) {

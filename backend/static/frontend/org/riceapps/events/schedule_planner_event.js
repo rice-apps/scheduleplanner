@@ -20,6 +20,9 @@ org.riceapps.events.SchedulePlannerEvent = function(type) {
   /** @type {!Array.<!org.riceapps.models.CourseModel>} */
   this.models = [];
 
+  /** @type {org.riceapps.models.CourseModel} */
+  this.model = null;
+
   /** @type {string} */
   this.query = '';
 
@@ -37,12 +40,16 @@ var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
  * @enum {string}
  */
 SchedulePlannerEvent.Type = {
-  ADD_GUIDE_VIEWS: 'sp_add_guide_views',
-  UPDATE_SEARCH: 'sp_update_search',
+  UPDATE_SEARCH: 'sp_update_search', // filters, query
   CRN_CLICK: 'sp_crn_click',
   AGREE_DISCLAIMER: 'sp_disclaimer_agree',
   EXIT_TOUR: 'sp_tour_exit',
-  CLEAR_PLAYGROUND_CLICK: 'sp_clear_playground_click'
+  CLEAR_PLAYGROUND_CLICK: 'sp_clear_playground_click',
+  SHOW_COURSE_DETAILS: 'sp_show_course_details', // model
+  SHOW_COURSE_EVALS: 'sp_show_course_evals', // model
+  REMOVE_COURSE: 'sp_remove_course', // model
+  MOVE_TO_PLAYGROUND: 'sp_move_to_playground', // model
+  ADD_GUIDE_VIEWS: 'sp_add_guide_views' // courses
 };
 
 });  // goog.scope

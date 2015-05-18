@@ -12,6 +12,7 @@ goog.require('org.riceapps.events.UserModelEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.CoursesModel');
 goog.require('org.riceapps.models.UserModel');
+goog.require('org.riceapps.views.AbstractCourseView');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.CourseCalendarView');
 goog.require('org.riceapps.views.CourseCalendarGuideView');
@@ -71,8 +72,95 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
 SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
   var courseView = /** @type {org.riceapps.views.AbstractCourseView|Node} */ (event.target);
   var modalView = new org.riceapps.views.CourseModalView(courseView.getCourseModel());
+  this.view_.addChild(modalView);
   modalView.disposeOnHide().show();
 };
+
+
+/**
+ * Event handler; called when a course view is clicked. Shows a modal view containing information about the course.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleShowCourseDetails_ = function(event) {
+  if (!event.model) {
+    return;
+  }
+
+  var modalView = new org.riceapps.views.CourseModalView(event.model);
+  this.view_.addChild(modalView);
+  modalView.disposeOnHide().show();
+};
+
+
+/**
+ * Event handler; called when a course view is clicked. Shows a modal view containing information about the course.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleShowCourseEvals_ = function(event) {
+  this.openCourseEvaluations(event.model);
+};
+
+
+/**
+ * Opens the course evaluations in a new browser tab.
+ *
+ * We perform an XSRF attack on ESTHER to send the user to the course evaluations page. This attack will require the
+ * user to be logged into ESTHER. A note about this requirement should be placed next to the link.
+ *
+ * NOTE: In this case, the XSRF attack is pretty non-damaging since it simply retrieves the evaluations, but ESTHER
+ * should probably fix this.
+ *
+ * To retreive course evaluations:
+ * POST https://esther.rice.edu/selfserve/swkscmt.main HTTP/1.1
+ * p_commentid:
+ * p_confirm: 1
+ * p_term: <year><term_code>
+ * p_type: Course
+ * p_crn: <crn>
+ *
+ * To retrieve instructor evaluations:
+ * POST https://esther.rice.edu/selfserve/swkscmt.main HTTP/1.1
+ * p_commentid:
+ * p_confirm: 1
+ * p_term: <year><term_code>
+ * p_type: Instructor
+ * p_instr: <instructor_id>
+ *
+ * NOTE: The ESTHER instructor IDs are different than our internal ones and unfortunately there is no way to data mine
+ * them since the course feed does not include them; we will need to get the list from the university for this purpose,
+ * or drop the feature. The user can easily find the instructor evaluations from within ESTHER.
+ */
+SchedulePlannerController.prototype.openCourseEvaluations = function(courseModel) {
+  var form = goog.dom.createDom(goog.dom.TagName.FORM, {
+    'target': '_blank',
+    'action': 'https://esther.rice.edu/selfserve/swkscmt.main',
+    'method': 'POST'
+  });
+
+  var params = {
+    'p_commentid': '',
+    'p_confirm': '1',
+    'p_term': courseModel.getFormattedTermCodeForPrevYear(),
+    'p_type': 'Course',
+    'p_crn': courseModel.getCrn()
+  };
+
+  for (var key in params) {
+    var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
+      'type': 'hidden',
+      'name': key,
+      'value': params[key]
+    });
+    goog.dom.appendChild(form, input);
+  }
+
+  goog.dom.appendChild(document.body, form);
+  form.submit();
+  goog.dom.removeNode(form);
+};
+
 
 /**
  * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
@@ -85,6 +173,7 @@ SchedulePlannerController.prototype.onCRNViewClick_ = function(event) {
     modalView.disposeOnHide().show();
   }
 };
+
 
 /**
  * Event handler; called when clear playground button is clicked. Clears all courses from the playground.
@@ -107,6 +196,7 @@ SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
   }
 };
 
+
 /**
  * Event handler; called when a AbstractCourseView is being dragged to add guide views to the calendar.
  * @param {SchedulePlannerEvent} event
@@ -117,6 +207,178 @@ SchedulePlannerController.prototype.handleAddGuideViews_ = function(event) {
   for(var i = 0; i < views.length; i++) {
     this.view_.getCalendarView().addChildAt(views[i], views[i].getChildIndex(), true);
   }
+};
+
+
+/**
+ * Adds the given courses to playground as views.
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
+  for (var i = 0; i < courses.length; i++) {
+    var course = new org.riceapps.views.CourseView(courses[i]);
+    this.view_.getPlaygroundView().addChild(course, true);
+    course.addDropTarget(this.view_.getPlaygroundView());
+    course.addDropTarget(this.view_.getTrashView());
+  }
+};
+
+
+/**
+ * Event handler; called when a course should be removed from the UI.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleRemoveCourse_ = function(event) {
+  window.console.log('SchedulePlannerController.handleRemoveCourse_', event.model);
+  var course = event.model;
+  var views;
+
+  // Figure out if the view is in the playground and remove it.
+  views = this.view_.getPlaygroundView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.removeCoursesFromPlayground([course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  // Figure out if the view is in the calendar and ermove it.
+  views = this.view_.getCalendarView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.removeCoursesFromSchedule([course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  this.view_.getCalendarView().relayout();
+};
+
+
+/**
+ * Event handler; called when a course should be moved to the playground.
+ * NOTE: Course may be present in calendar or not at all.
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleMoveToPlayground_ = function(event) {
+  window.console.log('SchedulePlannerController.handleMoveToPlayground_', event.model);
+  var course = event.model;
+  var views;
+
+  // Figure out if the view is in the search view.
+  views = this.view_.getSearchView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.addCoursesToPlayground([course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  // Figure out if the view is in the calendar and remove it.
+  views = this.view_.getCalendarView().removeChildrenIf(function(child) {
+    return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
+  });
+
+  if (views.length > 0) {
+    this.userModel_.moveCoursesFromScheduleToPlayground([course], [course]);
+  }
+
+  for (var i = 0; i < views.length; i++) {
+    views[i].dispose();
+  }
+
+  this.view_.getCalendarView().relayout();
+};
+
+
+/**
+ * Adds given coruses to schedule as views.
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ * @param {number=} opt_index
+ */
+SchedulePlannerController.prototype.addCoursesToSchedule = function(courses, opt_index) {
+  var index = opt_index || this.calendarInsertAt_ || 0;
+  index = Math.max(index, 0);
+  index = Math.min(index, this.view_.getCalendarView().getChildCount() + 1);
+
+  for (var i = 0; i < courses.length; i++) {
+    var course = new org.riceapps.views.CourseCalendarView(courses[i]);
+    this.view_.getCalendarView().addChildAt(course, index, true);
+    course.addDropTarget(this.view_.getPlaygroundView());
+    course.addDropTarget(this.view_.getTrashView());
+  }
+
+  this.calendarInsertAt_ = 0;
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.moveCoursesFromPlaygroundToCalendar = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.moveCoursesFromCalendarToPlayground = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.moveCoursesFromCalendarToCalendar = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.moveCoursesFromSearchToCalendar = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.moveCoursesFromSearchToPlayground = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.removeCoursesFromCalendar = function(courses) {
+  // TODO(mschurr): Implement.
+};
+
+
+/**
+ * @param {!Array.<!org.riceapps.models.CourseModel>} courses
+ */
+SchedulePlannerController.prototype.removeCoursesFromPlayground = function(courses) {
+  // TODO(mschurr): Implement.
 };
 
 
@@ -299,7 +561,11 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
     listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
-    listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_);
+    listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
+    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_EVALS, this.handleShowCourseEvals_).
+    listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
+    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
+    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
 
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
@@ -409,41 +675,6 @@ SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
   /*if (errorType == SchedulePlannerXhrController.ErrorType.SESSION_EXPIRED) {
     // TODO(mschurr): Block all access to the UI, display message to the user informing them to refresh the page.
   }*/
-};
-
-
-/**
- * Adds the given courses to playground as views.
- * @param {!Array.<!org.riceapps.models.CourseModel>} courses
- */
-SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
-  for (var i = 0; i < courses.length; i++) {
-    var course = new org.riceapps.views.CourseView(courses[i]);
-    this.view_.getPlaygroundView().addChild(course, true);
-    course.addDropTarget(this.view_.getPlaygroundView());
-    course.addDropTarget(this.view_.getTrashView());
-  }
-};
-
-
-/**
- * Adds given coruses to schedule as views.
- * @param {!Array.<!org.riceapps.models.CourseModel>} courses
- * @param {number=} opt_index
- */
-SchedulePlannerController.prototype.addCoursesToSchedule = function(courses, opt_index) {
-  var index = opt_index || this.calendarInsertAt_ || 0;
-  index = Math.max(index, 0);
-  index = Math.min(index, this.view_.getCalendarView().getChildCount() + 1);
-
-  for (var i = 0; i < courses.length; i++) {
-    var course = new org.riceapps.views.CourseCalendarView(courses[i]);
-    this.view_.getCalendarView().addChildAt(course, index, true);
-    course.addDropTarget(this.view_.getPlaygroundView());
-    course.addDropTarget(this.view_.getTrashView());
-  }
-
-  this.calendarInsertAt_ = 0;
 };
 
 
