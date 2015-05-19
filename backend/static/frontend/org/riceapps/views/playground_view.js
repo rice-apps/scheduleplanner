@@ -103,12 +103,12 @@ PlaygroundView.prototype.createDom = function() {
 
   var directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(directionsSpan,
-    'You can use this area to hold courses that you are considering taking.');
+    'Use this area to hold courses that you are considering taking.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(directionsSpan,
-    'You can find courses by using the search box above and dragging the results here.');
+    'Find courses by using the search box above and dragging the results here or onto the calendar.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);

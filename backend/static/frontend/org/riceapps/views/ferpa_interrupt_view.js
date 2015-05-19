@@ -40,10 +40,10 @@ FerpaInterruptView.DISCLAIMER_TEXT = 'Schedule Planner is not affiliated with or
   + 'any of your information may not be compliant with the Family Educational Rights and Privacy Act (FERPA).';
 
 /** @const {string} */
-FerpaInterruptView.CONDITIONS_TEXT = 'Course evaluations are intended to be available only to Rice students, faculty, '
+FerpaInterruptView.CONDITIONS_TEXT = 'Schedule Planner provides you with access to course evaluations. Course evaluations are intended to be available only to Rice students, faculty, '
  + 'and staff on Rice\'s internal computer network. Evaluation information should be considered confidential and is '
- + 'to be used solely by, within, and amongst the Rice University community and its members.  Failure to follow this '
- + 'rule may result in a student\'s access to the evaluations being restricted or in other disciplinary action.';
+ + 'to be used solely by, within, and amongst the Rice University community and its members. Failure to follow this '
+ + 'rule may result in your access to the evaluations being restricted or in other disciplinary action by the university.';
 
 /** @enum {string} */
 FerpaInterruptView.Theme = {
@@ -60,7 +60,7 @@ FerpaInterruptView.prototype.createDom = function() {
   goog.base(this, 'createDom');
 
   goog.style.setStyle(this.getElement(), {
-    'height': '400px'
+    'height': '420px'
   });
 
   var element;

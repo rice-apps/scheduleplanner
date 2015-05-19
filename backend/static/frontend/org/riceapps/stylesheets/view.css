@@ -1016,10 +1016,14 @@ html, body {
   padding: 7px 35px;
   font-size: 14px;
   line-height: 14px;
+  height: 14px;
   /*border-bottom: 1px solid #E9E9E9;*/
   background-repeat: no-repeat;
   background-size: 16px 16px;
   background-position: 10px center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   /*background-image: url('http://www.w3schools.com/images/compatible_chrome.gif');*/
 }
 

@@ -143,9 +143,10 @@ View.prototype.isShown = function() {
 
 
 /**
+ * Removes all children who satisfy the closure optionally unrendering them and returns a list of the children removed.
  * @param {function(this:SCOPE, !org.riceapps.views.View): boolean} shouldRemove Function which indicates if given child should be removed
  * @param {boolean=} opt_unrender Whether to unrender the view
- * @param {SCOPE=} opt_scope Scope in which to execute comparator.
+ * @param {SCOPE=} opt_scope Scope in which to execute comparator shouldRemove
  * @return {!Array.<!org.riceapps.views.View>} List of children removed
  * @template SCOPE
  */

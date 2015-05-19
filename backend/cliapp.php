@@ -5,7 +5,6 @@ import('CLIController');
 
 CLIApplication::listen('prompt', 'CLIQueryController');
 
-
 import('CourseDataParser');
 import('ProtocolMessage');
 import('SchedulePlannerProtocolMessages');
@@ -13,6 +12,7 @@ import('SchedulePlannerProtocolMessages');
 
 /**
  * Resets the database.
+ * php server.php reset
  */
 CLIApplication::listen('reset', function($args) {
   $db = App::getDatabase();
@@ -95,7 +95,8 @@ CLIApplication::listen('courses', function($args) {
 });
 
 /**
- * Regenerates the cache of course data.
+ * Regenerates the cache of course data to reflect database modifications.
+ * php server.php recache
  */
 CLIApplication::listen('recache', function($args) {
   $utility = new SchedulePlannerProtocolMessageUtility(App::getDatabase());

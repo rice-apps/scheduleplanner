@@ -10,7 +10,7 @@ scope(function() {
 	// Filter: If the user is logged in, allow the request. Otherwise, display an HTTP 403 Unauthorized Error.
 	$apiFilter = function(Request $request) {
 		if ($request->session->auth->loggedIn) {
-			return true;
+			return true; // Require user authentication.
 		}
 
 		return 401; // HTTP 401 Unauthorized
@@ -19,7 +19,7 @@ scope(function() {
 	// Filter: If the user is logged in, allow the request. Otherwise, redirect them to the login page.
 	$authFilter = function(Request $request) {
 		if ($request->session->auth->loggedIn) {
-			return true;
+			return true; // Require user authentication.
 		}
 
 		return Redirect::to('/login');
@@ -33,9 +33,12 @@ scope(function() {
 	// Route: Access Restricted Pages
 	Route::filter($authFilter, function() {
 		Route::get('/', function(Request $request, Response $response) {
+			// For local development builds: use the Google Closure Development bundle.
 			if (Config::get('app.development', false)) {
 				return View::make('SchedulePlannerDevelopment');
-			} else {
+			}
+			// For production builds: use the Google Closure Compiled bundle.
+			else {
 				return View::make('SchedulePlanner');
 			}
 		});
@@ -46,6 +49,5 @@ scope(function() {
 		Route::get ('/api/user', 'API.UserController');
 		Route::post('/api/user', 'API.UserController');
 		Route::get ('/api/courses', 'API.CoursesController');
-		Route::post('/api/courses', 'API.CoursesController');
 	});
 });
