@@ -1,10 +1,10 @@
 goog.provide('org.riceapps.views.TourView');
 
 goog.require('goog.Timer');
-goog.require('goog.events.EventType');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
+goog.require('goog.events.EventType');
 goog.require('goog.style');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.fx.Animation');
@@ -121,31 +121,34 @@ TourView.prototype.enterDocument = function() {
 
 /**
  * @param {goog.events.BrowserEvent=} opt_event
+ * @private
  */
 TourView.prototype.handleExitButtonClick_ = function(opt_event) {
   this.hide();
   this.dispatchEvent(new SchedulePlannerEvent(SchedulePlannerEvent.Type.EXIT_TOUR));
-}
+};
 
 
 /**
  * @param {goog.events.BrowserEvent=} opt_event
+ * @private
  */
 TourView.prototype.handleNextButtonClick_ = function(opt_event) {
   if (this.stage_ < this.explanations_.length - 1) {
     this.next();
   }
-}
+};
 
 
 /**
  * @param {goog.events.BrowserEvent=} opt_event
+ * @private
  */
 TourView.prototype.handlePrevButtonClick_ = function(opt_event) {
   if (this.stage_ > 0) {
     this.prev();
   }
-}
+};
 
 
 /**
@@ -157,7 +160,7 @@ TourView.prototype.exitDocument = function() {
   this.getHandler().
       unlisten(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
       unlisten(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
-      unlisten(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_)
+      unlisten(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_);
 };
 
 

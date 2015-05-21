@@ -6,14 +6,14 @@ goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
+goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.events.KeyEvent');
-goog.require('goog.events.EventType');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.CourseView');
+goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.TrashView');
 goog.require('org.riceapps.views.View');
-goog.require('org.riceapps.views.DraggableView');
 
 
 goog.scope(function() {
@@ -191,7 +191,7 @@ ToolbarView.prototype.exitDocument = function() {
     unlisten(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     unlisten(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
     unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-	unlisten(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
+    unlisten(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
 };
 
 /**
@@ -208,6 +208,7 @@ ToolbarView.prototype.onCRNViewClick_ = function(event) {
 
 /**
  * @param {?goog.events.BrowserEvent=} opt_event
+ * @private
  */
 ToolbarView.prototype.onSearchInputBlur_ = function(opt_event) {
   if (this.searchInput_.value == '') {
@@ -240,11 +241,12 @@ ToolbarView.prototype.blurInput = function() {
 
 /**
  * @param {?goog.events.BrowserEvent=} opt_event
+ * @private
  */
 ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
   if (this.searchInput_.value == ToolbarView.DEFAULT_QUERY) {
     this.searchInput_.value = '';
-    this.onSearchQueryChanged_("");
+    this.onSearchQueryChanged_('');
   }
 
   goog.dom.classlist.add(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
@@ -284,6 +286,7 @@ ToolbarView.prototype.userDidStopTyping_ = function() {
 
 /**
  * @param {string} query
+ * @private
  */
 ToolbarView.prototype.onSearchQueryChanged_ = function(query) {
   if (this.updateSearchTimer_ != -1) {

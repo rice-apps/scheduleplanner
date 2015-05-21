@@ -9,8 +9,8 @@ goog.require('goog.style');
 goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.layouts.CalendarLayout');
 goog.require('org.riceapps.layouts.CalendarLayout.Calendar');
-goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.views.DraggableView');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var DraggableView = org.riceapps.views.DraggableView;
@@ -29,10 +29,10 @@ org.riceapps.views.CalendarView = function() {
   /** @private {!org.riceapps.layouts.CalendarLayout} */
   this.calendarLayout_ = new org.riceapps.layouts.CalendarLayout(this);
 
-  /** @type {boolean} */
+  /** @private {boolean} */
   this.directionsShown_ = false;
 
-  /** @type {Element} */
+  /** @private {Element} */
   this.directionsElement_ = null;
 
   /** @private {boolean} */
@@ -57,7 +57,7 @@ CalendarView.Theme = {
 
 
 /** @const {!Array.<string>} */
-CalendarView.DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+CalendarView.DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 
 /** @const {!Array.<string>} */
@@ -98,7 +98,7 @@ CalendarView.prototype.hasCoursesOnDay = function(day) {
     var times = items[i].getCalendarTimes();
 
     for (var j = 0; j < times.length; j++) {
-      if (times[j]['day'] == day)  {
+      if (times[j]['day'] == day) {
         return true;
       }
     }
@@ -110,6 +110,7 @@ CalendarView.prototype.hasCoursesOnDay = function(day) {
 
 /**
  * @param {!org.riceapps.events.ViewEvent} event
+ * @private
  */
 CalendarView.prototype.handleChildrenChanged_ = function(event) {
   if (this.hasChildren()) {
@@ -126,7 +127,7 @@ CalendarView.prototype.handleChildrenChanged_ = function(event) {
   if (oldShowSunday != this.showSunday_ || oldShowSaturday != this.showSaturday_) {
     this.relayout();
   }
-}
+};
 
 
 /**
@@ -197,7 +198,7 @@ CalendarView.prototype.createDom = function() {
 
     goog.dom.classlist.add(cell, CalendarView.Theme.HOUR);
 
-    goog.dom.setTextContent(cell, (i % 12 == 0) ? '12 PM' : i % 12 + ' ' +  (i >= 12 ? 'PM' : 'AM'));
+    goog.dom.setTextContent(cell, (i % 12 == 0) ? '12 PM' : i % 12 + ' ' + (i >= 12 ? 'PM' : 'AM'));
     goog.dom.appendChild(row, cell);
 
     // Add other columns.

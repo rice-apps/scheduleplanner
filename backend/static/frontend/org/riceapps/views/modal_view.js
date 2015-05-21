@@ -176,6 +176,7 @@ ModalView.prototype.hide = function(opt_preventAnimation) {
 
 /**
  * @param {!goog.events.BrowserEvent} event
+ * @private
  */
 ModalView.prototype.handleOverlayClicked_ = function(event) {
   this.hide();
@@ -184,6 +185,7 @@ ModalView.prototype.handleOverlayClicked_ = function(event) {
 
 /**
  * @param {!goog.events.BrowserEvent} event
+ * @private
  */
 ModalView.prototype.handleCloseClicked_ = function(event) {
   this.hide();
@@ -192,6 +194,7 @@ ModalView.prototype.handleCloseClicked_ = function(event) {
 
 /**
  * @param {!goog.events.KeyEvent} event
+ * @private
  */
 ModalView.prototype.handleKeyUp_ = function(event) {
   if (event.keyCode == goog.events.KeyCodes.ESC) {

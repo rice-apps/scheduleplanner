@@ -3,10 +3,10 @@ goog.provide('org.riceapps.models.CoursesModel');
 goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.structs.Map');
-goog.require('org.riceapps.models.Model');
-goog.require('org.riceapps.models.CourseModel');
-goog.require('org.riceapps.protocol.Messages');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.models.CourseModel');
+goog.require('org.riceapps.models.Model');
+goog.require('org.riceapps.protocol.Messages');
 goog.require('org.riceapps.util.CourseScheduleMatrix');
 
 goog.scope(function() {
@@ -155,7 +155,7 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
 
   // Lastly, sort the results in order by how well they matched the query.
   // Sorting Order: SCORE DESC, SUBJ ASC, COURSE NUMBER ASC
-  results.sort(function(a,b) {
+  results.sort(function(a, b) {
     if (a.getMatchScore(query) > b.getMatchScore(query)) {
       return -1;
     } else if (a.getMatchScore(query) < b.getMatchScore(query)) {

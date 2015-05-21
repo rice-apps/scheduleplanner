@@ -107,10 +107,12 @@ CalendarLayout.prototype.relayout = function() {
  * @param {number} day
  * @param {number} start
  * @param {number} end
+ * @param {number} offset
  * @return {{
  *   offset: number,
  *   limit: number
  * }}
+ * @private
  */
 CalendarLayout.prototype.getLimit_ = function(matrix, item, day, start, end, offset) {
   //window.console.log(matrix, 'day', day, 'start', start, 'end', end, 'offset', offset);
@@ -135,16 +137,17 @@ CalendarLayout.prototype.getLimit_ = function(matrix, item, day, start, end, off
 
   return {
     offset: offset,
-    limit:  Math.max(maxChanges, offset + 1)
+    limit: Math.max(maxChanges, offset + 1)
   };
-}
+};
 
 
 /**
  * @param {!Object.<number, !Object.<number, !Array.<org.riceapps.layouts.CalendarLayout.Item>>>} matrix
+ * @private
  */
 CalendarLayout.prototype.expandMatrix_ = function(matrix) {
-  for (var day = 0; day < 7; day ++) {
+  for (var day = 0; day < 7; day++) {
     for (var hour = 0; hour < 24 * CalendarLayout.PRECISION; hour++) {
       if (matrix[day][hour].length == 0) {
         matrix[day][hour].push(null);
@@ -153,7 +156,7 @@ CalendarLayout.prototype.expandMatrix_ = function(matrix) {
       }
     }
   }
-}
+};
 
 
 /**
@@ -162,6 +165,7 @@ CalendarLayout.prototype.expandMatrix_ = function(matrix) {
  * @param {!org.riceapps.layouts.CalendarLayout.Item} item
  * @param {!org.riceapps.models.CourseModel.MeetingTime} time
  * @return {number}
+ * @private
  */
 CalendarLayout.prototype.placeItem_ = function(matrix, items, item, time) {
   var day = time['day'];
@@ -187,7 +191,7 @@ CalendarLayout.prototype.placeItem_ = function(matrix, items, item, time) {
       this.expandMatrix_(matrix);
     }
     var initial = matrix[day][hour][offset];
-    for (var i = offset; i <  matrix[day][hour].length; i++) {
+    for (var i = offset; i < matrix[day][hour].length; i++) {
       if (matrix[day][hour][i] === initial ||
           matrix[day][hour][i] === null) {
         matrix[day][hour][i] = item;
@@ -206,6 +210,7 @@ CalendarLayout.prototype.placeItem_ = function(matrix, items, item, time) {
  * @param {number} end
  * @param {number} offset
  * @return {boolean}
+ * @private
  */
 CalendarLayout.prototype.canPlaceAt_ = function(matrix, day, start, end, offset) {
   for (var hour = Math.floor(start * CalendarLayout.PRECISION);
@@ -223,12 +228,13 @@ CalendarLayout.prototype.canPlaceAt_ = function(matrix, day, start, end, offset)
 
 /**
  * @return {!Object.<number, !Object.<number, !Array.<org.riceapps.layouts.CalendarLayout.Item>>>}
+ * @private
  */
 CalendarLayout.prototype.createMatrix_ = function() {
   // Build a matrix of calendar positions.
   var matrix = {};
 
-  for (var day = 0; day < 7; day ++) {
+  for (var day = 0; day < 7; day++) {
     matrix[day] = {};
 
     for (var hour = 0; hour < 24 * CalendarLayout.PRECISION; hour++) {

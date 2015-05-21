@@ -16,8 +16,8 @@ goog.require('goog.structs.Map');
 goog.require('goog.style');
 goog.require('org.riceapps.events.ContextMenuEvent');
 goog.require('org.riceapps.events.ContextMenuEvent.Type');
-goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.utils.DomUtils');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var DomUtils = org.riceapps.utils.DomUtils;
@@ -207,6 +207,7 @@ ContextMenuView.prototype.relayout = function(opt_preventAnimation) {
 /**
  * @param {number} optionId
  * @param {goog.events.BrowserEvent} event
+ * @private
  */
 ContextMenuView.prototype.handleOptionClick_ = function(optionId, event) {
   this.dispatchEvent(new ContextMenuEvent(ContextMenuEvent.Type.OPTION_CLICK, optionId));

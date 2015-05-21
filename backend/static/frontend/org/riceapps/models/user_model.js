@@ -2,8 +2,8 @@ goog.provide('org.riceapps.models.UserModel');
 
 goog.require('goog.array');
 goog.require('org.riceapps.events.UserModelEvent');
-goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.models.CourseModel');
+goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.protocol.Messages');
 goog.require('org.riceapps.utils.FakeData');
 
@@ -68,7 +68,7 @@ UserModel.prototype.initialize = function(coursesModel) {
   }
 
   this.protocolMessage_ = null;
-}
+};
 
 
 /**
@@ -113,7 +113,7 @@ UserModel.prototype.setHasSeenTour = function(hasSeenTour) {
   if (oldHasSeenTour != hasSeenTour) {
     this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
   }
-}
+};
 
 
 /**
@@ -134,7 +134,7 @@ UserModel.prototype.setHasAgreedToDisclaimer = function(hasAgreedToDisclaimer) {
   if (oldHasAgreedToDisclaimer != hasAgreedToDisclaimer) {
     this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
   }
-}
+};
 
 
 /**

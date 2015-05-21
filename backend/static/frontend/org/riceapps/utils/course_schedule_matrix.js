@@ -39,7 +39,7 @@ CourseScheduleMatrix.prototype.rebuildMatrix_ = function() {
   // Create an empty matrix.
   this.matrix_ = {};
 
-  for (var day = 0; day < 7; day ++) {
+  for (var day = 0; day < 7; day++) {
     this.matrix_[day] = {};
 
     for (var hour = 0; hour < 24 * CourseScheduleMatrix.GRANULARITY; hour++) {
@@ -88,7 +88,7 @@ CourseScheduleMatrix.prototype.hasConflictWith = function(course) {
     for (var hour = Math.floor(times[j]['start'] * CourseScheduleMatrix.GRANULARITY);
          hour < Math.ceil(times[j]['end'] * CourseScheduleMatrix.GRANULARITY);
          hour += 1) {
-      if(this.matrix_[times[j]['day']][hour]) {
+      if (this.matrix_[times[j]['day']][hour]) {
         return true;
       }
     }

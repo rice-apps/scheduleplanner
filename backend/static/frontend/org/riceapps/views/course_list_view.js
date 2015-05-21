@@ -7,12 +7,12 @@ goog.provide('org.riceapps.views.CourseListView');
 
 goog.require('goog.array');
 goog.require('goog.dom');
-goog.require('goog.dom.classlist');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classlist');
 goog.require('goog.style');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
-goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
@@ -129,7 +129,7 @@ CourseListView.prototype.removeCourses = function(courses) {
  * @private
  */
 CourseListView.prototype.handleChildrenChanged_ = function() {
-  this.courses_.sort(function(a,b) {
+  this.courses_.sort(function(a, b) {
     if (a.getSubject() == b.getSubject()) {
       return a.getCourseNumber() - b.getCourseNumber();
     } else {

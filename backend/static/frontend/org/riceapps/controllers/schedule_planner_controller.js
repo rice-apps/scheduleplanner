@@ -13,16 +13,15 @@ goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.CoursesModel');
 goog.require('org.riceapps.models.UserModel');
 goog.require('org.riceapps.views.AbstractCourseView');
-goog.require('org.riceapps.views.CourseView');
-goog.require('org.riceapps.views.CourseCalendarView');
-goog.require('org.riceapps.views.CourseCalendarGuideView');
-goog.require('org.riceapps.views.CourseSearchView');
-goog.require('org.riceapps.views.DraggableView');
-goog.require('org.riceapps.views.CourseModalView');
 goog.require('org.riceapps.views.CRNModalView');
-goog.require('org.riceapps.views.SchedulePlannerView');
+goog.require('org.riceapps.views.CourseCalendarGuideView');
+goog.require('org.riceapps.views.CourseCalendarView');
+goog.require('org.riceapps.views.CourseModalView');
+goog.require('org.riceapps.views.CourseSearchView');
+goog.require('org.riceapps.views.CourseView');
+goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.PlaygroundView');
-
+goog.require('org.riceapps.views.SchedulePlannerView');
 
 
 goog.scope(function() {
@@ -35,6 +34,7 @@ var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 var SchedulePlannerXhrEvent = org.riceapps.events.SchedulePlannerXhrEvent;
 var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrController;
 var UserModelEvent = org.riceapps.events.UserModelEvent;
+
 
 
 /**
@@ -99,7 +99,9 @@ SchedulePlannerController.prototype.handleShowCourseDetails_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.handleShowCourseEvals_ = function(event) {
-  this.openCourseEvaluations(event.model);
+  if (event.model) {
+    this.openCourseEvaluations(event.model);
+  }
 };
 
 
@@ -131,6 +133,8 @@ SchedulePlannerController.prototype.handleShowCourseEvals_ = function(event) {
  * NOTE: The ESTHER instructor IDs are different than our internal ones and unfortunately there is no way to data mine
  * them since the course feed does not include them; we will need to get the list from the university for this purpose,
  * or drop the feature. The user can easily find the instructor evaluations from within ESTHER.
+ *
+ * @param {!org.riceapps.models.CourseModel} courseModel
  */
 SchedulePlannerController.prototype.openCourseEvaluations = function(courseModel) {
   var form = goog.dom.createDom(goog.dom.TagName.FORM, {
@@ -204,7 +208,7 @@ SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
  */
 SchedulePlannerController.prototype.handleAddGuideViews_ = function(event) {
   var views = event.target.getGuideViews();
-  for(var i = 0; i < views.length; i++) {
+  for (var i = 0; i < views.length; i++) {
     this.view_.getCalendarView().addChildAt(views[i], views[i].getChildIndex(), true);
   }
 };
@@ -429,9 +433,10 @@ SchedulePlannerController.prototype.removeCoursesFromPlayground = function(cours
  */
 SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   // Move an item from the calendar to the calendar.
-  if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
+  if (event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
      event.target instanceof org.riceapps.views.CourseCalendarView) {
-    window.console.log("[MoveEvent] CALENDAR [" + event.target.getCourseModel().getId() + "] -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] CALENDAR [' + event.target.getCourseModel().getId() + '] -> CALENDAR [' +
+        event.dropTarget.getCourseModel().getId() + ']');
 
     // Update the user model.
     this.calendarInsertAt_ = event.target.getParent().indexOfChild(event.target);
@@ -450,9 +455,9 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the search view to the calendar.
-  else if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
+  else if (event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
           event.target instanceof org.riceapps.views.CourseSearchView) {
-    window.console.log("[MoveEvent] SEARCH -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] SEARCH -> CALENDAR [' + event.dropTarget.getCourseModel().getId() + ']');
 
     // Update the user model.
     this.userModel_.addCoursesToSchedule([event.dropTarget.getCourseModel()]);
@@ -463,9 +468,10 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the playground to the calendar.
-  else if(event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
+  else if (event.dropTarget instanceof org.riceapps.views.CourseCalendarGuideView &&
           event.target instanceof org.riceapps.views.CourseView) {
-    window.console.log("[MoveEvent] PLAYGROUND [" + event.target.getCourseModel().getId() + "] -> CALENDAR [" + event.dropTarget.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] PLAYGROUND [' + event.target.getCourseModel().getId() + '] -> CALENDAR [' +
+        event.dropTarget.getCourseModel().getId() + ']');
 
     // Update the user model.
     //this.userModel_.removeCoursesFromPlayground([event.target.getCourseModel()]);
@@ -480,9 +486,9 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the calendar to the playground.
-  else if(event.dropTarget === this.view_.getPlaygroundView() &&
+  else if (event.dropTarget === this.view_.getPlaygroundView() &&
           event.target instanceof org.riceapps.views.CourseCalendarView) {
-    window.console.log("[MoveEvent] CALENDAR -> PLAYGROUND [" + event.target.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] CALENDAR -> PLAYGROUND [' + event.target.getCourseModel().getId() + ']');
 
     // Update the user model.
     //this.userModel_.removeCoursesFromSchedule([event.target.getCourseModel()]);
@@ -497,9 +503,9 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the search results to the playground.
-  else if(event.dropTarget === this.view_.getPlaygroundView() &&
+  else if (event.dropTarget === this.view_.getPlaygroundView() &&
           event.target instanceof org.riceapps.views.CourseSearchView) {
-    window.console.log("[MoveEvent] SEARCH -> PLAYGROUND [" + event.target.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] SEARCH -> PLAYGROUND [' + event.target.getCourseModel().getId() + ']');
 
     // Update the user model.
     this.userModel_.addCoursesToPlayground([event.target.getCourseModel()]);
@@ -510,15 +516,15 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the playground to the playground.
-  else if(event.dropTarget === this.view_.getPlaygroundView() &&
+  else if (event.dropTarget === this.view_.getPlaygroundView() &&
           event.target instanceof org.riceapps.views.CourseView) {
     // DO NOTHING.
   }
 
   // Move an item from the calendar to the trash.
-  else if(event.dropTarget === this.view_.getTrashView() &&
+  else if (event.dropTarget === this.view_.getTrashView() &&
           event.target instanceof org.riceapps.views.CourseCalendarView) {
-    window.console.log("[MoveEvent] CALENDAR -> TRASH [" + event.target.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] CALENDAR -> TRASH [' + event.target.getCourseModel().getId() + ']');
 
     // Update the user model.
     this.userModel_.removeCoursesFromSchedule([event.target.getCourseModel()]);
@@ -529,9 +535,9 @@ SchedulePlannerController.prototype.onCourseViewDropped_ = function(event) {
   }
 
   // Move an item from the playground to the trash.
-  else if(event.dropTarget === this.view_.getTrashView() &&
+  else if (event.dropTarget === this.view_.getTrashView() &&
           event.target instanceof org.riceapps.views.CourseView) {
-    window.console.log("[MoveEvent] PLAYGROUND -> TRASH [" + event.target.getCourseModel().getId() + "]");
+    window.console.log('[MoveEvent] PLAYGROUND -> TRASH [' + event.target.getCourseModel().getId() + ']');
 
     // Update the user model.
     this.userModel_.removeCoursesFromPlayground([event.target.getCourseModel()]);
@@ -621,12 +627,13 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
   } else if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
     this.view_.getTourView().show();
   }
-}
+};
 
 
 /**
  * Event handler; called when the user model changes.
  * @param {org.riceapps.events.UserModelEvent=} opt_event
+ * @private
  */
 SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event) {
   // Update credit counter in toolbar.
@@ -644,6 +651,7 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
 /**
  * Event Handler; called when user agrees to disclaimer.
  * @param {SchedulePlannerEvent=} opt_event
+ * @private
  */
 SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
   this.userModel_.setHasAgreedToDisclaimer(true);
@@ -658,6 +666,7 @@ SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
 /**
  * Event handler; called when user marks tour as seen.
  * @param {SchedulePlannerEvent=} opt_event
+ * @private
  */
 SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
   this.userModel_.setHasSeenTour(true);
@@ -691,7 +700,7 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
   this.view_.getSearchView().setLoading(true);
 
   if (event.filters === null)
-    throw new Error("A query needs a filter");
+    throw new Error('A query needs a filter');
 
   var results = this.coursesModel_.getCoursesByQuery(event.query, event.filters, this.userModel_);
   var views = [];
@@ -708,6 +717,7 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
 
 
 /**
+ * @param {*} errorType
  * @private
  */
 SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
@@ -723,6 +733,7 @@ SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
 /**
  * Event handler; called when a course view is no longer being dragged.
  * @param {goog.events.Event} event
+ * @private
  */
 SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
   // Force the calendar view to re-draw items located on the calendar since the guide views will have disappeared.
@@ -732,6 +743,7 @@ SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
 /**
  * Event handler; called when a course view starts to be dragged.
  * @param {goog.events.Event} event
+ * @private
  */
 SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
   // Close the search view when dragging from playground.
@@ -764,6 +776,7 @@ SchedulePlannerController.prototype.start = function() {
 /**
  * Event handler; called when an XHR request fails.
  * @param {!SchedulePlannerXhrEvent} event
+ * @private
  */
 SchedulePlannerController.prototype.handleXhrFailed_ = function(event) {
   window.console.log('[XhrEvent] SchedulePlannerController.handleXhrFailed_', event);

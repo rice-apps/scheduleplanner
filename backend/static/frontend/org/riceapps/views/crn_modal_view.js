@@ -1,8 +1,8 @@
 goog.provide('org.riceapps.views.CRNModalView');
 
 goog.require('goog.dom');
-goog.require('goog.dom.classlist');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classlist');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.EventType');
 goog.require('org.riceapps.views.ModalView');
@@ -63,9 +63,9 @@ CRNModalView.prototype.createDom = function() {
     goog.style.setStyle(div, {'margin': '3px'});
     goog.dom.setTextContent(div, courses[i].getTitle());
 
-	  crn = courses[i].getCrn();
-	  coursename = courses[i].getCourseCategory();
-	  element = goog.dom.createDom(goog.dom.TagName.INPUT, {
+    crn = courses[i].getCrn();
+    coursename = courses[i].getCourseCategory();
+    element = goog.dom.createDom(goog.dom.TagName.INPUT, {
       'type': 'text',
       'value': crn
     });
@@ -81,8 +81,8 @@ CRNModalView.prototype.createDom = function() {
         }, 10);
       });
 
-	  goog.dom.appendChild(div, element);
-	}
+    goog.dom.appendChild(div, element);
+  }
 
   element = goog.dom.createDom(goog.dom.TagName.DIV, CRNModalView.Theme.SUBTITLE);
   goog.dom.setTextContent(element, 'CRNs (in Staging Area):');

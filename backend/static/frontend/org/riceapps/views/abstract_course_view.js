@@ -11,8 +11,8 @@ goog.require('org.riceapps.events.ContextMenuEvent.Type');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.views.ContextMenuView');
-goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.CourseCalendarGuideView');
+goog.require('org.riceapps.views.DraggableView');
 
 goog.scope(function() {
 var ContextMenuEvent = org.riceapps.events.ContextMenuEvent;
@@ -89,8 +89,8 @@ AbstractCourseView.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
 
   this.getHandler().
-    listen(this, DraggableView.EventType.DRAGSTART, this.handleDragStart_).
-    listen(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_).
+    listen(this, DraggableView.EventType.DRAGSTART, this.onDragStart_).
+    listen(this, DraggableView.EventType.DRAGEND, this.onDragEnd_).
     listen(this.getElement(), goog.events.EventType.CONTEXTMENU, this.handleContextMenu_);
 };
 
@@ -102,8 +102,8 @@ AbstractCourseView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
 
   this.getHandler().
-    unlisten(this, DraggableView.EventType.DRAGSTART, this.handleDragStart_).
-    unlisten(this, DraggableView.EventType.DRAGEND, this.handleDragEnd_).
+    unlisten(this, DraggableView.EventType.DRAGSTART, this.onDragStart_).
+    unlisten(this, DraggableView.EventType.DRAGEND, this.onDragEnd_).
     unlisten(this.getElement(), goog.events.EventType.CONTEXTMENU, this.handleContextMenu_);
 };
 
@@ -240,7 +240,7 @@ AbstractCourseView.prototype.isInSearch = function() {
  * @param {goog.events.Event} event
  * @private
  */
-AbstractCourseView.prototype.handleDragStart_ = function(event) {
+AbstractCourseView.prototype.onDragStart_ = function(event) {
   window.console.log('AbstractCourseView dragStart');
 
   // Set the drag source to be invisible.
@@ -286,12 +286,11 @@ AbstractCourseView.prototype.shouldHideElementOnDrag = function() {
 };
 
 
-
 /**
  * @param {goog.events.Event} event
  * @private
  */
-AbstractCourseView.prototype.handleDragEnd_ = function(event) {
+AbstractCourseView.prototype.onDragEnd_ = function(event) {
   window.console.log('AbstractCourseView dragEnd');
 
   // Set the drag source to be visible again.

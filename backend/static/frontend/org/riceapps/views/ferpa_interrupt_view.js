@@ -32,18 +32,18 @@ goog.inherits(org.riceapps.views.FerpaInterruptView,
               org.riceapps.views.InterruptView);
 var FerpaInterruptView = org.riceapps.views.FerpaInterruptView;
 
+/** @const {string} */
+FerpaInterruptView.DISCLAIMER_TEXT = 'Schedule Planner is not affiliated with or endorsed by Rice University in any way. ' +
+  'By using this application, you agree to grant the Rice Apps student organization permission to store information ' +
+  'about you. You also acknowledge that the methods used by Rice Apps to store ' +
+  'any of your information may not be compliant with the Family Educational Rights and Privacy Act (FERPA).';
 
 /** @const {string} */
-FerpaInterruptView.DISCLAIMER_TEXT = 'Schedule Planner is not affiliated with or endorsed by Rice University in any way. '
-  + 'By using this application, you agree to grant the Rice Apps student organization permission to store information '
-  + 'about you. You also acknowledge that the methods used by Rice Apps to store '
-  + 'any of your information may not be compliant with the Family Educational Rights and Privacy Act (FERPA).';
-
-/** @const {string} */
-FerpaInterruptView.CONDITIONS_TEXT = 'Schedule Planner provides you with access to course evaluations. Course evaluations are intended to be available only to Rice students, faculty, '
- + 'and staff on Rice\'s internal computer network. Evaluation information should be considered confidential and is '
- + 'to be used solely by, within, and amongst the Rice University community and its members. Failure to follow this '
- + 'rule may result in your access to the evaluations being restricted or in other disciplinary action by the university.';
+FerpaInterruptView.CONDITIONS_TEXT = 'Schedule Planner provides you with access to course evaluations. Course evaluations ' +
+ 'are intended to be available only to Rice students, faculty, ' +
+ 'and staff on Rice\'s internal computer network. Evaluation information should be considered confidential and is ' +
+ 'to be used solely by, within, and amongst the Rice University community and its members. Failure to follow this ' +
+ 'rule may result in your access to the evaluations being restricted or in other disciplinary action by the university.';
 
 /** @enum {string} */
 FerpaInterruptView.Theme = {
@@ -95,6 +95,7 @@ FerpaInterruptView.prototype.createDom = function() {
 
 /**
  * @param {!goog.events.BrowserEvent} event
+ * @private
  */
 FerpaInterruptView.prototype.onAgreeClick_ = function(event) {
   this.hide();

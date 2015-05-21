@@ -25,7 +25,6 @@
  */
 
 
-goog.provide('org.riceapps.fx.Animator');
 goog.provide('org.riceapps.fx.Animation');
 goog.provide('org.riceapps.fx.Animation.Direction');
 goog.provide('org.riceapps.fx.Animation.Fill');
@@ -33,6 +32,7 @@ goog.provide('org.riceapps.fx.Animation.Preset');
 goog.provide('org.riceapps.fx.Animation.Repeat');
 goog.provide('org.riceapps.fx.Animation.State');
 goog.provide('org.riceapps.fx.Animation.Timing');
+goog.provide('org.riceapps.fx.Animator');
 
 goog.require('goog.Promise');
 goog.require('goog.Timer');
@@ -500,7 +500,7 @@ Animation.perform = function(element, animation) {
 
   if (typeof element[Animation.ACTIVE_PROPERTY] == 'string' &&
       animation.mode == Animation.Mode.AVAILABLE) {
-    return new goog.Promise(function(resolve,reject){});
+    return new goog.Promise(function(resolve, reject) {});
   }
 
   var uid = Animation.ID_GENERATOR.getNextUniqueId();
@@ -558,7 +558,7 @@ Animation.perform = function(element, animation) {
         var styles = {};
         for (var key in Animation.PROPERTY_PREFIXES) {
           var p = Animation.PROPERTY_PREFIXES[key];
-          styles[p+'animation'] = 'none';
+          styles[p + 'animation'] = 'none';
         }
         goog.style.setStyle(element, styles);
 
@@ -584,14 +584,14 @@ Animation.perform = function(element, animation) {
     var styles = {};
     for (var key in Animation.PROPERTY_PREFIXES) {
       var p = Animation.PROPERTY_PREFIXES[key];
-      styles[p+Animation.CSS.DURATION] = animation.duration + 'ms';
-      styles[p+Animation.CSS.TIMING] = animation.timing;
-      styles[p+Animation.CSS.DELAY] = animation.delay + 'ms';
-      styles[p+Animation.CSS.REPEAT] = animation.repeat;
-      styles[p+Animation.CSS.DIRECTION] = animation.direction;
-      styles[p+Animation.CSS.FILL] = animation.fill;
-      styles[p+Animation.CSS.STATE] = animation.state;
-      styles[p+Animation.CSS.NAME] = animation.name;
+      styles[p + Animation.CSS.DURATION] = animation.duration + 'ms';
+      styles[p + Animation.CSS.TIMING] = animation.timing;
+      styles[p + Animation.CSS.DELAY] = animation.delay + 'ms';
+      styles[p + Animation.CSS.REPEAT] = animation.repeat;
+      styles[p + Animation.CSS.DIRECTION] = animation.direction;
+      styles[p + Animation.CSS.FILL] = animation.fill;
+      styles[p + Animation.CSS.STATE] = animation.state;
+      styles[p + Animation.CSS.NAME] = animation.name;
     }
     goog.style.setStyle(element, styles);
   //}, 0);

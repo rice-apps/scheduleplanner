@@ -1,8 +1,8 @@
 goog.provide('org.riceapps.views.CourseModalView');
 
 goog.require('goog.dom');
-goog.require('goog.dom.classlist');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classlist');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.EventType');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
@@ -137,7 +137,7 @@ CourseModalView.prototype.createDom = function() {
   });
 
   element = goog.dom.createDom(goog.dom.TagName.DIV, CourseModalView.Theme.TITLE);
-  goog.dom.setTextContent(element, 'Sections (' + sections.length  + ')');
+  goog.dom.setTextContent(element, 'Sections (' + sections.length + ')');
   goog.dom.appendChild(this.getElement(), element);
 
   table = goog.dom.createDom(goog.dom.TagName.TABLE);
@@ -219,12 +219,12 @@ CourseModalView.prototype.createDom = function() {
       'target': '_blank'
     });
     goog.dom.setTextContent(element, 'View Course Syllabus');
-    goog.dom.appendChild(this.getElement(),element);
+    goog.dom.appendChild(this.getElement(), element);
 
     element = goog.dom.createDom(goog.dom.TagName.DIV, CourseModalView.Theme.TEXT);
     goog.dom.setTextContent(element, ' ');
     goog.dom.appendChild(this.getElement(), element);
-  };
+  }
 
   // Add courses.rice.edu link.
   element = goog.dom.createDom(goog.dom.TagName.A, {
@@ -232,7 +232,7 @@ CourseModalView.prototype.createDom = function() {
     'target': '_blank'
   });
   goog.dom.setTextContent(element, CourseModalView.Messages.OPEN_COURSES);
-  goog.dom.appendChild(this.getElement(),element);
+  goog.dom.appendChild(this.getElement(), element);
 
   element = goog.dom.createDom(goog.dom.TagName.DIV, CourseModalView.Theme.TEXT);
   goog.dom.setTextContent(element, ' ');

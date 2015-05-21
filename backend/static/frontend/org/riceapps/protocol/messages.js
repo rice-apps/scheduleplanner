@@ -39,16 +39,16 @@
  */
 
 goog.provide('org.riceapps.protocol.Messages');
-goog.provide('org.riceapps.protocol.Messages.CoursesRequest');
-goog.provide('org.riceapps.protocol.Messages.UserRequest');
-goog.provide('org.riceapps.protocol.Messages.User');
-goog.provide('org.riceapps.protocol.Messages.Playground');
-goog.provide('org.riceapps.protocol.Messages.Schedule');
-goog.provide('org.riceapps.protocol.Messages.Courses');
+goog.provide('org.riceapps.protocol.Messages.Course');
 goog.provide('org.riceapps.protocol.Messages.CourseMeetingTime');
 goog.provide('org.riceapps.protocol.Messages.CourseRestriction');
+goog.provide('org.riceapps.protocol.Messages.Courses');
+goog.provide('org.riceapps.protocol.Messages.CoursesRequest');
 goog.provide('org.riceapps.protocol.Messages.Instructor');
-goog.provide('org.riceapps.protocol.Messages.Course');
+goog.provide('org.riceapps.protocol.Messages.Playground');
+goog.provide('org.riceapps.protocol.Messages.Schedule');
+goog.provide('org.riceapps.protocol.Messages.User');
+goog.provide('org.riceapps.protocol.Messages.UserRequest');
 
 goog.scope(function() {
 var Messages = org.riceapps.protocol.Messages;

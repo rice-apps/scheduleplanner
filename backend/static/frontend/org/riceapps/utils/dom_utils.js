@@ -2,11 +2,11 @@ goog.provide('org.riceapps.utils.DomUtils');
 
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
-goog.require('goog.string');
-goog.require('goog.style');
 goog.require('goog.math.Coordinate');
 goog.require('goog.math.Rect');
 goog.require('goog.math.Size');
+goog.require('goog.string');
+goog.require('goog.style');
 
 goog.scope(function() {
 var DomUtils = org.riceapps.utils.DomUtils;

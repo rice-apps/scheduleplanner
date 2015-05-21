@@ -1,16 +1,16 @@
 goog.provide('org.riceapps.views.PlaygroundView');
 
 goog.require('goog.dom');
-goog.require('goog.style');
-goog.require('org.riceapps.events.ViewEvent');
-goog.require('org.riceapps.views.CourseView');
-goog.require('org.riceapps.views.DraggableView.DropTarget');
-goog.require('org.riceapps.views.DraggableView');
-goog.require('org.riceapps.views.View');
+goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventType');
+goog.require('goog.style');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
-goog.require('goog.events.BrowserEvent');
+goog.require('org.riceapps.events.ViewEvent');
+goog.require('org.riceapps.views.CourseView');
+goog.require('org.riceapps.views.DraggableView');
+goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var ViewEvent = org.riceapps.events.ViewEvent;
@@ -27,10 +27,10 @@ var DraggableView = org.riceapps.views.DraggableView;
 org.riceapps.views.PlaygroundView = function() {
   goog.base(this);
 
-  /** @type {boolean} */
+  /** @private {boolean} */
   this.directionsShown_ = false;
 
-  /** @type {Element} */
+  /** @private {Element} */
   this.directionsElement_ = null;
 };
 goog.inherits(org.riceapps.views.PlaygroundView,
@@ -191,6 +191,7 @@ PlaygroundView.prototype.exitDocument = function() {
 
 /**
  * @param {!org.riceapps.events.ViewEvent} event
+ * @private
  */
 PlaygroundView.prototype.handleChildrenChanged_ = function(event) {
   if (this.hasChildren()) {
@@ -202,7 +203,7 @@ PlaygroundView.prototype.handleChildrenChanged_ = function(event) {
   if (this.clearPlaygroundElement_) {
     goog.style.setElementShown(this.clearPlaygroundElement_, this.hasChildren());
   }
-}
+};
 
 /**
  * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
@@ -214,6 +215,6 @@ PlaygroundView.prototype.onClearPlaygroundClick_ = function(event) {
     var new_event = new SchedulePlannerEvent(SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK);
     this.dispatchEvent(new_event);
   }
-}
+};
 
 }); // goog.scope

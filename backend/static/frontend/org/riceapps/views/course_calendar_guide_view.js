@@ -41,7 +41,7 @@ org.riceapps.views.CourseCalendarGuideView = function(courseModel, childIndex) {
   /** @private {!Array.<!Element>} */
   this.boxes_ = [];
 
-  /** @private {number} */
+  /** @type {number} */
   this.childIndex__ = childIndex;
 };
 goog.inherits(org.riceapps.views.CourseCalendarGuideView,

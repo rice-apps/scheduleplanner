@@ -59,7 +59,7 @@ CourseSearchView.prototype.createDom = function() {
   if (course.isLpap()) {
     text = course.getCreditsAsString() + ' Hours, LPAP';
   } else if (course.getDistributionType() != 0) {
-    text = course.getCreditsAsString() + ' Hours, Distribution ' + course.getDistributionTypeAsString() ;
+    text = course.getCreditsAsString() + ' Hours, Distribution ' + course.getDistributionTypeAsString();
   } else {
     text = course.getCreditsAsString() + ' Hours';
   }

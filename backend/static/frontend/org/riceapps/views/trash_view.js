@@ -2,9 +2,9 @@ goog.provide('org.riceapps.views.TrashView');
 
 goog.require('goog.dom.classlist');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
-goog.require('org.riceapps.views.View');
 goog.require('org.riceapps.views.AbstractCourseView');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;

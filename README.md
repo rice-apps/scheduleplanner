@@ -33,7 +33,7 @@ We will be following the [Google JavaScript Style Guide] (https://google-stylegu
 * Always end code files with a new line
 * Always eliminate trailing spaces
 * Always indent using spaces, 2 spaces per tab
-* Maximum length of a line is 120 characters
+* Maximum length of a line is 140 characters
 * Always use semicolons to avoid ambiguity in the interpreter
 * Always use brackets in control blocks to avoid ambiguity in the interpreter
 * Always place two blank lines between top-level blocks
@@ -43,6 +43,8 @@ We will be following the [Google JavaScript Style Guide] (https://google-stylegu
 * To indicate a note: `NOTE(githubuser): MESSAGE`
 * To indicate a todo: `TODO(githubuser): MESSAGE`
 * Caution: compiler may rewrite property names (e.g. obj.property) for optimization. Use string literals to prevent this (e.g. obj['property']) in areas where renaming at compile time might affect correctness at runtime. Compiler will not rewrite properties that are well known (e.g. DOM node properties).
+
+In order to make following style more convenient, you can utilize the [Closure Linter] (https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
 
 ## Developer Set-Up and Workflow:
 1. Clone the code repository.

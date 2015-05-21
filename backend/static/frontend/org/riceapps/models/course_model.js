@@ -6,10 +6,10 @@
 goog.provide('org.riceapps.models.CourseModel');
 
 goog.require('goog.Promise');
-goog.require('goog.color');
 goog.require('goog.array');
-goog.require('org.riceapps.models.Model');
+goog.require('goog.color');
 goog.require('org.riceapps.models.InstructorModel');
+goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.protocol.Messages');
 
 goog.scope(function() {
@@ -111,6 +111,7 @@ CourseModel.prototype.equals = function(otherCourse) {
 
 
 /**
+ * @param {number} type
  * @return {boolean}
  */
 CourseModel.prototype.assertDistribution = function(type) {
@@ -219,7 +220,7 @@ CourseModel.prototype.getMeetingTimesAsString = function() {
 
   // First, compress the times (e.g. group same times and locations on separate days into one component of the string).
   var elongatedTimes = goog.array.map(this.getMeetingTimes(), function(time, idx, arr) {
-    time['day'] = days[time['day']] || "" + time['day'];
+    time['day'] = days[time['day']] || '' + time['day'];
     return time;
   });
   var times = [];
@@ -268,7 +269,7 @@ CourseModel.prototype.timeToString = function(time) {
   var hour = Math.floor(time);
   var min = Math.floor((time - hour) * 60);
   var ampm = (hour < 12 || hour == 23 ? ' AM' : ' PM');
-  return '' + (hour > 12 ? hour - 12 : hour) + ':' + (min < 10 ? '0' : '')  + min + ampm;
+  return '' + (hour > 12 ? hour - 12 : hour) + ':' + (min < 10 ? '0' : '') + min + ampm;
 };
 
 /**
@@ -421,9 +422,9 @@ CourseModel.prototype.getMatchScore = function(query) {
   if (total > 0 && queryNumber != null) {
     if (queryNumber === this.data_['courseNumber'] + '') {
       total += 3;
-    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,2)) {
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0, 2)) {
       total += 2.5;
-    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0,1)) {
+    } else if (queryNumber === (this.data_['courseNumber'] + '').substring(0, 1)) {
       total += 2.2;
     } else {
       total -= 2; // For matching subject or title but not matching number.
@@ -482,7 +483,7 @@ CourseModel.prototype.getDistributionType = function() {
  * @return {string}
  */
 CourseModel.prototype.getDistributionTypeAsString = function() {
-  switch(this.data_['distributionGroup']) {
+  switch (this.data_['distributionGroup']) {
     case 1:
       return 'I';
     case 2:
@@ -539,23 +540,23 @@ CourseModel.prototype.getAllSections = function() {
  */
 CourseModel.COLORS = [ // from http://www.google.com/design/spec/style/color.html#color-color-palette
   [242, 245, 246], // Gray
-  [244,  67,  54], // Red
+  [244, 67, 54], // Red
   //[233,  30,  99], // Pink
   //[156,  39, 176], // Purple
-  [103,  58, 183], // Deep Purple
-  [ 63,  81, 181], // Indigo
-  [ 33, 150, 243], // Blue
-  [  3, 169, 244], // Light Blue
-  [  0, 188, 212], // Cyan
-  [  0, 150, 136], // Teal
-  [ 76, 175,  80], // Green
+  [103, 58, 183], // Deep Purple
+  [63, 81, 181], // Indigo
+  [33, 150, 243], // Blue
+  [3, 169, 244], // Light Blue
+  [0, 188, 212], // Cyan
+  [0, 150, 136], // Teal
+  [76, 175, 80], // Green
   //[139, 195,  74], // Light Green
   //[205, 220,  57], // Lime
-  [255, 235,  59], // Yellow
-  [255, 193,   7], // Amber
-  [255, 152,   0], // Orange
-  [255,  87,  34], // Deep Orange
-  [ 96, 125, 139] // Blue Grey
+  [255, 235, 59], // Yellow
+  [255, 193, 7], // Amber
+  [255, 152, 0], // Orange
+  [255, 87, 34], // Deep Orange
+  [96, 125, 139] // Blue Grey
 ];
 
 
@@ -606,7 +607,7 @@ CourseModel.prototype.getTerm = function() {
  * @return {string}
  */
 CourseModel.prototype.getTermAsString = function() {
-  switch(this.data_['term']) {
+  switch (this.data_['term']) {
     case CourseModel.Term.FALL:
       return 'Fall';
     case CourseModel.Term.SPRING:

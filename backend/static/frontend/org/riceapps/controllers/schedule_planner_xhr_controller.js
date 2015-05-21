@@ -15,10 +15,10 @@ goog.require('goog.json');
 goog.require('goog.net.XhrIo');
 goog.require('org.riceapps.controllers.Controller');
 goog.require('org.riceapps.events.SchedulePlannerXhrEvent');
+goog.require('org.riceapps.events.UserModelEvent');
 goog.require('org.riceapps.models.CoursesModel');
 goog.require('org.riceapps.models.UserModel');
 goog.require('org.riceapps.protocol.Messages');
-goog.require('org.riceapps.events.UserModelEvent');
 
 goog.scope(function() {
 var Messages = org.riceapps.protocol.Messages;
