@@ -71,6 +71,7 @@ class UserRequestProtocolMessage extends ProtocolMessage {
   public /*string*/ $xsrfToken;
   public /*boolean*/ $hasSeenTour;
   public /*boolean*/ $hasAgreedToDisclaimer;
+  public /*int*/ $lastSeenVersion;
   public /*PlaygroundProtocolMessage*/ $playground;
   public /*ScheduleProtocolMessage */ $schedule;
 
@@ -88,6 +89,7 @@ class UserModelProtocolMessage extends ProtocolMessage {
   public /*string*/ $xsrfToken;
   public /*boolean*/ $hasSeenTour;
   public /*boolean*/ $hasAgreedToDisclaimer;
+  public /*int*/ $lastSeenVersion;
   public /*PlaygroundProtocolMessage*/ $playground;
   public /*ScheduleProtocolMessage */ $schedule;
 
@@ -107,7 +109,9 @@ class UserModelProtocolMessage extends ProtocolMessage {
            $this->hasAgreedToDisclaimer !== null &&
            $this->playground->validate() &&
            $this->schedule->validate() &&
-           is_integer($this->userId);
+           is_integer($this->userId) &&
+           is_integer($this->lastSeenVersion) &&
+           $this->lastSeenVersion >= 0;
   }
 }
 
@@ -267,6 +271,7 @@ class SchedulePlannerProtocolMessageUtility {
   const XSRF_PROPERTY = '_xsrf';
   const TOUR_PROPERTY = 'tour';
   const DISCLAIMER_PROPERTY = 'disclaimer';
+  const LAST_SEEN_VERSION_PROPERTY = 'last_seen_version';
 
   protected /*Database*/ $db;
 
@@ -284,12 +289,15 @@ class SchedulePlannerProtocolMessageUtility {
         ? $user->getProperty(static::TOUR_PROPERTY) : false;
     $hasAgreedToDisclaimer = $user->hasProperty(static::DISCLAIMER_PROPERTY)
         ? $user->getProperty(static::DISCLAIMER_PROPERTY) : false;
+    $lastSeenVersion = $user->hasProperty(static::LAST_SEEN_VERSION_PROPERTY)
+        ? $user->getProperty(static::LAST_SEEN_VERSION_PROPERTY) : 0;
 
     $message = new UserModelProtocolMessage;
     $message->userId = (int) $user->id;
     $message->userName = $user->username;
     $message->xsrfToken = $this->createXsrfToken($session);
     $message->hasSeenTour = $hasSeenTour;
+    $message->lastSeenVersion = $lastSeenVersion;
     $message->hasAgreedToDisclaimer = $hasAgreedToDisclaimer;
     $message->playground = $this->createPlayground($user);
     $message->schedule = $this->createSchedule($user);
@@ -307,7 +315,7 @@ class SchedulePlannerProtocolMessageUtility {
   public /*string*/ function createXsrfToken(/*Session*/ $session) {
     $user = $session->auth->user;
     $token = str_random(128);
-    $session->set(static::XSRF_PROPERTY, $token);
+    //$session->set(static::XSRF_PROPERTY, $token);
 
     if ($user) {
       $user->setProperty(static::XSRF_PROPERTY, $token);
@@ -326,19 +334,19 @@ class SchedulePlannerProtocolMessageUtility {
 
     $user = $session->auth->user;
 
-    if (!$session->has(static::XSRF_PROPERTY)) {
+    /*if (!$session->has(static::XSRF_PROPERTY)) {
       return false;
     }
 
     if (strcmp($session->get(static::XSRF_PROPERTY), $token) !== 0) {
       return false;
-    }
+    }*/
 
     if (!$user->hasProperty(static::XSRF_PROPERTY)) {
       return false;
     }
 
-    return strcmp($session->get(static::XSRF_PROPERTY), $user->getProperty(static::XSRF_PROPERTY)) === 0;
+    return strcmp($token, $user->getProperty(static::XSRF_PROPERTY)) === 0;
   }
 
   public /*PlaygroundProtocolMessage*/ function createPlayground(/*User_Provider*/ $user) {

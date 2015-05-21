@@ -42,6 +42,9 @@ org.riceapps.models.UserModel = function(data) {
   /** @private {boolean} */
   this.hasSeenTour_ = data['hasSeenTour'];
 
+  /** @private {number} */
+  this.lastSeenVersion_ = data['lastSeenVersion'];
+
   /** @private {boolean} */
   this.hasAgreedToDisclaimer_ = data['hasAgreedToDisclaimer'];
 };
@@ -111,6 +114,27 @@ UserModel.prototype.setHasSeenTour = function(hasSeenTour) {
   this.hasSeenTour_ = hasSeenTour;
 
   if (oldHasSeenTour != hasSeenTour) {
+    this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
+  }
+};
+
+
+/**
+ * @return {number}
+ */
+UserModel.prototype.getLastSeenVersion = function() {
+  return this.lastSeenVersion_;
+};
+
+
+/**
+ * @param {number} lastSeenVersion
+ */
+UserModel.prototype.setLastSeenVersion = function(lastSeenVersion) {
+  var oldLastSeenVersion = this.lastSeenVersion_;
+  this.lastSeenVersion_ = lastSeenVersion;
+
+  if (oldLastSeenVersion != lastSeenVersion) {
     this.dispatchEvent(new UserModelEvent(UserModelEvent.Type.USER_MODEL_CHANGED));
   }
 };

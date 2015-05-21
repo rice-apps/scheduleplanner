@@ -15,6 +15,7 @@ goog.require('org.riceapps.views.PlaygroundView');
 goog.require('org.riceapps.views.SearchView');
 goog.require('org.riceapps.views.ToolbarView');
 goog.require('org.riceapps.views.TourView');
+goog.require('org.riceapps.views.VersionInterruptView');
 goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
@@ -69,6 +70,9 @@ org.riceapps.views.SchedulePlannerView = function() {
 
   /** @private {!org.riceapps.views.FerpaInterruptView} */
   this.ferpaInterruptView_ = new org.riceapps.views.FerpaInterruptView();
+
+  /** @private {!org.riceapps.views.VersionInterruptView} */
+  this.versionInterruptView_ = new org.riceapps.views.VersionInterruptView();
 };
 goog.inherits(org.riceapps.views.SchedulePlannerView,
               org.riceapps.views.View);
@@ -96,6 +100,9 @@ SchedulePlannerView.prototype.createLoadingInterruptView_ = function() {
 
   var element;
   var container = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.style.setStyle(container, {
+    'padding-bottom' : '80px'
+  });
   goog.dom.classlist.add(container, SchedulePlannerView.Theme.LOADING_CONTAINER);
   goog.dom.setTextContent(container, 'Welcome to Rice Schedule Planner (BETA)!');
   goog.dom.appendChild(view.getElement(), container);
@@ -136,6 +143,9 @@ SchedulePlannerView.prototype.createErrorInterruptView_ = function() {
 
   var element;
   var container = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.style.setStyle(container, {
+    'padding-bottom' : '80px'
+  });
   goog.dom.classlist.add(container, SchedulePlannerView.Theme.LOADING_CONTAINER);
   goog.dom.setTextContent(container, 'Synchronization Failure');
   goog.dom.appendChild(view.getElement(), container);
@@ -143,6 +153,7 @@ SchedulePlannerView.prototype.createErrorInterruptView_ = function() {
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(element,
     'An unrecoverable error occured trying to synchronize your schedule with the remote server. ' +
+    'This may have occured because you opened the application in another window. ' +
     'Please reload the page in order to continue.');
   goog.dom.appendChild(container, element);
 
@@ -165,6 +176,14 @@ SchedulePlannerView.prototype.getErrorInterruptView = function() {
  */
 SchedulePlannerView.prototype.getFerpaInterruptView = function() {
   return this.ferpaInterruptView_;
+};
+
+
+/**
+ * @return {!org.riceapps.views.InterruptView}
+ */
+SchedulePlannerView.prototype.getVersionInterruptView = function() {
+  return this.versionInterruptView_;
 };
 
 

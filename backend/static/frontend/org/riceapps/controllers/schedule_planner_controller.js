@@ -4,6 +4,7 @@ goog.require('goog.Promise');
 goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
 goog.require('org.riceapps.SchedulePlannerConfig');
+goog.require('org.riceapps.SchedulePlannerVersion');
 goog.require('org.riceapps.controllers.Controller');
 goog.require('org.riceapps.controllers.SchedulePlannerXhrController');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
@@ -31,6 +32,7 @@ var DraggableView = org.riceapps.views.DraggableView;
 var ModalView = org.riceapps.views.ModalView;
 var SchedulePlannerConfig = org.riceapps.SchedulePlannerConfig;
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var SchedulePlannerVersion = org.riceapps.SchedulePlannerVersion;
 var SchedulePlannerXhrEvent = org.riceapps.events.SchedulePlannerXhrEvent;
 var SchedulePlannerXhrController = org.riceapps.controllers.SchedulePlannerXhrController;
 var UserModelEvent = org.riceapps.events.UserModelEvent;
@@ -58,10 +60,55 @@ org.riceapps.controllers.SchedulePlannerController = function() {
 
   /** @private {number} */
   this.calendarInsertAt_ = 0;
+
+  /** @private {number} */
+  this.currentIntroPhase_ = -1;
 };
 goog.inherits(org.riceapps.controllers.SchedulePlannerController,
               org.riceapps.controllers.Controller);
 var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerController;
+
+
+/**
+ * Defines the list of windows that will be shown to the user (in order) when entering the application.
+ * @const {!Array.<function(this:org.riceapps.controllers.SchedulePlannerController)>}
+ */
+SchedulePlannerController.INTRO_PHASES = [
+  function() { // Disclaimer
+    if (!this.userModel_.hasAgreedToDisclaimer()) {
+      this.view_.getFerpaInterruptView().show();
+    } else {
+      this.advancePhase_();
+    }
+  },
+  function() { // Tour
+    if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
+      this.view_.getTourView().show();
+    } else {
+      this.advancePhase_();
+    }
+  },
+  function() { // Change Log
+    if (this.userModel_.getLastSeenVersion() < SchedulePlannerVersion.CURRENT_VERSION) {
+      this.view_.getVersionInterruptView().setVersion(this.userModel_.getLastSeenVersion());
+      this.view_.getVersionInterruptView().show();
+    } else {
+      this.advancePhase_();
+    }
+  }
+];
+
+
+/**
+ * @private
+ */
+SchedulePlannerController.prototype.advancePhase_ = function() {
+  this.currentIntroPhase_++;
+
+  if (this.currentIntroPhase_ < SchedulePlannerController.INTRO_PHASES.length) {
+    SchedulePlannerController.INTRO_PHASES[this.currentIntroPhase_].apply(this);
+  }
+};
 
 
 /**
@@ -606,6 +653,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
     listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
     listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
+    listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
     listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
     listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
@@ -621,12 +669,8 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
   // Remove the loading view.
   this.view_.getLoadingInterruptView().hide();
 
-  // Proceed: Disclaimer > Tour > Main UI
-  if (!this.userModel_.hasAgreedToDisclaimer()) {
-    this.view_.getFerpaInterruptView().show();
-  } else if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
-    this.view_.getTourView().show();
-  }
+  // Proceed.
+  this.advancePhase_();
 };
 
 
@@ -655,11 +699,18 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
  */
 SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
   this.userModel_.setHasAgreedToDisclaimer(true);
+  this.advancePhase_();
+};
 
-  // Proceed: Tour > Main UI
-  if (!this.userModel_.hasSeenTour() && SchedulePlannerConfig.ENABLE_TOURS) {
-    this.view_.getTourView().show();
-  }
+
+/**
+ * Event Handler; called when user has seen change log.
+ * @param {SchedulePlannerEvent=} opt_event
+ * @private
+ */
+SchedulePlannerController.prototype.onVersionAgreed_ = function(opt_event) {
+  this.userModel_.setLastSeenVersion(SchedulePlannerVersion.CURRENT_VERSION);
+  this.advancePhase_();
 };
 
 
@@ -670,6 +721,7 @@ SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
  */
 SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
   this.userModel_.setHasSeenTour(true);
+  this.advancePhase_();
 };
 
 

@@ -13,8 +13,6 @@ MED PRIORITY:
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
 LOW PRIORITY:
-  - Synchronization Issues: use UserController to prevent people with multiple open copies of application from breaking things. Current behavior is that synchronized copy matches UI of last window to make a change, which is OK.
-
   - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
     NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
 

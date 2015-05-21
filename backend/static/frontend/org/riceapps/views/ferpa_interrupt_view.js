@@ -60,7 +60,7 @@ FerpaInterruptView.prototype.createDom = function() {
   goog.base(this, 'createDom');
 
   goog.style.setStyle(this.getElement(), {
-    'height': '420px'
+    'padding-bottom': '20px'
   });
 
   var element;

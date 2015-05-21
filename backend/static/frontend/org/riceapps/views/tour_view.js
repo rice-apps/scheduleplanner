@@ -5,6 +5,8 @@ goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
 goog.require('goog.events.EventType');
+goog.require('goog.events.KeyCodes');
+goog.require('goog.events.KeyEvent');
 goog.require('goog.style');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.fx.Animation');
@@ -115,9 +117,39 @@ TourView.prototype.enterDocument = function() {
   this.getHandler().
       listen(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
       listen(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
-      listen(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_);
+      listen(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_).
+      listen(document, goog.events.EventType.KEYUP, this.handleKeyUp_);
+
+  goog.style.setStyle(document.body, {
+    'overflow': 'hidden'
+  });
 };
 
+
+/**
+ * @param {!goog.events.KeyEvent} event
+ * @private
+ */
+TourView.prototype.handleKeyUp_ = function(event) {
+  switch (event.keyCode) {
+    case goog.events.KeyCodes.ESC:
+      this.hide();
+      this.dispatchEvent(new SchedulePlannerEvent(SchedulePlannerEvent.Type.EXIT_TOUR));
+      break;
+
+    case goog.events.KeyCodes.LEFT:
+      if (this.stage_ > 0) {
+        this.prev();
+      }
+      break;
+
+    case goog.events.KeyCodes.RIGHT:
+      if (this.stage_ < this.explanations_.length - 1) {
+        this.next();
+      }
+      break;
+  }
+};
 
 /**
  * @param {goog.events.BrowserEvent=} opt_event
@@ -157,10 +189,11 @@ TourView.prototype.handlePrevButtonClick_ = function(opt_event) {
 TourView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
 
-  this.getHandler().
-      unlisten(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
-      unlisten(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
-      unlisten(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_);
+  this.getHandler().removeAll();
+
+  goog.style.setStyle(document.body, {
+    'overflow': 'inherit'
+  });
 };
 
 

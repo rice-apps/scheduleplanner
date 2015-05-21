@@ -5,3 +5,4 @@ closure-library
 closure-compiler
 closure-library/*
 closure-compiler/*
+*.dmp

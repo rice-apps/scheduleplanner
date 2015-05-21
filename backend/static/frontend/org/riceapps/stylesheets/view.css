@@ -51,7 +51,7 @@ html, body {
   top: calc(10% - 1px);
   left: calc(50% - 351px);
   width: 700px;
-  height: 200px;
+  height: auto;
   border: 1px solid #000;
   background-color: #FFF;
   z-index: 999;
@@ -923,6 +923,7 @@ html, body {
 
 .course-list-view {
   margin: 20px;
+  overflow: hidden;
 }
 
 .course-list-view-table {
@@ -1021,4 +1022,44 @@ html, body {
 .context-menu-view-option:hover {
   background-color: #4281F4;
   color: #FFF;
+}
+
+.version-interrupt-view {
+  padding: 50px 50px 20px 50px;
+  font-size: 25px;
+  line-height: 27px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.version-interrupt-view .version-interrupt-view-changes {
+  max-height: 250px;
+  overflow: auto;
+  margin-top: 10px;
+}
+
+.version-interrupt-view span.version {
+  font-size: 18px;
+  text-decoration: underline;
+  text-align: justify;
+  padding-top: 10px;
+  display: block;
+  line-height: 20px;
+}
+
+.version-interrupt-view ul.vitems {
+  margin: 5px 20px;
+  padding: 0px;
+  list-style-type: circle;
+}
+
+.version-interrupt-view ul.vitems li {
+  text-align: justify;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 2px;
 }

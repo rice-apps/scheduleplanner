@@ -34,10 +34,11 @@ class UserController extends Controller {
     }
 
     // Check: XSRF token is correct.
-    // TODO(mschurr): Needs additional work as uncommenting this causes consistency problems.
-    /*if (!$this->utility->checkXsrfToken($this->session, $message->xsrfToken)) {
-      return 401;
-    }*/
+    if (!$this->utility->checkXsrfToken($this->session, $message->xsrfToken)) {
+      $this->response->status = 401;
+      $this->response->json(['STATUS' => 'FAILURE', 'MESSAGE' => 'XSRF token is invalid.'], true);
+      return $this->response;
+    }
 
     // Update database to reflect information sent in the request.
     $this->user->setProperty(SchedulePlannerProtocolMessageUtility::TOUR_PROPERTY,
@@ -45,6 +46,11 @@ class UserController extends Controller {
 
     $this->user->setProperty(SchedulePlannerProtocolMessageUtility::DISCLAIMER_PROPERTY,
         $message->hasAgreedToDisclaimer === true);
+
+    if (is_integer($message->lastSeenVersion) && $message->lastSeenVersion >= 0) {
+      $this->user->setProperty(SchedulePlannerProtocolMessageUtility::LAST_SEEN_VERSION_PROPERTY,
+          $message->lastSeenVersion);
+    }
 
     $this->db->prepare("DELETE FROM `playgrounds` WHERE `userid` = ?")->execute($this->user->id);
     $q = $this->db->prepare("INSERT INTO `playgrounds` (`userid`, `courseid`) VALUES (?, ?);");

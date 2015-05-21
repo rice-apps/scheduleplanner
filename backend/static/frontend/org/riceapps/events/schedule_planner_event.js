@@ -43,6 +43,7 @@ SchedulePlannerEvent.Type = {
   UPDATE_SEARCH: 'sp_update_search', // filters, query
   CRN_CLICK: 'sp_crn_click',
   AGREE_DISCLAIMER: 'sp_disclaimer_agree',
+  AGREE_VERSION: 'sp_agree_version',
   EXIT_TOUR: 'sp_tour_exit',
   CLEAR_PLAYGROUND_CLICK: 'sp_clear_playground_click',
   SHOW_COURSE_DETAILS: 'sp_show_course_details', // model
