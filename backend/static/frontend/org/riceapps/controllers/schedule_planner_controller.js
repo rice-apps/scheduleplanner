@@ -1,3 +1,7 @@
+/**
+ * SchedulePlannerController is the heart of the schedule planner application and provides the main entry point to the application.
+ */
+
 goog.provide('org.riceapps.controllers.SchedulePlannerController');
 
 goog.require('goog.Promise');
@@ -70,7 +74,7 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
 
 
 /**
- * Defines the list of windows that will be shown to the user (in order) when entering the application.
+ * Defines the list of pop-up windows that will be shown to the user (in order) when entering the application.
  * @const {!Array.<function(this:org.riceapps.controllers.SchedulePlannerController)>}
  */
 SchedulePlannerController.INTRO_PHASES = [
@@ -100,6 +104,129 @@ SchedulePlannerController.INTRO_PHASES = [
 
 
 /**
+ * Starts the applications.
+ */
+SchedulePlannerController.prototype.start = function() {
+  // Render the application views.
+  this.view_.render();
+
+  // Display the loading indicator, prevents the user from interacting with the UI until loading completes.
+  this.view_.getLoadingInterruptView().show();
+
+  // Listen for any backend request failures.
+  this.getHandler().listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
+
+  // Asynchronously request information from the back-end about the current user.
+  this.xhrController_.getUserModel().then(this.onUserModelReady_, undefined, this);
+
+  // Asynchronously request the course catalog from the back-end.
+  this.xhrController_.getAllCourses().then(this.onCoursesReady_, undefined, this);
+};
+
+
+/**
+ * Event handler; called when an XHR request fails.
+ * @param {!SchedulePlannerXhrEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleXhrFailed_ = function(event) {
+  window.console.log('[XhrEvent] SchedulePlannerController.handleXhrFailed_', event);
+
+  // Hide the loading view (if it is shown).
+  this.view_.getLoadingInterruptView().hide();
+
+  // Show the error view; prevents the user from interacting with the UI and prompts them to reload the page.
+  this.view_.getErrorInterruptView().show();
+
+  // NOTE: The application is effectively unusable to the user from this point forward. This is intentional, and provides a simple way of
+  // dealing with synchronization failures. As an example, if the user opens two copies of the application in different browser tabs, only
+  // the last copy they opened will be able to sync with the back-end (guaranteed by the XSRF token enforcement on the back-end).
+};
+
+
+/**
+ * Event handler; called when user model is fully loaded from backend.
+ * @param {!org.riceapps.models.UserModel} userModel
+ * @private
+ */
+SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
+  window.console.log('SchedulePlannerController.onUserModelReady_', userModel);
+
+  // Store a reference to the completed model.
+  this.userModel_ = userModel;
+
+  // Proceed to the next step (if both the user model and courses model are ready).
+  this.onUserModelAndCoursesReady_();
+};
+
+
+/**
+ * Event handler; called when course catalog is fully loaded from backend.
+ * @param {!org.riceapps.models.CoursesModel} coursesModel
+ * @private
+ */
+SchedulePlannerController.prototype.onCoursesReady_ = function(coursesModel) {
+  window.console.log('SchedulePlannerController.onCoursesReady_', coursesModel);
+
+  // Store a reference to the completed model.
+  this.coursesModel_ = coursesModel;
+
+  // Proceed to the next step (if both the user model and courses model are ready).
+  this.onUserModelAndCoursesReady_();
+};
+
+
+/**
+ * Event handler; called when both courses database and user model are fully loaded from backend.
+ * @private
+ */
+SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
+  if (!(this.userModel_ && this.coursesModel_)) {
+    return; // Only proceed if both courses model and user model are ready.
+  }
+
+  window.console.log('SchedulePlannerController.onUserModelAndCoursesReady_');
+
+  this.userModel_.initialize(this.coursesModel_);
+  this.addCoursesToPlayground(this.userModel_.getCoursesInPlayground());
+  this.addCoursesToSchedule(this.userModel_.getCoursesInSchedule());
+
+  // TODO(mschurr@rice.edu): May also wish to listen for remove events to keep model and UI synchronized... however,
+  // since delete should only be triggered by the UI, no need to do this for now.
+  this.getHandler().
+    listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
+    listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
+    listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
+    listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
+    listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
+    listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
+    listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
+    listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
+    listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
+    listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
+    listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
+    listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
+    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
+    listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
+    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_EVALS, this.handleShowCourseEvals_).
+    listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
+    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
+    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_CALENDAR, this.handleMoveToCalendar_).
+    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
+
+  this.handleUserModelChange_();
+  this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
+
+  // Remove the loading view.
+  this.view_.getLoadingInterruptView().hide();
+
+  // Proceed.
+  this.advancePhase_();
+};
+
+
+/**
+ * Shows the next window in the set of windows defined in SchedulePlannerController.INTRO_PHASES.
  * @private
  */
 SchedulePlannerController.prototype.advancePhase_ = function() {
@@ -118,14 +245,15 @@ SchedulePlannerController.prototype.advancePhase_ = function() {
  */
 SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
   var courseView = /** @type {org.riceapps.views.AbstractCourseView|Node} */ (event.target);
+
   var modalView = new org.riceapps.views.CourseModalView(courseView.getCourseModel());
-  this.view_.addChild(modalView);
+  this.view_.addChild(modalView); // For event propagation.
   modalView.disposeOnHide().show();
 };
 
 
 /**
- * Event handler; called when a course view is clicked. Shows a modal view containing information about the course.
+ * Event handler; called when "Show Information" is clicked on a context menu.
  * @param {SchedulePlannerEvent} event
  * @private
  */
@@ -135,13 +263,13 @@ SchedulePlannerController.prototype.handleShowCourseDetails_ = function(event) {
   }
 
   var modalView = new org.riceapps.views.CourseModalView(event.model);
-  this.view_.addChild(modalView);
+  this.view_.addChild(modalView); // For event propagation.
   modalView.disposeOnHide().show();
 };
 
 
 /**
- * Event handler; called when a course view is clicked. Shows a modal view containing information about the course.
+ * Event handler; called when "Show Evaluations" is clicked on a context menu.
  * @param {SchedulePlannerEvent} event
  * @private
  */
@@ -214,7 +342,7 @@ SchedulePlannerController.prototype.openCourseEvaluations = function(courseModel
 
 
 /**
- * Event handler; called when crn button is clicked. Shows a modal view containing all current CRNs in schedule.
+ * Event handler; called when CRN button in the toolbar is clicked. Shows a modal view containing all current CRNs in schedule.
  * @param {SchedulePlannerEvent} event
  * @private
  */
@@ -242,19 +370,20 @@ SchedulePlannerController.prototype.onClearPlaygroundClick_ = function(event) {
       courses.push(child.getCourseModel());
     }
 
-    this.userModel_.removeCoursesFromPlayground(courses);
+    this.userModel_.removeCoursesFromPlayground(courses); // NOTE: Remove them as a batch to trigger only one back-end request.
     playground_view.removeChildren(true);
   }
 };
 
 
 /**
- * Event handler; called when a AbstractCourseView is being dragged to add guide views to the calendar.
+ * Event handler; called when a AbstractCourseView is being dragged. Adds guide views for the course being dragged to the calendar.
  * @param {SchedulePlannerEvent} event
  * @private
  */
 SchedulePlannerController.prototype.handleAddGuideViews_ = function(event) {
   var views = event.target.getGuideViews();
+
   for (var i = 0; i < views.length; i++) {
     this.view_.getCalendarView().addChildAt(views[i], views[i].getChildIndex(), true);
   }
@@ -262,7 +391,7 @@ SchedulePlannerController.prototype.handleAddGuideViews_ = function(event) {
 
 
 /**
- * Adds the given courses to playground as views.
+ * Adds the given courses to playground.
  * @param {!Array.<!org.riceapps.models.CourseModel>} courses
  */
 SchedulePlannerController.prototype.addCoursesToPlayground = function(courses) {
@@ -290,7 +419,7 @@ SchedulePlannerController.prototype.handleRemoveCourse_ = function(event) {
     return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
   });
 
-  if (views.length > 0) {
+  if (views.length > 0) { // Course was present in the playground.
     this.userModel_.removeCoursesFromPlayground([course]);
   }
 
@@ -298,12 +427,12 @@ SchedulePlannerController.prototype.handleRemoveCourse_ = function(event) {
     views[i].dispose();
   }
 
-  // Figure out if the view is in the calendar and ermove it.
+  // Figure out if the view is in the calendar and remove it.
   views = this.view_.getCalendarView().removeChildrenIf(function(child) {
     return child instanceof org.riceapps.views.AbstractCourseView && child.getCourseModel().equals(course);
   });
 
-  if (views.length > 0) {
+  if (views.length > 0) { // Course was present in the calendar.
     this.userModel_.removeCoursesFromSchedule([course]);
   }
 
@@ -619,62 +748,6 @@ SchedulePlannerController.prototype.handleScheduleCoursesAdded_ = function(event
 
 
 /**
- * Event handler; called when courses database is fully loaded from backend.
- * @param {!org.riceapps.models.CoursesModel} coursesModel
- * @private
- */
-SchedulePlannerController.prototype.onCoursesReady_ = function(coursesModel) {
-  window.console.log('SchedulePlannerController.onCoursesReady_', coursesModel);
-  this.coursesModel_ = coursesModel;
-  this.onUserModelAndCoursesReady_();
-};
-
-
-/**
- * Event handler; called when both courses database and user model are fully loaded from backend.
- * @private
- */
-SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
-  if (!(this.userModel_ && this.coursesModel_)) {
-    return; // Only proceed if both are ready.
-  }
-
-  window.console.log('SchedulePlannerController.onUserModelAndCoursesReady_');
-
-  this.userModel_.initialize(this.coursesModel_);
-  this.addCoursesToPlayground(this.userModel_.getCoursesInPlayground());
-  this.addCoursesToSchedule(this.userModel_.getCoursesInSchedule());
-
-  // TODO(mschurr@rice.edu): May also wish to listen for remove events to keep model and UI synchronized... however,
-  // since delete should only be triggered by the UI, no need to do this for now.
-  this.getHandler().
-    listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
-    listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
-    listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
-    listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
-    listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
-    listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
-    listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
-    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
-    listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
-    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_EVALS, this.handleShowCourseEvals_).
-    listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
-    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
-    listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_CALENDAR, this.handleMoveToCalendar_).
-    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
-
-  this.handleUserModelChange_();
-  this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
-
-  // Remove the loading view.
-  this.view_.getLoadingInterruptView().hide();
-
-  // Proceed.
-  this.advancePhase_();
-};
-
-
-/**
  * Event handler; called when the user model changes.
  * @param {org.riceapps.events.UserModelEvent=} opt_event
  * @private
@@ -726,18 +799,6 @@ SchedulePlannerController.prototype.onTourSeen_ = function(opt_event) {
 
 
 /**
- * Event handler; called when user model is fully loaded from backend.
- * @param {!org.riceapps.models.UserModel} userModel
- * @private
- */
-SchedulePlannerController.prototype.onUserModelReady_ = function(userModel) {
-  window.console.log('SchedulePlannerController.onUserModelReady_', userModel);
-  this.userModel_ = userModel;
-  this.onUserModelAndCoursesReady_();
-};
-
-
-/**
  * Event handler; called when search view should be updated.
  * @param {!SchedulePlannerEvent} event
  * @private
@@ -769,20 +830,6 @@ SchedulePlannerController.prototype.handleUpdateSearch_ = function(event) {
 
 
 /**
- * @param {*} errorType
- * @private
- */
-SchedulePlannerController.prototype.onXhrError_ = function(errorType) {
-  // TODO(mschurr@rice.edu): Error handling.
-  window.console.log('[ERROR] [CRITICAL] Failed to fetch user model.');
-
-  /*if (errorType == SchedulePlannerXhrController.ErrorType.SESSION_EXPIRED) {
-    // TODO(mschurr): Block all access to the UI, display message to the user informing them to refresh the page.
-  }*/
-};
-
-
-/**
  * Event handler; called when a course view is no longer being dragged.
  * @param {goog.events.Event} event
  * @private
@@ -803,38 +850,5 @@ SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
     this.view_.getSearchView().onCloseSearch();
   }
 };
-
-
-/**
- * Informs the controller to start rendering and listening for events.
- */
-SchedulePlannerController.prototype.start = function() {
-  this.view_.render();
-  this.view_.getLoadingInterruptView().show();
-
-  this.getHandler().
-    listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
-    listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
-    listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
-    listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
-    listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
-    listen(this.xhrController_, SchedulePlannerXhrEvent.Type.XHR_FAILED, this.handleXhrFailed_);
-
-  this.xhrController_.getUserModel().then(this.onUserModelReady_, this.onXhrError_, this);
-  this.xhrController_.getAllCourses().then(this.onCoursesReady_, this.onXhrError_, this);
-};
-
-
-/**
- * Event handler; called when an XHR request fails.
- * @param {!SchedulePlannerXhrEvent} event
- * @private
- */
-SchedulePlannerController.prototype.handleXhrFailed_ = function(event) {
-  window.console.log('[XhrEvent] SchedulePlannerController.handleXhrFailed_', event);
-  this.view_.getLoadingInterruptView().hide();
-  this.view_.getErrorInterruptView().show();
-};
-
 
 });  // goog.scope

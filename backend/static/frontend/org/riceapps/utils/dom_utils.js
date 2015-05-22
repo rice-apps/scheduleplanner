@@ -1,3 +1,8 @@
+/**
+ * Provides convenience methods for interacting with DOM in a cross-browser compatible way not provided elsewhere
+ * in the Closure library.
+ */
+
 goog.provide('org.riceapps.utils.DomUtils');
 
 goog.require('goog.dom');
@@ -34,6 +39,7 @@ DomUtils.getComputedInnerSize = function(element) {
 
 
 /**
+ * Updates the document scroll location.
  * @param {number} x
  * @param {number} y
  */
@@ -45,6 +51,7 @@ DomUtils.setDocumentScrollLocation = function(x, y) {
 
 
 /**
+ * Updates the document scroll location (vertically).
  * @param {number} distance
  */
 DomUtils.setDocumentScroll = function(distance) {
@@ -56,6 +63,7 @@ DomUtils.setDocumentScroll = function(distance) {
 
 
 /**
+ * Updates the document scroll location (horizontally).
  * @param {number} distance
  */
 DomUtils.setDocumentScrollHorizontal = function(distance) {
@@ -67,6 +75,7 @@ DomUtils.setDocumentScrollHorizontal = function(distance) {
 
 
 /**
+ * Returns the width of the document.
  * @return {number}
  */
 DomUtils.getDocumentWidth = function() {
@@ -80,6 +89,7 @@ DomUtils.getDocumentWidth = function() {
 
 
 /**
+ * Returns the height of the document.
  * @return {number}
  */
 DomUtils.getDocumentHeight = function() {
@@ -94,6 +104,7 @@ DomUtils.getDocumentHeight = function() {
 
 
 /**
+ * Positions an element at the coordinates indicated by rect, optionally shifted by opt_adjust.
  * @param {!Element} element
  * @param {goog.math.Rect} rect
  * @param {goog.math.Rect=} opt_adjust
@@ -115,18 +126,11 @@ DomUtils.applyRect = function(element, rect, opt_adjust) {
       'width': rect.width + 'px',
       'height': rect.height + 'px'
     });
-
-    /*var actualSize = goog.style.getSize(element);
-    goog.style.setStyle(element, {
-      'width': (rect.width + (rect.width - actualSize.width)) + 'px',
-      'height': (rect.height + (rect.height - actualSize.height)) + 'px'
-    });
-
-    var actualSize = goog.style.getSize(element);*/
 };
 
 
 /**
+ * Builds a labeled checkbox and returns a <div> element containing the assembled box.
  * @param {string} name
  * @param {string} value
  * @param {string} text

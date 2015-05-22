@@ -1,3 +1,14 @@
+/**
+ * A calendar layout is responsible for positioning the items within a calendar. To position the items, simply call
+ * relayout() provided both the calendar and its items implement the required interfaces.
+ *
+ * The layout is responsible for ensuring that all courses can be displayed on the calendar visibly even when time
+ * conflicts exist.
+ *
+ * NOTE: This layout is still not **perfect**, but it works good in almost every case. Issues occur because calculating
+ * limit does not take into account things not in the row that affect layout of things extending into the row.
+ */
+
 goog.provide('org.riceapps.layouts.CalendarLayout');
 goog.provide('org.riceapps.layouts.CalendarLayout.Calendar');
 goog.provide('org.riceapps.layouts.CalendarLayout.Item');
@@ -9,12 +20,6 @@ goog.scope(function() {
 
 
 /**
- * A calendar layout is responsible for positioning the items within a calendar. To position the items, simply call
- * relayout() provided both the calendar and its items implement the required interfaces.
- *
- * NOTE: This layout is still not **perfect**, but it works good in almost every case. Issues occur because calculating
- * limit does not take into account things not in the row that affect layout of things extending into the row.
- *
  * @param {!org.riceapps.layouts.CalendarLayout.Calendar} calendar
  * @constructor
  */

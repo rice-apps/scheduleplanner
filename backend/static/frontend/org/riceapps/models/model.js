@@ -1,3 +1,7 @@
+/**
+ * Provides a generic model class. All models should inherit from this class.
+ */
+
 goog.provide('org.riceapps.models.Model');
 
 goog.require('goog.events.EventTarget');

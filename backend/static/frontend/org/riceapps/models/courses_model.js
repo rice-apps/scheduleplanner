@@ -1,3 +1,7 @@
+/**
+ * Provides methods for interacting with the catalog of all courses.
+ */
+
 goog.provide('org.riceapps.models.CoursesModel');
 
 goog.require('goog.array');
@@ -39,6 +43,7 @@ var CoursesModel = org.riceapps.models.CoursesModel;
 
 
 /**
+ * Returns the course with the given identifier, or null if no such course exists.
  * @param {number} id
  * @return {org.riceapps.models.CourseModel}
  */
@@ -89,6 +94,9 @@ CoursesModel.prototype.getAllCrosslistedSections = function(course) {
 
 
 /**
+ * Returns up to opt_limit (default 250) courses matching the given search query and filters.
+ * Excludes results present on calendar or playground if a user model is provided.
+ * A user model must be provided for some filters to function properly.
  * @param {string} query
  * @param {org.riceapps.models.CourseModel.Filter} filters
  * @param {org.riceapps.models.UserModel=} opt_userModel
@@ -176,6 +184,7 @@ CoursesModel.prototype.getCoursesByQuery = function(query, filters, opt_userMode
 
 
 /**
+ * Returns whether or not a user model contains a given course (or categorical equivalent of the given course).
  * @param {!org.riceapps.models.UserModel} userModel
  * @param {!org.riceapps.models.CourseModel} course
  * @return {boolean}

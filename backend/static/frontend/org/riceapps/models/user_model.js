@@ -1,3 +1,9 @@
+/**
+ * Provides a model which represents a user of the application.
+ *
+ * NOTE: SchedulePlannerController listens for changes to the user model and automatically pushes those changes to the back-end.
+ */
+
 goog.provide('org.riceapps.models.UserModel');
 
 goog.require('goog.array');
@@ -5,7 +11,6 @@ goog.require('org.riceapps.events.UserModelEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.Model');
 goog.require('org.riceapps.protocol.Messages');
-goog.require('org.riceapps.utils.FakeData');
 
 goog.scope(function() {
 var CourseModel = org.riceapps.models.CourseModel;
@@ -54,6 +59,8 @@ var UserModel = org.riceapps.models.UserModel;
 
 
 /**
+ * Initializes the user model given a course catalog; neccesary because the back-end passes course ids but the
+ * user model needs to convert them to instances of org.riceapps.models.CourseModel.
  * @param {!org.riceapps.models.CoursesModel} coursesModel
  */
 UserModel.prototype.initialize = function(coursesModel) {
@@ -75,6 +82,7 @@ UserModel.prototype.initialize = function(coursesModel) {
 
 
 /**
+ * Returns a unique integer identifying the user.
  * @return {number}
  */
 UserModel.prototype.getUserId = function() {
@@ -83,6 +91,7 @@ UserModel.prototype.getUserId = function() {
 
 
 /**
+ * Returns the XSRF token required to modify the user through back-end requests.
  * @return {string}
  */
 UserModel.prototype.getXsrfToken = function() {
@@ -91,6 +100,7 @@ UserModel.prototype.getXsrfToken = function() {
 
 
 /**
+ * Returns a unique string identifying the user.
  * @return {string}
  */
 UserModel.prototype.getUserName = function() {
@@ -99,6 +109,7 @@ UserModel.prototype.getUserName = function() {
 
 
 /**
+ * Returns whether or not the user has seen the tour before.
  * @return {boolean}
  */
 UserModel.prototype.hasSeenTour = function() {
@@ -107,6 +118,7 @@ UserModel.prototype.hasSeenTour = function() {
 
 
 /**
+ * Sets whether or not the user has seen the tour before.
  * @param {boolean} hasSeenTour
  */
 UserModel.prototype.setHasSeenTour = function(hasSeenTour) {
@@ -120,6 +132,7 @@ UserModel.prototype.setHasSeenTour = function(hasSeenTour) {
 
 
 /**
+ * Returns the version of the application that was present the last time the user visited the application.
  * @return {number}
  */
 UserModel.prototype.getLastSeenVersion = function() {
@@ -128,6 +141,7 @@ UserModel.prototype.getLastSeenVersion = function() {
 
 
 /**
+ * Sets the last version of the application that the user has seen.
  * @param {number} lastSeenVersion
  */
 UserModel.prototype.setLastSeenVersion = function(lastSeenVersion) {
@@ -141,6 +155,7 @@ UserModel.prototype.setLastSeenVersion = function(lastSeenVersion) {
 
 
 /**
+ * Returns whether or not the user has agreed to the terms and conditions.
  * @return {boolean}
  */
 UserModel.prototype.hasAgreedToDisclaimer = function() {
@@ -149,6 +164,7 @@ UserModel.prototype.hasAgreedToDisclaimer = function() {
 
 
 /**
+ * Sets whether or not the user has agreed to the terms and conditions.
  * @param {boolean} hasAgreedToDisclaimer
  */
 UserModel.prototype.setHasAgreedToDisclaimer = function(hasAgreedToDisclaimer) {
@@ -162,6 +178,7 @@ UserModel.prototype.setHasAgreedToDisclaimer = function(hasAgreedToDisclaimer) {
 
 
 /**
+ * Adds courses to the playground (staging area).
  * @param {!Array.<!CourseModel>} courses
  */
 UserModel.prototype.addCoursesToPlayground = function(courses) {
@@ -177,6 +194,7 @@ UserModel.prototype.addCoursesToPlayground = function(courses) {
 
 
 /**
+ * Removes courses from the playground (staging area).
  * @param {!Array.<!CourseModel>} courses
  */
 UserModel.prototype.removeCoursesFromPlayground = function(courses) {
@@ -190,6 +208,7 @@ UserModel.prototype.removeCoursesFromPlayground = function(courses) {
 
 
 /**
+ * Returns the courses in the playground (staging area).
  * @return {!Array.<!CourseModel>}
  */
 UserModel.prototype.getCoursesInPlayground = function() {
@@ -198,6 +217,7 @@ UserModel.prototype.getCoursesInPlayground = function() {
 
 
 /**
+ * Adds courses to the schedule (calendar).
  * @param {!Array.<!CourseModel>} courses
  */
 UserModel.prototype.addCoursesToSchedule = function(courses) {
@@ -213,6 +233,7 @@ UserModel.prototype.addCoursesToSchedule = function(courses) {
 
 
 /**
+ * Removes courses from the schedule (calendar).
  * @param {!Array.<!CourseModel>} courses
  */
 UserModel.prototype.removeCoursesFromSchedule = function(courses) {
@@ -226,6 +247,7 @@ UserModel.prototype.removeCoursesFromSchedule = function(courses) {
 
 
 /**
+ * Atomically updates the courses present on the schedule in a way that triggers only one modification event.
  * @param {!Array.<!CourseModel>} coursesToRemove To be removed from schedule
  * @param {!Array.<!CourseModel>} coursesToAdd To be added to schedule
  */
@@ -299,6 +321,7 @@ UserModel.prototype.moveCoursesFromPlaygroundToSchedule = function(srcCourses, d
 
 
 /**
+ * Returns all of the courses in the schedule (calendar).
  * @return {!Array.<!CourseModel>}
  */
 UserModel.prototype.getCoursesInSchedule = function() {
@@ -307,6 +330,8 @@ UserModel.prototype.getCoursesInSchedule = function() {
 
 
 /**
+ * Returns the number of credit hours present on the calendar. Returns total hours if no parameter provided, or hours in a
+ * particular distribution group if a parameter is provided.
  * @param {number=} opt_distributionGroup
  * @return {number}
  */

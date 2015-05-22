@@ -1,3 +1,7 @@
+/**
+ * A custom event fired by various actions on a org.riceapps.controllers.SchedulePlannerXhrController.
+ */
+
 goog.provide('org.riceapps.events.SchedulePlannerXhrEvent');
 
 goog.require('goog.events.Event');

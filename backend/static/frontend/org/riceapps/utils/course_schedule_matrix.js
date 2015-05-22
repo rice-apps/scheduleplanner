@@ -1,5 +1,10 @@
 /**
  * Provides a method for detecting scheduling conflicts amongst a set of courses efficiently.
+ *
+ * Usage:
+ * conflictDetector = new CourseScheduleMatrix();
+ * conflictDetector.setCourses(courseModels);
+ * if (conflictDetector.hasConflictsWith(courseModel)) { ... } else { ... }
  */
 
 goog.provide('org.riceapps.util.CourseScheduleMatrix');

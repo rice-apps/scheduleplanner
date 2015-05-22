@@ -1,3 +1,7 @@
+/**
+ * A custom event fired by various actions on various components of the schedule planner application.
+ */
+
 goog.provide('org.riceapps.events.SchedulePlannerEvent');
 
 goog.require('goog.events.Event');
@@ -37,6 +41,8 @@ var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
 
 
 /**
+ * NOTE: Comments define which properties must be set for which event type.
+ * TODO: Enforce the property requirements in assertions.
  * @enum {string}
  */
 SchedulePlannerEvent.Type = {

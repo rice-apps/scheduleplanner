@@ -1,3 +1,7 @@
+/**
+ * A custom event fired by various actions on an org.riceapps.views.ContextMenuView.
+ */
+
 goog.provide('org.riceapps.events.ContextMenuEvent');
 goog.provide('org.riceapps.events.ContextMenuEvent.Type');
 

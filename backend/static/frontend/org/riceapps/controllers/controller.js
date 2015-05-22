@@ -1,3 +1,7 @@
+/**
+ * Provides a generic Controller class. All controllers should inherit form this base class.
+ */
+
 goog.provide('org.riceapps.controllers.Controller');
 
 goog.require('goog.events.EventHandler');
@@ -23,6 +27,7 @@ var Controller = org.riceapps.controllers.Controller;
 
 
 /**
+ * Returns an EventHandler; handlers execute within the scope of the controller.
  * @return {!goog.events.EventHandler}
  */
 Controller.prototype.getHandler = function() {

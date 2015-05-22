@@ -1,3 +1,12 @@
+/**
+ * A modal view is a pop-up that prevents the user from interacting with anything outside of the pop-up until the pop-up is dismissed by
+ * pressing escape, clicking outside of the pop-up, or clicking the close button.
+ *
+ * This class encapsulates basic functionality for a modal view by creating an empty pop-up window, close button, and animations.
+ *
+ * You should not instantiate this class directly, but rather create a subclass and build your content in createDom.
+ */
+
 goog.provide('org.riceapps.views.ModalView');
 
 goog.require('goog.Timer');

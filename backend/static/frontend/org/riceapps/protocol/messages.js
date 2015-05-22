@@ -30,9 +30,6 @@
  * GET /api/courses
  *   INPUTS: none
  *   RETURNS: Messages.Courses
- * POST /api/courses
- *   INPUT: Messages.CoursesRequest
- *   RETURNS: Messages.Courses
  *
  * Note: You will likely not need to interface directly with the back-end; rather, use SchedulePlannerXhrController
  * which will automatically generate and format the requests for you.

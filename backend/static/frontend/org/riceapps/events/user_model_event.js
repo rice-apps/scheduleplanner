@@ -1,3 +1,7 @@
+/**
+ * A custom event fired by various actions on an org.riceapps.models.UserModel.
+ */
+
 goog.provide('org.riceapps.events.UserModelEvent');
 goog.provide('org.riceapps.events.UserModelEvent.Type');
 

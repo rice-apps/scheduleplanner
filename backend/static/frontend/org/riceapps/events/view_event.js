@@ -1,3 +1,7 @@
+/**
+ * A custom event fired by various actions on an org.riceapps.views.View.
+ */
+
 goog.provide('org.riceapps.events.ViewEvent');
 goog.provide('org.riceapps.events.ViewEvent.Type');
 

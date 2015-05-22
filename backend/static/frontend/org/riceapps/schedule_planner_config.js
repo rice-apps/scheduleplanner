@@ -1,3 +1,7 @@
+/**
+ * Provides constants that can be used to enable or disable features of the application.
+ */
+
 goog.provide('org.riceapps.SchedulePlannerConfig');
 
 goog.scope(function() {

@@ -1,3 +1,7 @@
+/**
+ * Provides a model that represents an instructor of a course.
+ */
+
 goog.provide('org.riceapps.models.InstructorModel');
 
 goog.require('org.riceapps.models.Model');
@@ -24,6 +28,7 @@ var InstructorModel = org.riceapps.models.InstructorModel;
 
 
 /**
+ * Returns a unique integer identifying the instructor.
  * @return {number}
  */
 InstructorModel.prototype.getId = function() {
@@ -32,6 +37,7 @@ InstructorModel.prototype.getId = function() {
 
 
 /**
+ * Returns the name of the instructor.
  * @return {string}
  */
 InstructorModel.prototype.getName = function() {

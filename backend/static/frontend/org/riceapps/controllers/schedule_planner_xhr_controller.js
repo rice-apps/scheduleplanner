@@ -1,4 +1,8 @@
 /**
+ * SchedulePlannerXhrController provides convenient methods for interacting with the application back-end.
+ * Since network requests are asynchronous, this controller returns Promises() that resolve when network
+ * requests are completed and processed correctly, and that fail on timeout, error, or other issues.
+ *
  * TODO(mschurr@): Schedule pushed to occur after X ms of no changes, up to at most Xms from
  * the first changes; ensure only 1 outstanding request at a time.
  *
@@ -111,12 +115,7 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
   return promise.then(function(userModel) {
     userModel = /** @type {!org.riceapps.models.UserModel} */ (userModel);
     this.userModel_ = userModel;
-    this.getHandler().
-      listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.onPlaygroundCoursesAdded_).
-      listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_REMOVED, this.onPlaygroundCoursesRemoved_).
-      listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.onScheduleCoursesAdded_).
-      listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_REMOVED, this.onScheduleCoursesRemoved_).
-      listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.onUserModelChanged_);
+    this.getHandler().listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.onUserModelChanged_);
     return userModel;
   }, function(errorType) {
     errorType = /** @type {SchedulePlannerXhrEvent.ErrorType} */ (errorType);
@@ -182,6 +181,8 @@ SchedulePlannerXhrController.prototype.getAllCourses = function(opt_pathOverride
 
 /**
  * Pushes the user model to the remote server, synchronizing any properties changed client-side to the server.
+ * NOTE: Calling this method guarantees that at some point in the future the back-end will attempt to synchronize
+ * the user model to the server in the state that it was in AT OR AFTER this method is called.
  * @return {!goog.Promise.<SchedulePlannerXhrEvent.ErrorType>}
  */
 SchedulePlannerXhrController.prototype.pushUserModel = function() {
@@ -301,93 +302,27 @@ SchedulePlannerXhrController.prototype.pushUserModelInternal_ = function() {
 
 
 /**
+ * Event handler; called when the user model changes.
  * @param {org.riceapps.events.UserModelEvent} event
  * @private
  */
 SchedulePlannerXhrController.prototype.onUserModelChanged_ = function(event) {
+  // Push the user model to the server.
   this.pushUserModel();
 };
 
 
 /**
- * @param {org.riceapps.events.UserModelEvent} event
- * @private
- */
-SchedulePlannerXhrController.prototype.onPlaygroundCoursesAdded_ = function(event) {
-  //window.console.log('xhr dispatch: playground_add ', event.courses);
-};
-
-
-/**
- * @param {org.riceapps.events.UserModelEvent} event
- * @private
- */
-SchedulePlannerXhrController.prototype.onPlaygroundCoursesRemoved_ = function(event) {
-  //window.console.log('xhr dispatch: playground_remove ', event.courses);
-};
-
-
-/**
- * @param {org.riceapps.events.UserModelEvent} event
- * @private
- */
-SchedulePlannerXhrController.prototype.onScheduleCoursesAdded_ = function(event) {
-  //window.console.log('xhr dispatch: schedule_add ', event.courses);
-};
-
-
-/**
- * @param {org.riceapps.events.UserModelEvent} event
- * @private
- */
-SchedulePlannerXhrController.prototype.onScheduleCoursesRemoved_ = function(event) {
-  //window.console.log('xhr dispatch: schedule_remove ', event.courses);
-};
-
-
-/**
+ * Assembles and returns a complete URL to the provided path with the provided query parameters.
  * @param {string} path
  * @param {!Object.<string, *>} params
  * @return {!goog.Uri}
  */
 SchedulePlannerXhrController.prototype.buildXhrUrl = function(path, params) {
-  /*if (this.userModel_) {
-    params[SchedulePlannerXhrController.XSRF_PARAM_NAME] = this.userModel_.getXsrfToken();
-  }*/
-
   return goog.Uri.parse(window.location).
       setFragment('').
       setPath(path).
       setQueryData(goog.Uri.QueryData.createFromMap(params));
-};
-
-
-/**
- * @param {number} courseId
- * @return {!goog.Promise.<org.riceapps.models.CourseModel>}
- */
-SchedulePlannerXhrController.prototype.getCourseById = function(courseId) {
-  return goog.Promise.resolve();
-};
-
-
-/**
- * Returns all sessions of the provided course model (including the provided model).
- * @param {!org.riceapps.models.CourseModel} courseModel
- * @return {!goog.Promise.<!Array.<!org.riceapps.models.CourseModel>>}
- */
-SchedulePlannerXhrController.prototype.getAllCourseSessions = function(courseModel) {
-  return goog.Promise.resolve([courseModel]);
-};
-
-
-/**
- * Returns all courses matching the provided query.
- * @param {!Messages.CoursesRequest} request
- * @return {!goog.Promise.<!Array.<!org.riceapps.models.CourseModel>>}
- */
-SchedulePlannerXhrController.prototype.getCourses = function(request) {
-  return goog.Promise.resolve([]);
 };
 
 });  // goog.scope
