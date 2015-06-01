@@ -9,8 +9,15 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
+goog.require('goog.events.BrowserEvent');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventType');
 goog.require('goog.style');
+goog.require('org.riceapps.events.ContextMenuEvent');
+goog.require('org.riceapps.events.ContextMenuEvent.Type');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.views.ContextMenuView');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
 goog.require('org.riceapps.views.View');
 
@@ -32,6 +39,10 @@ org.riceapps.views.CourseListView = function() {
 
   /** @private {Element} */
   this.table_ = null;
+
+  /** @private {!goog.events.EventHandler} */
+  this.childEventHandler_ = new goog.events.EventHandler(this);
+  this.registerDisposable(this.childEventHandler_);
 };
 goog.inherits(org.riceapps.views.CourseListView,
               org.riceapps.views.View);
@@ -137,7 +148,6 @@ CourseListView.prototype.handleChildrenChanged_ = function() {
     }
   });
 
-
   this.relayout();
 };
 
@@ -181,7 +191,7 @@ CourseListView.prototype.relayout = function(opt_preventAnimation) {
 
   // Draw data rows.
   for (var i = 0; i < this.courses_.length; i++) {
-    row = row = goog.dom.createDom(goog.dom.TagName.TR);
+    row = goog.dom.createDom(goog.dom.TagName.TR);
 
     for (var title in CourseListView.COLUMN_RENDERER) {
       var column = goog.dom.createDom(goog.dom.TagName.TD);
@@ -190,6 +200,20 @@ CourseListView.prototype.relayout = function(opt_preventAnimation) {
     }
 
     goog.dom.appendChild(this.table_, row);
+
+    // Register event listeners.
+    this.childEventHandler_.
+      listen(row, goog.events.EventType.CLICK, goog.bind(function(model) {
+        var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS);
+        newEvent.model = model;
+        this.dispatchEvent(newEvent);
+      }, this, this.courses_[i])).
+      listen(row, goog.events.EventType.CONTEXTMENU, goog.bind(function(model, event) {
+        //event.preventDefault();
+        //var scroll = goog.dom.getDomHelper().getDocumentScroll();
+        //var menu = new org.riceapps.views.ContextMenuView(scroll.x + event.clientX - 1, scroll.y + event.clientY - 1);
+        //menu.show();
+      }, this, this.courses_[i]));
   }
 
   if (this.courses_.length == 0) {

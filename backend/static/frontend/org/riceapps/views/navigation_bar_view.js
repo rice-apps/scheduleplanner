@@ -1,3 +1,6 @@
+/**
+ * A simple view that provides a navigation bar.
+ */
 goog.provide('org.riceapps.views.NavigationBarView');
 
 goog.require('goog.dom');
@@ -33,6 +36,8 @@ NavigationBarView.Theme = {
 NavigationBarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), NavigationBarView.Theme.BASE);
+
+  // NOTE: Currently, this view is unused.
   goog.style.setElementShown(this.getElement(), false);
 };
 

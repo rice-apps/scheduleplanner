@@ -25,6 +25,7 @@ goog.require('org.riceapps.views.CourseModalView');
 goog.require('org.riceapps.views.CourseSearchView');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.DraggableView');
+goog.require('org.riceapps.views.EvaluationsModalView');
 goog.require('org.riceapps.views.PlaygroundView');
 goog.require('org.riceapps.views.SchedulePlannerView');
 
@@ -258,6 +259,7 @@ SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
  * @private
  */
 SchedulePlannerController.prototype.handleShowCourseDetails_ = function(event) {
+  window.console.log('SchedulePlannerController.handleShowCourseDetails_', event.model);
   if (!event.model) {
     return;
   }
@@ -275,7 +277,13 @@ SchedulePlannerController.prototype.handleShowCourseDetails_ = function(event) {
  */
 SchedulePlannerController.prototype.handleShowCourseEvals_ = function(event) {
   if (event.model) {
-    this.openCourseEvaluations(event.model);
+    if (SchedulePlannerConfig.USE_ESTHER_EVALUATIONS) {
+      this.openCourseEvaluations(event.model);
+    } else {
+      var modalView = new org.riceapps.views.EvaluationsModalView(event.model);
+      this.view_.addChild(modalView); // For event propagation.
+      modalView.disposeOnHide().show();
+    }
   }
 };
 

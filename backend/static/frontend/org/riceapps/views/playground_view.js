@@ -1,3 +1,7 @@
+/**
+ * A simple container for staging courses that have not yet been placed on the calendar.
+ */
+
 goog.provide('org.riceapps.views.PlaygroundView');
 
 goog.require('goog.dom');

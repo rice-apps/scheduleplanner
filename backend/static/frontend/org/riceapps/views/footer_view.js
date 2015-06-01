@@ -1,3 +1,6 @@
+/**
+ * A simple view that renders the links at the bottom of the application.
+ */
 goog.provide('org.riceapps.views.FooterView');
 
 goog.require('goog.dom');

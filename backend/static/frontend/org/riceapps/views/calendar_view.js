@@ -1,3 +1,6 @@
+/**
+ * Provides a view which lays out its children on a calendar.
+ */
 goog.provide('org.riceapps.views.CalendarView');
 
 goog.require('goog.asserts');

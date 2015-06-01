@@ -47,6 +47,7 @@ VersionInterruptView.Theme = {
 
 
 /**
+ * Sets the last version that this view should not display changes from.
  * @param {number} version
  */
 VersionInterruptView.prototype.setVersion = function(version) {
@@ -98,6 +99,7 @@ VersionInterruptView.prototype.relayout = function(opt_preventAnimation) {
   goog.dom.removeChildren(changesContainer);
   var element, ul;
 
+  // Only display changes since the last version the user has seen.
   for (var i = this.version_ + 1; i <= SchedulePlannerVersion.CURRENT_VERSION; i++) {
     element = goog.dom.createDom(goog.dom.TagName.SPAN);
     goog.dom.classlist.add(element, VersionInterruptView.Theme.VHEADER);

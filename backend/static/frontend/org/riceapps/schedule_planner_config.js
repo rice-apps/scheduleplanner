@@ -14,4 +14,11 @@ var SchedulePlannerConfig = org.riceapps.SchedulePlannerConfig;
  */
 SchedulePlannerConfig.ENABLE_TOURS = false;
 
+
+/**
+ * Whether or not to use ESTHER to display course evaluations.
+ * @const {boolean}
+ */
+SchedulePlannerConfig.USE_ESTHER_EVALUATIONS = true;
+
 });  // goog.scope

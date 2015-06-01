@@ -22,9 +22,11 @@ goog.require('goog.style');
 goog.require('goog.ui.Component');
 goog.require('org.riceapps.fx.Animation');
 goog.require('org.riceapps.views.View');
+goog.require('org.riceapps.utils.WindowManager');
 
 goog.scope(function() {
 var Animation = org.riceapps.fx.Animation;
+var WindowManager = org.riceapps.utils.WindowManager;
 
 
 
@@ -98,7 +100,10 @@ ModalView.prototype.enterDocument = function() {
       listen(this.transparentOverlay_, goog.events.EventType.CLICK, this.handleOverlayClicked_).
       listen(this.closeButton_, goog.events.EventType.CLICK, this.handleCloseClicked_);
 
+  var disposeOnHide = this.disposeOnHide_;
+  this.disposeOnHide_ = false;
   this.hide(true);
+  this.disposeOnHide_ = disposeOnHide;
 };
 
 
@@ -126,12 +131,17 @@ ModalView.prototype.relayout = function(opt_preventAnimation) {
  */
 ModalView.prototype.show = function(opt_preventAnimation) {
   if (!this.isInDocument()) {
-    this.render();
+    this.render(document.body);
   }
 
   if (this.isShown()) {
     return;
   }
+
+  var index = WindowManager.getSharedInstance().push(this);
+  window.console.log('ModalView.show', index);
+  goog.style.setStyle(this.getElement(), { 'z-index': index });
+  goog.style.setStyle(this.transparentOverlay_, { 'z-index': (index - 1) });
 
   goog.base(this, 'show', opt_preventAnimation);
 
@@ -162,6 +172,11 @@ ModalView.prototype.hide = function(opt_preventAnimation) {
   if (opt_preventAnimation) {
     goog.style.setElementShown(this.getElement(), false);
     goog.style.setElementShown(this.transparentOverlay_, false);
+
+    this.dispatchEvent(new goog.events.Event(ModalView.EventType.DISMISSED));
+    if (this.disposeOnHide_) {
+      this.dispose();
+    }
   } else {
     Animation.
         perform(this.transparentOverlay_, Animation.Preset.FADE_OUT).
@@ -180,6 +195,8 @@ ModalView.prototype.hide = function(opt_preventAnimation) {
           }
         }, this));
   }
+  
+  WindowManager.getSharedInstance().pop(this);
 };
 
 
@@ -206,7 +223,8 @@ ModalView.prototype.handleCloseClicked_ = function(event) {
  * @private
  */
 ModalView.prototype.handleKeyUp_ = function(event) {
-  if (event.keyCode == goog.events.KeyCodes.ESC) {
+  if (event.keyCode == goog.events.KeyCodes.ESC &&
+      WindowManager.getSharedInstance().isActiveWindow(this)) {
     this.hide();
   }
 };

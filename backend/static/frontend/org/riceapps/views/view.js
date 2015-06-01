@@ -1,3 +1,8 @@
+/**
+ * Provides a generic implementation of a View.
+ * All other views should inherit from this class.
+ */
+
 goog.provide('org.riceapps.views.View');
 
 goog.require('goog.events.BrowserEvent');
@@ -36,6 +41,7 @@ var View = org.riceapps.views.View;
 
 
 /**
+ * Returns an event handler whose scope is the view.
  * @return {!goog.events.EventHandler}
  */
 View.prototype.getHandler = function() {

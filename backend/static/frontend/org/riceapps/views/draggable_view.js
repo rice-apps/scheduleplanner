@@ -1,3 +1,16 @@
+/**
+ * An abstract implementation of a view that can be dragged by the user. You should not use this view directly; rather,
+ * subclass it and create the content you wish to be dragged in createDom.
+ *
+ * The view will fire DraggableView.Event events on various actions; the event types are defined by DraggableView.EventType.
+ *
+ * Any view that wishes to have DraggableViews dropped upon it must implement the DraggableView.DropTarget interface.
+ *
+ * FEATURES STILL NEEDING TO BE IMPLEMENTED:
+ *  - animate drag handle back to element position when drag ends but no drop
+ *
+ */
+
 goog.provide('org.riceapps.views.DraggableView');
 goog.provide('org.riceapps.views.DraggableView.DropTarget');
 goog.provide('org.riceapps.views.DraggableView.Event');
@@ -24,12 +37,6 @@ var DomUtils = org.riceapps.utils.DomUtils;
 
 
 /**
- * An abstract implementation of a view that can be dragged by the user. You should not use this view directly; rather,
- * subclass it and create the content you wish to be dragged in createDom.
- *
- * FEATURES STILL NEEDING TO BE IMPLEMENTED:
- *  - animate drag handle back to element position when drag ends but no drop
- *
  * @extends {org.riceapps.views.View}
  * @constructor
  */

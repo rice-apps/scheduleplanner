@@ -1,3 +1,7 @@
+/**
+ * Provides a view which represents a course as it appears inside of a org.riceapps.views.CalendarView that can be dropped upon.
+ */
+
 goog.provide('org.riceapps.views.CourseCalendarGuideView');
 
 goog.require('goog.asserts');

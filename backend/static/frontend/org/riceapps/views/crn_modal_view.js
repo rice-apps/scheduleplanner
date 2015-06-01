@@ -1,3 +1,8 @@
+/**
+ * A simple modal view which lists the names and CRNs of all courses on the calendar and playground, giving the user easy
+ * access to the information they need when registering for classes.
+ */
+
 goog.provide('org.riceapps.views.CRNModalView');
 
 goog.require('goog.dom');

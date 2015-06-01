@@ -1,3 +1,7 @@
+/**
+ * A pop-up slideshow view which provides the user with instructions on how to utilize the application.
+ */
+
 goog.provide('org.riceapps.views.TourView');
 
 goog.require('goog.Timer');
@@ -119,10 +123,6 @@ TourView.prototype.enterDocument = function() {
       listen(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
       listen(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_).
       listen(document, goog.events.EventType.KEYUP, this.handleKeyUp_);
-
-  goog.style.setStyle(document.body, {
-    'overflow': 'hidden'
-  });
 };
 
 
@@ -190,10 +190,6 @@ TourView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
 
   this.getHandler().removeAll();
-
-  goog.style.setStyle(document.body, {
-    'overflow': 'inherit'
-  });
 };
 
 
@@ -231,6 +227,10 @@ TourView.prototype.prev = function() {
  */
 TourView.prototype.show = function(opt_preventAnimation) {
   goog.base(this, 'show', opt_preventAnimation);
+
+  goog.style.setStyle(document.body, {
+    'overflow': 'hidden'
+  });
   goog.style.setElementShown(this.getElement(), true);
   goog.style.setElementShown(this.nextButton_, false);
   goog.style.setElementShown(this.prevButton_, false);
@@ -311,6 +311,10 @@ TourView.prototype.renderStage_ = function() {
  */
 TourView.prototype.hide = function(opt_preventAnimation) {
   goog.base(this, 'hide', opt_preventAnimation);
+
+  goog.style.setStyle(document.body, {
+    'overflow': 'inherit'
+  });
 
   if (opt_preventAnimation) {
     goog.style.setElementShown(this.getElement(), false);

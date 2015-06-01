@@ -1,3 +1,6 @@
+/**
+ * A pop-up view that displays information about a single course.
+ */
 goog.provide('org.riceapps.views.CourseModalView');
 
 goog.require('goog.dom');
@@ -245,6 +248,19 @@ CourseModalView.prototype.createDom = function() {
 
   goog.dom.setTextContent(this.evaluationsLink_, CourseModalView.Messages.OPEN_EVALUATIONS);
   goog.dom.appendChild(this.getElement(), this.evaluationsLink_);
+};
+
+
+/**
+ * @override
+ */
+CourseModalView.prototype.show = function(opt_preventAnimation) {
+  goog.base(this, 'show', opt_preventAnimation);
+
+  var scroll = goog.dom.getDomHelper().getDocumentScroll();
+  goog.style.setStyle(this.getElement(), {
+    'top': 'calc(10% + ' + scroll.y + 'px)'
+  });
 };
 
 

@@ -1,3 +1,8 @@
+/**
+ * A simple view which represents the trash can on the toolbar.
+ * Courses can be dropped on this view to remove them from the calendar or playground.
+ */
+
 goog.provide('org.riceapps.views.TrashView');
 
 goog.require('goog.dom.classlist');

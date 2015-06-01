@@ -1,3 +1,7 @@
+/**
+ * Provides a view which represents a course as it appears inside of a org.riceapps.views.SearchView.
+ */
+
 goog.provide('org.riceapps.views.CourseSearchView');
 
 goog.require('goog.asserts');

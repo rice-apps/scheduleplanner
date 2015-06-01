@@ -1,3 +1,7 @@
+/**
+ * A slide-in panel that displays search results and search filters.
+ */
+
 goog.provide('org.riceapps.views.SearchView');
 
 goog.require('goog.Timer');

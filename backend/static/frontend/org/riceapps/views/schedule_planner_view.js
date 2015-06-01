@@ -1,3 +1,7 @@
+/**
+ * The master view for schedule planner which is responsible for placing all of the other views.
+ */
+
 goog.provide('org.riceapps.views.SchedulePlannerView');
 
 goog.require('goog.dom');

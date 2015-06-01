@@ -1,3 +1,7 @@
+/**
+ * A toolbar which is displayed above the calendar and contains the search text field and various buttons.
+ */
+
 goog.provide('org.riceapps.views.ToolbarView');
 
 goog.require('goog.Timer');
@@ -266,6 +270,8 @@ ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
       /*this.searchInput_.value.length > 2 &&*/
       this.searchInput_.value != ToolbarView.DEFAULT_QUERY) {
 
+    // NOTE: Do not trigger a search on every keypress as searching is expensive; trigger a search only after the
+    // user has stopped typing for 400ms.
     if (this.updateSearchTimer_ != -1) {
       goog.Timer.clear(this.updateSearchTimer_);
       this.updateSearchTimer_ = -1;

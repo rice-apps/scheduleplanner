@@ -984,6 +984,15 @@ html, body {
   text-align: left;
 }
 
+.course-list-view-table > tr:not(:first-child) {
+  cursor: pointer;
+}
+
+/*.course-list-view-table > tr:not(:first-child):hover {
+  background-color: #4281F4;
+  color: #FFF;
+}*/
+
 .context-menu-view {
   position: absolute;
   z-index: 10000;

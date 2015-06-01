@@ -1,3 +1,7 @@
+/**
+ * Provides a generic view representing a course which implements functionality shared amongst all different types of course views.
+ */
+
 goog.provide('org.riceapps.views.AbstractCourseView');
 
 goog.require('goog.color');
