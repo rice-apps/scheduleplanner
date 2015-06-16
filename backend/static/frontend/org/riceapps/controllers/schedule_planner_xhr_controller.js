@@ -88,6 +88,24 @@ SchedulePlannerXhrController.prototype.getUserModel = function() {
     goog.net.XhrIo.send(url, goog.bind(function(event) {
       var xhr = event.target;
 
+      if (xhr.getStatus() === 401) {
+        resolve(new org.riceapps.models.UserModel(/** @type {org.riceapps.protocol.Messages.User} */ ({
+          'userId': org.riceapps.models.UserModel.INVALID_USER_ID,
+          'userName': '',
+          'xsrfToken': '',
+          'hasSeenTour': false,
+          'lastSeenVersion': 0,
+          'hasAgreedToDisclaimer': false,
+          'playground': {
+            'courses': []
+          },
+          'schedule': {
+            'courses': []
+          }
+        })));
+        return;
+      }
+
       if (!xhr.isSuccess()) {
         reject(SchedulePlannerXhrEvent.ErrorType.NETWORK_FAILURE);
         return;
@@ -186,6 +204,11 @@ SchedulePlannerXhrController.prototype.getAllCourses = function(opt_pathOverride
  * @return {!goog.Promise.<SchedulePlannerXhrEvent.ErrorType>}
  */
 SchedulePlannerXhrController.prototype.pushUserModel = function() {
+  if (this.userModel_ && !this.userModel_.isLoggedIn()) {
+    // Always succeed when there is no user to push to (in other words, don't attempt to sync to the server).
+    return goog.Promise.resolve(SchedulePlannerXhrEvent.ErrorType.NONE);
+  }
+
   // We must ensure that there exists at most one push request pending over the network at a time.
   // If we don't, we could run into some nasty concurrency data race issues.
   if (this.pendingPushRequest_ != null) {

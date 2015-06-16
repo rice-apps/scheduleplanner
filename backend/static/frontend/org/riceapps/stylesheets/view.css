@@ -17,7 +17,8 @@ html, body {
   z-index: 998;
 }
 
-.interrupt-view input[type="submit"] {
+.interrupt-view input[type="submit"],
+.interrupt-view a.input {
   cursor: pointer;
   display: inline-block;
   margin: 0 1px;
@@ -38,12 +39,19 @@ html, body {
   float: right;
 }
 
-.interrupt-view input[type="submit"]:hover {
+.interrupt-view input[type="submit"]:hover,
+.interrupt-view a.input:hover {
   background-position: right -156px;
 }
 
-.interrupt-view input[type="submit"]:active {
+.interrupt-view input[type="submit"]:active,
+.interrupt-view a.input:active {
   top: 1px;
+}
+
+.interrupt-view a.input {
+  padding: 2px 8px !important;
+  display: block;
 }
 
 .interrupt-view {
@@ -405,6 +413,7 @@ html, body {
   display: table-cell;
   vertical-align: top;
   padding-bottom: 10px;
+  padding-right: 5px;
 }
 
 .calendar-view-directions {
@@ -1071,4 +1080,80 @@ html, body {
   font-size: 14px;
   line-height: 20px;
   padding: 2px;
+}
+
+.guest-interrupt-view {
+  padding: 50px 50px 20px 50px;
+  font-size: 25px;
+  line-height: 27px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.guest-interrupt-view .guest-interrupt-view-content {
+  margin-top: 10px;
+  text-align: justify;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 2px;
+}
+
+.guest-banner-view {
+
+}
+
+div.bar-error,
+div.bar-warning,
+div.bar-notice,
+div.bar-success {
+  margin: 10px 10px;
+  padding: 7px 10px 8px 30px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: 6px 9px;
+  background-size: 16px 16px;
+}
+
+div.bar-error a,
+div.bar-warning a,
+div.bar-notice a,
+div.bar-success a {
+  color: inherit !important;
+  text-decoration: none;
+  border-bottom: 1px dotted;
+}
+
+div.bar-error {
+  background-color: #FEE;
+  border: 1px solid #D55;
+  background-image: url('./exclamation.png');
+  color: #A22;
+}
+
+div.bar-warning {
+  background-color: #FFD;
+  border: 1px solid #ECA;
+  background-image: url('./error.png');
+  color: #A22;
+}
+
+div.bar-notice {
+  background-color: #EEF;
+  border: 1px solid #AAC;
+  background-image: url('./information.png');
+  color: #337;
+}
+
+div.bar-success {
+  background-color: #EFE;
+  border: 1px solid #ACA;
+  color: #373;
+  background-image: url('./accept.png');
 }

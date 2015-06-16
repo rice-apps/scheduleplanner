@@ -1,6 +1,5 @@
 /**
  * Provides a model which represents a user of the application.
- *
  * NOTE: SchedulePlannerController listens for changes to the user model and automatically pushes those changes to the back-end.
  */
 
@@ -59,6 +58,13 @@ var UserModel = org.riceapps.models.UserModel;
 
 
 /**
+ * A number used to indicate an invalid user id.
+ * @const {number}
+ */
+UserModel.INVALID_USER_ID = -1;
+
+
+/**
  * Initializes the user model given a course catalog; neccesary because the back-end passes course ids but the
  * user model needs to convert them to instances of org.riceapps.models.CourseModel.
  * @param {!org.riceapps.models.CoursesModel} coursesModel
@@ -78,6 +84,15 @@ UserModel.prototype.initialize = function(coursesModel) {
   }
 
   this.protocolMessage_ = null;
+};
+
+
+/**
+ * Returns whether or not a user is logged in.
+ * @return {boolean}
+ */
+UserModel.prototype.isLoggedIn = function() {
+  return this.userId_ != UserModel.INVALID_USER_ID;
 };
 
 
@@ -104,6 +119,10 @@ UserModel.prototype.getXsrfToken = function() {
  * @return {string}
  */
 UserModel.prototype.getUserName = function() {
+  if (this.userId_ == UserModel.INVALID_USER_ID) {
+    return 'Guest';
+  }
+
   return this.userName_;
 };
 

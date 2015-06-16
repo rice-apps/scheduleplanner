@@ -50,6 +50,7 @@ SchedulePlannerEvent.Type = {
   CRN_CLICK: 'sp_crn_click',
   AGREE_DISCLAIMER: 'sp_disclaimer_agree',
   AGREE_VERSION: 'sp_agree_version',
+  AGREE_GUEST: 'sp_agree_guest',
   EXIT_TOUR: 'sp_tour_exit',
   CLEAR_PLAYGROUND_CLICK: 'sp_clear_playground_click',
   SHOW_COURSE_DETAILS: 'sp_show_course_details', // model

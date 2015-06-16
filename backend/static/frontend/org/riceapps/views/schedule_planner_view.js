@@ -12,6 +12,8 @@ goog.require('org.riceapps.views.CourseListView');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.FerpaInterruptView');
 goog.require('org.riceapps.views.FooterView');
+goog.require('org.riceapps.views.GuestBannerView');
+goog.require('org.riceapps.views.GuestInterruptView');
 goog.require('org.riceapps.views.InterruptView');
 goog.require('org.riceapps.views.ModalView');
 goog.require('org.riceapps.views.NavigationBarView');
@@ -36,6 +38,10 @@ org.riceapps.views.SchedulePlannerView = function() {
   /** @private {!org.riceapps.views.NavigationBarView} */
   this.navigationBarView_ = new org.riceapps.views.NavigationBarView();
   this.addChild(this.navigationBarView_);
+
+  /** @private {!org.riceapps.views.GuestBannerView} */
+  this.guestBannerView_ = new org.riceapps.views.GuestBannerView();
+  this.addChild(this.guestBannerView_);
 
   /** @private {!org.riceapps.views.PlaygroundView} */
   this.playgroundView_ = new org.riceapps.views.PlaygroundView();
@@ -77,6 +83,9 @@ org.riceapps.views.SchedulePlannerView = function() {
 
   /** @private {!org.riceapps.views.VersionInterruptView} */
   this.versionInterruptView_ = new org.riceapps.views.VersionInterruptView();
+
+  /** @private {!org.riceapps.views.GuestInterruptView} */
+  this.guestInterruptView_ = new org.riceapps.views.GuestInterruptView();
 };
 goog.inherits(org.riceapps.views.SchedulePlannerView,
               org.riceapps.views.View);
@@ -126,6 +135,22 @@ SchedulePlannerView.prototype.createLoadingInterruptView_ = function() {
  */
 SchedulePlannerView.prototype.getLoadingInterruptView = function() {
   return this.loadingInterruptView_;
+};
+
+
+/**
+ * @return {!org.riceapps.views.GuestInterruptView}
+ */
+SchedulePlannerView.prototype.getGuestInterruptView = function() {
+  return this.guestInterruptView_;
+};
+
+
+/**
+ * @return {!org.riceapps.views.GuestBannerView}
+ */
+SchedulePlannerView.prototype.getGuestBannerView = function() {
+  return this.guestBannerView_;
 };
 
 
@@ -248,6 +273,7 @@ SchedulePlannerView.prototype.createDom = function() {
   goog.dom.classlist.add(this.getElement(), SchedulePlannerView.Theme.BASE);
 
   this.navigationBarView_.render(this.getElement());
+  this.guestBannerView_.render(this.getElement());
   this.toolbarView_.render(this.getElement());
 
   var columns = goog.dom.createDom(goog.dom.TagName.DIV, SchedulePlannerView.Theme.COLUMNS);

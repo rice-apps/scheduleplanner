@@ -14,6 +14,7 @@ goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.events.KeyEvent');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
+goog.require('org.riceapps.models.UserModel');
 goog.require('org.riceapps.views.CourseView');
 goog.require('org.riceapps.views.DraggableView');
 goog.require('org.riceapps.views.TrashView');
@@ -132,18 +133,27 @@ ToolbarView.prototype.createDom = function() {
 
 
 /**
+ * @param {number} userId
  * @param {string} userName
  */
-ToolbarView.prototype.setUserName = function(userName) {
+ToolbarView.prototype.setUserInfo = function(userId, userName) {
   this.userName_ = userName;
+
 
   var spanElement = goog.dom.createDom(goog.dom.TagName.SPAN, ToolbarView.Theme.LOGOUT);
   goog.dom.setTextContent(spanElement, 'Welcome, ' + this.userName_ + ' ');
   goog.dom.appendChild(this.getElement(), spanElement);
 
   var logoutElement = goog.dom.createDom(goog.dom.TagName.A);
-  logoutElement.href = '/logout';
-  goog.dom.setTextContent(logoutElement, '(Logout)');
+
+  if (userId == org.riceapps.models.UserModel.INVALID_USER_ID) {
+    logoutElement.href = '/login';
+    goog.dom.setTextContent(logoutElement, '(Login)');
+  } else {
+    logoutElement.href = '/logout';
+    goog.dom.setTextContent(logoutElement, '(Logout)');
+  }
+
   goog.dom.appendChild(spanElement, logoutElement);
 };
 

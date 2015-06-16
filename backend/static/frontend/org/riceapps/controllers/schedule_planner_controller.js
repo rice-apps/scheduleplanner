@@ -79,6 +79,13 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
  * @const {!Array.<function(this:org.riceapps.controllers.SchedulePlannerController)>}
  */
 SchedulePlannerController.INTRO_PHASES = [
+  function() { // Guest
+    if (this.userModel_.isLoggedIn()) {
+      this.advancePhase_();
+    } else {
+      this.view_.getGuestInterruptView().show();
+    }
+  },
   function() { // Disclaimer
     if (!this.userModel_.hasAgreedToDisclaimer()) {
       this.view_.getFerpaInterruptView().show();
@@ -206,6 +213,7 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
     listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
     listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
+    listen(this.view_.getGuestInterruptView(), SchedulePlannerEvent.Type.AGREE_GUEST, this.onGuestAgreed_).
     listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
     listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
     listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
@@ -216,7 +224,11 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
 
   this.handleUserModelChange_();
-  this.view_.getToolbarView().setUserName(this.userModel_.getUserName());
+  this.view_.getToolbarView().setUserInfo(this.userModel_.getUserId(), this.userModel_.getUserName());
+
+  if (!this.userModel_.isLoggedIn()) {
+    this.view_.getGuestBannerView().show();
+  }
 
   // Remove the loading view.
   this.view_.getLoadingInterruptView().hide();
@@ -770,6 +782,7 @@ SchedulePlannerController.prototype.handleUserModelChange_ = function(opt_event)
 
   // Update the list view.
   this.view_.getCourseListView().setCourses(this.userModel_.getCoursesInSchedule());
+  this.view_.relayout();
 };
 
 
@@ -791,6 +804,16 @@ SchedulePlannerController.prototype.onDisclaimerAgreed_ = function(opt_event) {
  */
 SchedulePlannerController.prototype.onVersionAgreed_ = function(opt_event) {
   this.userModel_.setLastSeenVersion(SchedulePlannerVersion.CURRENT_VERSION);
+  this.advancePhase_();
+};
+
+
+/**
+ * Event Handler; called when user has agreed to guest disclaimer.
+ * @param {SchedulePlannerEvent=} opt_event
+ * @private
+ */
+SchedulePlannerController.prototype.onGuestAgreed_ = function(opt_event) {
   this.advancePhase_();
 };
 

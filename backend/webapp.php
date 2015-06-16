@@ -31,7 +31,7 @@ scope(function() {
 	Route::get ('/logout', 'CASController@logout');
 
 	// Route: Access Restricted Pages
-	Route::filter($authFilter, function() {
+	//Route::filter($authFilter, function() {
 		Route::get('/', function(Request $request, Response $response) {
 			// For local development builds: use the Google Closure Development bundle.
 			if (Config::get('app.development', false)) {
@@ -42,12 +42,13 @@ scope(function() {
 				return View::make('SchedulePlanner');
 			}
 		});
-	});
+	//});
 
 	// Route: API Access Restricted Pages
 	Route::filter($apiFilter, function() {
 		Route::get ('/api/user', 'API.UserController');
 		Route::post('/api/user', 'API.UserController');
-		Route::get ('/api/courses', 'API.CoursesController');
 	});
+
+	Route::get ('/api/courses', 'API.CoursesController');
 });
