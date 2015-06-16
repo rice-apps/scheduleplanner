@@ -331,7 +331,15 @@ SearchView.prototype.show = function(opt_preventAnimation) {
   goog.style.setElementShown(this.getElementStrict(), true);
 
   if (!opt_preventAnimation) {
-    Animation.perform(this.getElementStrict(), Animation.Preset.FADE_IN_RIGHT_BIG);
+    Animation.perform(this.getElementStrict(), Animation.Preset.FADE_IN_RIGHT_BIG).then(goog.bind(function(element) {
+      // Due to a bug in Chrome, the browser fails to recognize the area is scrollable after it has been hidden and reshown.
+      // The workaround for this appears to be changing the overflow property to force the browser to recognize scrollability.
+      goog.style.setStyle(this.resultsContainer_, {'overflow': 'hidden'});
+      goog.Timer.callOnce(function() {
+        goog.style.setStyle(this.resultsContainer_, {'overflow': 'auto'});
+      }, 0, this);
+      return element;
+    }, this));
   }
 };
 
