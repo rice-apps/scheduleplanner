@@ -1,7 +1,9 @@
 scheduleplanner
 =====================
 
-A schedule planner and visualizer for students at Rice University maintained by [Rice Apps] (http://www.riceapps.org/).
+An open-source schedule planner and visualizer for university students maintained by [Rice Apps](http://www.riceapps.org/).
+
+You can view the application live at [scheduleplanner.riceapps.rocks](http://scheduleplanner.riceapps.rocks).
 
 ## Requirements (for building):
 * Google Closure Library
@@ -21,12 +23,12 @@ A schedule planner and visualizer for students at Rice University maintained by 
 * PHP >= 5.5 or HHVM
 
 ## Documentation:
-* [Google Closure] (https://developers.google.com/closure/)
-* [Closure API Reference] (http://docs.closure-library.googlecode.com/git/index.html)
-* [Closure Type Annotation] ( https://developers.google.com/closure/compiler/docs/js-for-compiler)
+* [Google Closure](https://developers.google.com/closure/)
+* [Closure API Reference](http://docs.closure-library.googlecode.com/git/index.html)
+* [Closure Type Annotation]( https://developers.google.com/closure/compiler/docs/js-for-compiler)
 
 ## Style:
-We will be following the [Google JavaScript Style Guide] (https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). In general,
+We will be following the [Google JavaScript Style Guide](https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). In general,
 
 * Always indent using spaces
 * Use unix line endings
@@ -44,7 +46,7 @@ We will be following the [Google JavaScript Style Guide] (https://google-stylegu
 * To indicate a todo: `TODO(githubuser): MESSAGE`
 * Caution: compiler may rewrite property names (e.g. obj.property) for optimization. Use string literals to prevent this (e.g. obj['property']) in areas where renaming at compile time might affect correctness at runtime. Compiler will not rewrite properties that are well known (e.g. DOM node properties).
 
-In order to make following style more convenient, you can utilize the [Closure Linter] (https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
+In order to make following style more convenient, you can utilize the [Closure Linter](https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
 
 ## Developer Set-Up and Workflow:
 1. Clone the code repository.

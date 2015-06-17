@@ -4,9 +4,7 @@ LONG TERM GOALS:
 MED PRIORITY:
   - Search View: better looking hide (cancel) button
 
-  - Search View: scroll results to top when they change.
-
-  - Search View: Results not scrollable when re-shown. Possibly resulting from a bug in Chrome.
+  - Search View: scroll results to top when they change; scroll results to previous position upon hide and re-show.
 
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
