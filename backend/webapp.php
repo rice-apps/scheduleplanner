@@ -34,7 +34,7 @@ scope(function() {
 	//Route::filter($authFilter, function() {
 		Route::get('/', function(Request $request, Response $response) {
 			// For local development builds: use the Google Closure Development bundle.
-			if (Config::get('app.development', false)) {
+			if (Config::get('app.development', false) && !$request->get->has('prod')) {
 				return View::make('SchedulePlannerDevelopment');
 			}
 			// For production builds: use the Google Closure Compiled bundle.

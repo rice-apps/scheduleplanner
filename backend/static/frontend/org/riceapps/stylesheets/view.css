@@ -720,6 +720,7 @@ html, body {
   overflow: auto;
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
+  padding: 50px;
 }
 
 .course-modal-view {
@@ -1157,4 +1158,34 @@ div.bar-success {
   border: 1px solid #ACA;
   color: #373;
   background-image: url('./accept.png');
+}
+
+.schedule-planner-view-disclaimer {
+  padding: 50px 50px 20px 50px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.schedule-planner-view-disclaimer .schedule-planner-view-disclaimer-header {
+  background-image: url('./error-large.png');
+  background-size: 30px 30px;
+  background-position: left center;
+  background-repeat: no-repeat;
+  height: 30px;
+  font-size: 25px;
+  line-height: 30px;
+  padding-left: 35px;
+  margin-bottom: 10px;
+}
+
+.schedule-planner-view-disclaimer span {
+  display: block;
+  text-align: justify;
+  padding-top: 15px;
+  font-size: 16px;
+  line-height: 20px;
 }

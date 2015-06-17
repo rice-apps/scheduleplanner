@@ -86,8 +86,15 @@ TourView.prototype.createDom = function() {
   goog.dom.setTextContent(this.prevButton_, '<');
   goog.dom.appendChild(this.getElement(), this.prevButton_);
 
-  var item;
+  this.createFrames_();
+};
 
+
+/**
+ * @private
+ */
+TourView.prototype.createFrames_ = function() {
+  var item;
   // TODO(mschurr): To implement tour view, we must build the frames in the tour here
   // and push them onto the explanations array.
 

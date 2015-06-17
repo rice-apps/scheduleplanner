@@ -47,9 +47,8 @@ FerpaInterruptView.CONDITIONS_TEXT = 'Schedule Planner provides you with access 
 
 /** @enum {string} */
 FerpaInterruptView.Theme = {
-  LOADING_CONTAINER: 'schedule-planner-view-directions',
-  LOADING_IMAGE: 'schedule-planner-view-loader',
-  ERROR_CONTAINER: 'schedule-planner-view-error'
+  BASE: 'schedule-planner-view-disclaimer',
+  HEADER: 'schedule-planner-view-disclaimer-header'
 };
 
 
@@ -58,38 +57,32 @@ FerpaInterruptView.Theme = {
  */
 FerpaInterruptView.prototype.createDom = function() {
   goog.base(this, 'createDom');
+  goog.dom.classlist.add(this.getElement(), FerpaInterruptView.Theme.BASE);
 
-  goog.style.setStyle(this.getElement(), {
-    'padding-bottom': '20px'
-  });
+  var header = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(header, FerpaInterruptView.Theme.HEADER);
+  goog.dom.setTextContent(header, 'Terms and Conditions');
+  goog.dom.appendChild(this.getElement(), header);
 
   var element;
-  var container = goog.dom.createDom(goog.dom.TagName.DIV);
-  goog.dom.classlist.add(container, FerpaInterruptView.Theme.LOADING_CONTAINER);
-  goog.dom.setTextContent(container, 'Terms and Conditions');
-  goog.dom.appendChild(this.getElement(), container);
-
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(element, FerpaInterruptView.DISCLAIMER_TEXT);
-  goog.dom.appendChild(container, element);
+  goog.dom.appendChild(this.getElement(), element);
 
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(element, FerpaInterruptView.CONDITIONS_TEXT);
-  goog.dom.appendChild(container, element);
-
-  goog.dom.classlist.add(this.getElement(), FerpaInterruptView.Theme.ERROR_CONTAINER);
-
+  goog.dom.appendChild(this.getElement(), element);
 
   this.agreeButton_ = goog.dom.createDom(goog.dom.TagName.INPUT, {
     'type': 'submit',
-    'value': 'I Agree'
+    'value': 'I Agree!'
   });
-  goog.dom.appendChild(container, this.agreeButton_);
+  goog.dom.appendChild(this.getElement(), this.agreeButton_);
 
 
   element = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(element, 'clear');
-  goog.dom.appendChild(container, element);
+  goog.dom.appendChild(this.getElement(), element);
 };
 
 

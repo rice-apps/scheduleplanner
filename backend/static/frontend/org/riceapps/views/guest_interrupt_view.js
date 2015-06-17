@@ -66,16 +66,7 @@ GuestInterruptView.prototype.createDom = function() {
   goog.dom.appendChild(contentContainer, element);
 
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
-  goog.dom.setTextContent(element, 'In order to get access to the full set of features, you can ');
-  goog.dom.appendChild(contentContainer, element);
-
-  element = goog.dom.createDom(goog.dom.TagName.A);
-  element.href = 'login';
-  goog.dom.setTextContent(element, 'log in');
-  goog.dom.appendChild(contentContainer, element);
-
-  element = goog.dom.createDom(goog.dom.TagName.SPAN);
-  goog.dom.setTextContent(element, ' using your Rice NetID.');
+  goog.dom.setTextContent(element, 'In order to get access to the full set of features, you can log in using your Rice Net ID.');
   goog.dom.appendChild(contentContainer, element);
 
   element = goog.dom.createDom(goog.dom.TagName.DIV);
