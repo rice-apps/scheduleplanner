@@ -64,6 +64,12 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {number} */
   this.scrollRestore_ = 0;
+
+  /** @private {Element} */
+  this.columns_ = null;
+
+  /** @private {Element} */
+  this.resultsColumn_ = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
@@ -124,9 +130,11 @@ SearchView.prototype.createDom = function() {
 
   var columns = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.COLUMNS);
   goog.dom.appendChild(this.getElement(), columns);
+  this.columns_ = columns;
 
   var results = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.RESULTS);
   goog.dom.appendChild(columns, results);
+  this.resultsColumn_ = results;
 
   var resultsContainer = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.RESULTS_CONTAINER);
   goog.dom.appendChild(results, resultsContainer);
@@ -347,6 +355,8 @@ SearchView.prototype.show = function(opt_preventAnimation) {
       return element;
     }, this));
   }
+
+  this.relayout();
 };
 
 
@@ -439,6 +449,28 @@ SearchView.prototype.hideDirections_ = function() {
 
   goog.style.setElementShown(this.directionsElement_, false);
   this.directionsShown_ = false;
+};
+
+
+/** @override */
+SearchView.prototype.relayout = function(opt_preventAnimation) {
+  goog.base(this, 'relayout', opt_preventAnimation);
+  window.console.log('SearchView.relayout');
+
+  if (this.columns_ && this.resultsColumn_ && this.resultsContainer_) {
+    var width = goog.style.getContentBoxSize(this.getElement()).width;
+    goog.style.setStyle(this.columns_, {
+      'width': width + 'px'
+    });
+
+    goog.style.setStyle(this.resultsColumn_, {
+      'width': (width - 300) + 'px'
+    });
+
+    goog.style.setStyle(this.resultsContainer_, {
+      'width': (width - 300) + 'px'
+    });
+  }
 };
 
 

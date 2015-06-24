@@ -15,7 +15,7 @@ var SchedulePlannerVersion = org.riceapps.SchedulePlannerVersion;
  * The current version of the application.
  * @const {number}
  */
-SchedulePlannerVersion.CURRENT_VERSION = 8;
+SchedulePlannerVersion.CURRENT_VERSION = 9;
 
 /**
  * A list of changes associated with each version of the application.
@@ -50,6 +50,9 @@ SchedulePlannerVersion.MESSAGES = [
   ],
   [ // Version 8
     'Fixed a bug in which search results were not always scrollable with the mouse wheel.'
+  ],
+  [ // Version 9
+    'Fixed a bug in which search filters were not visible on low resolution displays.'
   ]
 ];
 

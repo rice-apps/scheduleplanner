@@ -345,13 +345,6 @@ html, body {
   font-size: 11px;
 }
 
-.course-search-view {
-  font-size: 14px;
-  line-height: 18px;
-  padding: 5px 10px;
-  box-shadow: none !important;
-}
-
 .course-calendar-view,
 .course-calendar-guide-view {
   padding: 2px 5px;
@@ -370,12 +363,16 @@ html, body {
 }
 
 .course-search-view {
-  width: auto;
+  width: calc(100% - 40px);
   margin-top: 10px;
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 2px;
   height: 60px;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 5px 10px;
+  box-shadow: none !important;
 }
 
 .course-view,
@@ -611,13 +608,11 @@ html, body {
 }
 
 .search-view-columns {
-  width: 100%;
   height: 100%;
   display: table;
 }
 
 .search-view-results {
-  width: calc(100% - 300px);
   display: table-cell;
   vertical-align: top;
 }
@@ -625,6 +620,7 @@ html, body {
 .search-view-results-container {
   overflow: auto;
   height: calc(100% - 10px);
+  width: calc(100% - 10px);
 }
 
 .search-view-filters {

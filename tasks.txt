@@ -4,8 +4,6 @@ LONG TERM GOALS:
 MED PRIORITY:
   - Search View: better looking hide (cancel) button
 
-  - Search view filters not displaying on low resolution.
-
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
 
 LOW PRIORITY:
