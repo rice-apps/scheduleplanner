@@ -61,6 +61,9 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {org.riceapps.views.ToolbarView} */
   this.toolbarView_ = null;
+
+  /** @private {number} */
+  this.scrollRestore_ = 0;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
@@ -336,7 +339,10 @@ SearchView.prototype.show = function(opt_preventAnimation) {
       // The workaround for this appears to be changing the overflow property to force the browser to recognize scrollability.
       goog.style.setStyle(this.resultsContainer_, {'overflow': 'hidden'});
       goog.Timer.callOnce(function() {
+        // NOTE: Asynchronous because property changes only take effect after returning control to the browser.
+        // We need to let the overflow hidden take effect before toggling overflow back to auto.
         goog.style.setStyle(this.resultsContainer_, {'overflow': 'auto'});
+        this.resultsContainer_.scrollTop = this.scrollRestore_;
       }, 0, this);
       return element;
     }, this));
@@ -353,6 +359,7 @@ SearchView.prototype.hide = function(opt_preventAnimation) {
   }
 
   goog.base(this, 'hide', opt_preventAnimation);
+  this.scrollRestore_ = this.resultsContainer_.scrollTop;
 
   if (!opt_preventAnimation) {
     Animation.perform(this.getElementStrict(), Animation.Preset.FADE_OUT_RIGHT_BIG).
@@ -380,6 +387,9 @@ SearchView.prototype.setSearchResults = function(results) {
   for (var i = 0; i < results.length; i++) {
     this.addChild(results[i], true);
   }
+
+  this.resultsContainer_.scrollTop = 0;
+  this.scrollRestore_ = 0;
 };
 
 

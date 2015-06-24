@@ -617,7 +617,7 @@ html, body {
 }
 
 .search-view-results {
-  width: auto;
+  width: calc(100% - 300px);
   display: table-cell;
   vertical-align: top;
 }
@@ -629,6 +629,7 @@ html, body {
 
 .search-view-filters {
   width: 300px;
+  min-width: 300px;
   display: table-cell;
   vertical-align: top;
   border-left: 1px solid #999;

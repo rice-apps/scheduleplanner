@@ -87,7 +87,8 @@ SchedulePlannerController.INTRO_PHASES = [
     }
   },
   function() { // Disclaimer
-    if (!this.userModel_.hasAgreedToDisclaimer()) {
+    if (!this.userModel_.hasAgreedToDisclaimer() &&
+        this.userModel_.isLoggedIn()) {
       this.view_.getFerpaInterruptView().show();
     } else {
       this.advancePhase_();
@@ -101,7 +102,8 @@ SchedulePlannerController.INTRO_PHASES = [
     }
   },
   function() { // Change Log
-    if (this.userModel_.getLastSeenVersion() < SchedulePlannerVersion.CURRENT_VERSION) {
+    if (this.userModel_.getLastSeenVersion() < SchedulePlannerVersion.CURRENT_VERSION &&
+        this.userModel_.isLoggedIn()) {
       this.view_.getVersionInterruptView().setVersion(this.userModel_.getLastSeenVersion());
       this.view_.getVersionInterruptView().show();
     } else {

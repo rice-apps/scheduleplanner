@@ -148,10 +148,10 @@ ToolbarView.prototype.setUserInfo = function(userId, userName) {
 
   if (userId == org.riceapps.models.UserModel.INVALID_USER_ID) {
     logoutElement.href = '/login';
-    goog.dom.setTextContent(logoutElement, '(Login)');
+    goog.dom.setTextContent(logoutElement, '(Sign In)');
   } else {
     logoutElement.href = '/logout';
-    goog.dom.setTextContent(logoutElement, '(Logout)');
+    goog.dom.setTextContent(logoutElement, '(Sign Out)');
   }
 
   goog.dom.appendChild(spanElement, logoutElement);

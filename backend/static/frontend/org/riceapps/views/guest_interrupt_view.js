@@ -66,7 +66,7 @@ GuestInterruptView.prototype.createDom = function() {
   goog.dom.appendChild(contentContainer, element);
 
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
-  goog.dom.setTextContent(element, 'In order to get access to the full set of features, you can log in using your Rice Net ID.');
+  goog.dom.setTextContent(element, 'In order to get access to the full set of features, you can sign in using your Rice Net ID.');
   goog.dom.appendChild(contentContainer, element);
 
   element = goog.dom.createDom(goog.dom.TagName.DIV);
@@ -81,7 +81,7 @@ GuestInterruptView.prototype.createDom = function() {
   goog.style.setStyle(this.agreeButton_, {'float': 'right'});
 
   element = goog.dom.createDom(goog.dom.TagName.A);
-  goog.dom.setTextContent(element, 'Login Now');
+  goog.dom.setTextContent(element, 'Sign In Now');
   goog.dom.classlist.add(element, 'input');
   element.href = '/login';
   goog.style.setStyle(element, {'float': 'right', 'margin-right': '5px'});
