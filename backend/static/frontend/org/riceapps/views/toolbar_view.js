@@ -275,7 +275,9 @@ ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
 ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (event.keyCode == goog.events.KeyCodes.ESC) {
     this.searchInput_.blur();
+    this.searchView_.hide();
   }
+
   if (goog.events.KeyCodes.isTextModifyingKeyEvent(event) &&
       /*this.searchInput_.value.length > 2 &&*/
       this.searchInput_.value != ToolbarView.DEFAULT_QUERY) {

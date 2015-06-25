@@ -10,6 +10,7 @@ goog.require('goog.events.BrowserEvent');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventType');
 goog.require('goog.style');
+goog.require('goog.window');
 goog.require('org.riceapps.events.ContextMenuEvent');
 goog.require('org.riceapps.events.ContextMenuEvent.Type');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
@@ -56,7 +57,8 @@ AbstractCourseView.Option = {
   VIEW_EVALS: 2,
   MOVE_TO_PLAYGROUND: 3,
   REMOVE: 4,
-  MOVE_TO_CALENDAR: 5
+  MOVE_TO_CALENDAR: 5,
+  VIEW_IN_CATALOG: 6
 };
 
 
@@ -139,6 +141,7 @@ AbstractCourseView.prototype.handleContextMenu_ = function(event) {
   // Add options.
   this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_INFO, 'View Information');
   this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_EVALS, 'View Evaluations');
+  this.contextMenu_.setOption(AbstractCourseView.Option.VIEW_IN_CATALOG, 'View in Course Catalog');
 
   if (!this.isInPlayground()) {
     this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_PLAYGROUND, 'Move to Staging Area');
@@ -210,6 +213,10 @@ AbstractCourseView.prototype.handleContextMenuOptionClick_ = function(event) {
       var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.MOVE_TO_CALENDAR);
       newEvent.model = this.getCourseModel();
       this.dispatchEvent(newEvent);
+      break;
+    case AbstractCourseView.Option.VIEW_IN_CATALOG:
+      goog.window.open(this.getCourseModel().getLink(), {'target': '_blank'});
+      break;
     default:
       break;
   }

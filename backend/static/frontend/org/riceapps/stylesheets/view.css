@@ -489,14 +489,19 @@ html, body {
 }
 
 .close-search-view {
-  content: url('./close.png');
-  width: 30pt;
+  background-image: url('./close.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
   float: right;
-  padding-right: 30px;
+  margin-right: 30px;
 }
 
 .close-search-view:hover {
-  content: url('./close-hover.png');
+  background-image: url('./close-hover.png');
 }
 
 .trash-view {

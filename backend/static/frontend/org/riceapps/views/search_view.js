@@ -142,7 +142,7 @@ SearchView.prototype.createDom = function() {
 
   this.filterContainer_ = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.FILTERS);
 
-  this.cancelButton_ = goog.dom.createDom(goog.dom.TagName.IMG, 'close-search-view');
+  this.cancelButton_ = goog.dom.createDom(goog.dom.TagName.DIV, 'close-search-view');
   goog.dom.appendChild(this.filterContainer_, this.cancelButton_);
 
   goog.dom.appendChild(columns, this.filterContainer_);
@@ -152,18 +152,14 @@ SearchView.prototype.createDom = function() {
   var directionsSpan;
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, SearchView.Theme.DIRECTIONS);
-  goog.dom.setTextContent(this.directionsElement_, 'Instructions');
+  goog.dom.setTextContent(this.directionsElement_, 'No Results Found');
   goog.dom.appendChild(this.getElement(), this.directionsElement_);
 
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(directionsSpan,
-    'In order to find courses, start typing in the box above and using the filters on the right side of the panel.');
+    'There are no courses in the database that match your search query and filters.');
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
-  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
-  goog.dom.setTextContent(directionsSpan,
-    'Once you begin typing, results should appear instantly. You can drag search results directly onto the staging area to the left.');
-  goog.dom.appendChild(this.directionsElement_, directionsSpan);
   this.showDirections_();
 };
 
@@ -181,6 +177,7 @@ SearchView.prototype.getFilterValues = function() {
     d1: getFilterValue(this.filterElements_.d1),
     d2: getFilterValue(this.filterElements_.d2),
     d3: getFilterValue(this.filterElements_.d3),
+    indep: getFilterValue(this.filterElements_.indep),
     hideConflicts: getFilterValue(this.filterElements_.conflicts),
     hideFull: getFilterValue(this.filterElements_.full)
   };
@@ -197,6 +194,7 @@ SearchView.prototype.createFiltersDom = function(container) {
   filterDetails.set('d1', ['d[]', '1', 'Distribution 1', true]);
   filterDetails.set('d2', ['d[]', '2', 'Distribution 2', true]);
   filterDetails.set('d3', ['d[]', '3', 'Distribution 3', true]);
+  filterDetails.set('indep', ['show_indep', '1', 'Independent Study', true]);
   filterDetails.set('conflicts', ['filter_conflicts', '1', 'Hide conflicts']);
   filterDetails.set('full', ['filter_full', '1', 'Hide full courses']);
 
@@ -223,6 +221,7 @@ SearchView.prototype.createFiltersDom = function(container) {
     d1: createCheckbox('d1'),
     d2: createCheckbox('d2'),
     d3: createCheckbox('d3'),
+    indep: createCheckbox('indep'),
     conflicts: createCheckbox('conflicts'),
     full: createCheckbox('full')
   };

@@ -3,8 +3,7 @@ LONG TERM GOALS:
 
 MED PRIORITY:
   - Search View: better looking hide (cancel) button
-
-  - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
+  - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS
 
 LOW PRIORITY:
   - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".

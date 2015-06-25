@@ -57,6 +57,7 @@ var CourseModel = org.riceapps.models.CourseModel;
  *   d1: boolean,
  *   d2: boolean,
  *   d3: boolean,
+ *   indep: boolean,
  *   hideConflicts: boolean,
  *   hideFull: boolean
  * }}
@@ -114,7 +115,7 @@ CourseModel.prototype.equals = function(otherCourse) {
  * @param {number} type
  * @return {boolean}
  */
-CourseModel.prototype.assertDistribution = function(type) {
+CourseModel.prototype.isDistribution = function(type) {
   return this.getDistributionType() === type;
 };
 
@@ -129,10 +130,13 @@ CourseModel.prototype.passesFilters = function(filters, opt_userModel) {
     return false;
   }
 
-  return ((filters.normal && this.assertDistribution(0)) ||
-      (filters.d1 && this.assertDistribution(1)) ||
-      (filters.d2 && this.assertDistribution(2)) ||
-      (filters.d3 && this.assertDistribution(3)));
+  return (
+    (filters.indep && this.isIndependentStudy()) ||
+    (filters.normal && this.isDistribution(0) && !this.isIndependentStudy()) ||
+    (filters.d1 && this.isDistribution(1)) ||
+    (filters.d2 && this.isDistribution(2)) ||
+    (filters.d3 && this.isDistribution(3))
+  );
 };
 
 
@@ -196,6 +200,15 @@ CourseModel.prototype.getCalendarMeetingTimes = function() {
   }
 
   return times;
+};
+
+
+/**
+ * @return {boolean}
+ */
+CourseModel.prototype.isIndependentStudy = function() {
+  return this.data_['meetingTimes'].length == 0 ||
+         this.data_['creditHoursMin'] != this.data_['creditHoursMax'];
 };
 
 
