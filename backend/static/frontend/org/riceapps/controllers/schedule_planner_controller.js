@@ -259,11 +259,15 @@ SchedulePlannerController.prototype.advancePhase_ = function() {
  * @private
  */
 SchedulePlannerController.prototype.onCourseViewClick_ = function(event) {
-  var courseView = /** @type {org.riceapps.views.AbstractCourseView|Node} */ (event.target);
+  if (event.target instanceof org.riceapps.views.AbstractCourseView) {
+    var courseView = /** @type {org.riceapps.views.AbstractCourseView} */ (event.target);
 
-  var modalView = new org.riceapps.views.CourseModalView(courseView.getCourseModel());
-  this.view_.addChild(modalView); // For event propagation.
-  modalView.disposeOnHide().show();
+    if (courseView.shouldShowInfoOnClick()) {
+      var modalView = new org.riceapps.views.CourseModalView(courseView.getCourseModel());
+      this.view_.addChild(modalView); // For event propagation.
+      modalView.disposeOnHide().show();
+    }
+  }
 };
 
 

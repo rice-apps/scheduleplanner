@@ -15,7 +15,7 @@ var SchedulePlannerVersion = org.riceapps.SchedulePlannerVersion;
  * The current version of the application.
  * @const {number}
  */
-SchedulePlannerVersion.CURRENT_VERSION = 10;
+SchedulePlannerVersion.CURRENT_VERSION = 11;
 
 /**
  * A list of changes associated with each version of the application.
@@ -58,6 +58,10 @@ SchedulePlannerVersion.MESSAGES = [
     'Added a search filter for independent study courses.',
     'Added a "View In Catalog" context menu option.',
     'Pressing escape in the search box now hides the search view.'
+  ],
+  [ // Version 11
+    'Context menus now work in the list view.',
+    'Click on a CRN in the list view to easily copy to your clipboard.'
   ]
 ];
 

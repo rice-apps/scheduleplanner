@@ -147,7 +147,7 @@ AbstractCourseView.prototype.handleContextMenu_ = function(event) {
     this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_PLAYGROUND, 'Move to Staging Area');
   }
 
-  if (!this.isInCalendar() && this.getCourseModel().getAllSections().length == 1) {
+  if (!this.isInCalendar() && !this.isInList() && this.getCourseModel().getAllSections().length == 1) {
     this.contextMenu_.setOption(AbstractCourseView.Option.MOVE_TO_CALENDAR, 'Move to Calendar');
   }
 
@@ -244,6 +244,22 @@ AbstractCourseView.prototype.isInPlayground = function() {
  */
 AbstractCourseView.prototype.isInSearch = function() {
   return false;
+};
+
+
+/**
+ * @return {boolean}
+ */
+AbstractCourseView.prototype.isInList = function() {
+  return false;
+};
+
+
+/**
+ * @return {boolean}
+ */
+AbstractCourseView.prototype.shouldShowInfoOnClick = function() {
+  return true;
 };
 
 

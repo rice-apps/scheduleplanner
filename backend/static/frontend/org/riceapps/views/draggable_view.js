@@ -66,6 +66,9 @@ org.riceapps.views.DraggableView = function() {
 
   /** @private {!Element} */
   this.dropIndicatorElement_ = goog.dom.createDom(goog.dom.TagName.DIV, 'mouse-pointer-focus');
+
+  /** @private {boolean} */
+  this.isDraggable_ = true;
 };
 goog.inherits(org.riceapps.views.DraggableView,
               org.riceapps.views.View);
@@ -150,6 +153,22 @@ DraggableView.prototype.addDropTarget = function(target) {
  */
 DraggableView.prototype.removeDropTarget = function(target) {
   goog.array.remove(this.targets_, target);
+};
+
+
+/**
+ * @return {boolean}
+ */
+DraggableView.prototype.isDraggable = function() {
+  return this.isDraggable_;
+};
+
+
+/**
+ * @param {boolean} isDraggable
+ */
+DraggableView.prototype.setDraggable = function(isDraggable) {
+  this.isDraggable_ = isDraggable;
 };
 
 
@@ -657,6 +676,11 @@ DraggableView.prototype.stopMouseInTargetAnimation_ = function() {
 DraggableView.prototype.startDragging_ = function(initialPosition) {
   this.debugLog_('startDragging_');
   this.clearMaybeDrag_();
+
+  if (!this.isDraggable_) {
+    return;
+  }
+
   this.isBeingDragged_ = true;
   this.dragTooltip_ = this.getDragTooltip();
   this.pageScroll_ = goog.dom.getDomHelper().getDocumentScroll();

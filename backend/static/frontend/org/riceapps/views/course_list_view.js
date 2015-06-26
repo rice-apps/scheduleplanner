@@ -19,10 +19,12 @@ goog.require('org.riceapps.events.ContextMenuEvent.Type');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.views.ContextMenuView');
 goog.require('org.riceapps.views.DraggableView.DropTarget');
+goog.require('org.riceapps.views.ListCourseView');
 goog.require('org.riceapps.views.View');
 
 goog.scope(function() {
 var SchedulePlannerEvent = org.riceapps.events.SchedulePlannerEvent;
+var ListCourseView = org.riceapps.views.ListCourseView;
 
 
 
@@ -40,9 +42,11 @@ org.riceapps.views.CourseListView = function() {
   /** @private {Element} */
   this.table_ = null;
 
-  /** @private {!goog.events.EventHandler} */
-  this.childEventHandler_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.childEventHandler_);
+  /** @private {Element} */
+  this.tableBody_ = null;
+
+  /** @private {Element} */
+  this.emptyRow_ = null;
 };
 goog.inherits(org.riceapps.views.CourseListView,
               org.riceapps.views.View);
@@ -58,44 +62,18 @@ CourseListView.Theme = {
 };
 
 
-/**
- * @const {!Object.<string, function(this:CourseListView, !Element, !org.riceapps.models.CourseModel)>}
- */
-CourseListView.COLUMN_RENDERER = {
-  'CRN' : function(element, course) {
-    goog.dom.setTextContent(element, course.getCrn());
-  },
-  'Title' : function(element, course) {
-    goog.dom.setTextContent(element, course.getTitle());
-  },
-  'Credits' : function(element, course) {
-    goog.dom.setTextContent(element, course.getCreditsAsString());
-  },
-  'Instructor' : function(element, course) {
-    goog.dom.setTextContent(element, course.getInstructorNames());
-  },
-  'Meetings' : function(element, course) {
-    goog.dom.setTextContent(element, course.getMeetingTimesAsString());
-  },
-  'Distribution' : function(element, course) {
-    goog.dom.setTextContent(element, course.getDistributionTypeAsString());
-  },
-  'Restrictions' : function(element, course) {
-    var restrictions = course.getRestrictions();
-
-    for (var i = 0; i < restrictions.length; i++) {
-      var div = goog.dom.createDom(goog.dom.TagName.DIV);
-      goog.dom.setTextContent(div, restrictions[i]);
-      goog.dom.appendChild(element, div);
-    }
-  },
-  'Enrollment' : function(element, course) {
-    goog.dom.setTextContent(element, course.getTotalEnrollmentAsString());
-  },
-  'Waitlisted' : function(element, course) {
-    goog.dom.setTextContent(element, course.getTotalWaitlistedAsString());
-  }
-};
+/** @const {!Array.<string>} */
+CourseListView.COLUMNS = [
+  'CRN',
+  'Title',
+  'Credits',
+  'Instructor',
+  'Meetings',
+  'Distribution',
+  'Restrictions',
+  'Enrollment',
+  'Waitlisted'
+];
 
 
 /**
@@ -158,6 +136,30 @@ CourseListView.prototype.handleChildrenChanged_ = function() {
 CourseListView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), CourseListView.Theme.BASE);
+  this.table_ = goog.dom.createDom(goog.dom.TagName.TABLE, CourseListView.Theme.TABLE);
+  goog.dom.appendChild(this.getElement(), this.table_);
+
+  var tableHead = goog.dom.createDom(goog.dom.TagName.THEAD);
+  goog.dom.appendChild(this.table_, tableHead);
+
+  this.tableBody_ = goog.dom.createDom(goog.dom.TagName.TBODY);
+  goog.dom.appendChild(this.table_, this.tableBody_);
+
+  var row = goog.dom.createDom(goog.dom.TagName.TR);
+  var column;
+  for (var i = 0; i < CourseListView.COLUMNS.length; i++) {
+    column = goog.dom.createDom(goog.dom.TagName.TH);
+    goog.dom.setTextContent(column, CourseListView.COLUMNS[i]);
+    goog.dom.appendChild(row, column);
+  }
+  goog.dom.appendChild(tableHead, row);
+
+
+  this.emptyRow_ = row = goog.dom.createDom(goog.dom.TagName.TR);
+  column = goog.dom.createDom(goog.dom.TagName.TD, {'colspan': CourseListView.COLUMNS.length});
+  goog.dom.setTextContent(column, 'The courses scheduled on your calendar will also be listed here.');
+  goog.dom.appendChild(row, column);
+  goog.dom.appendChild(this.tableBody_, row);
 };
 
 
@@ -166,67 +168,20 @@ CourseListView.prototype.createDom = function() {
  */
 CourseListView.prototype.relayout = function(opt_preventAnimation) {
   goog.base(this, 'relayout', opt_preventAnimation);
+  this.removeChildren(true);
 
-  // Remove the existing table (if any).
-  if (this.table_) {
-    goog.dom.removeNode(this.table_);
-    this.table_ = null;
-  }
-
-  // Draw a table containing courses.
-  this.table_ = goog.dom.createDom(goog.dom.TagName.TABLE, CourseListView.Theme.TABLE);
-
-  // Draw the header row.
-  var row = goog.dom.createDom(goog.dom.TagName.TR);
-  var col_count = 0;
-
-  for (var title in CourseListView.COLUMN_RENDERER) {
-    var column = goog.dom.createDom(goog.dom.TagName.TH);
-    goog.dom.setTextContent(column, title);
-    goog.dom.appendChild(row, column);
-    col_count++;
-  }
-
-  goog.dom.appendChild(this.table_, row);
-
-  // Draw data rows.
   for (var i = 0; i < this.courses_.length; i++) {
-    row = goog.dom.createDom(goog.dom.TagName.TR);
+    var view = new ListCourseView(this.courses_[i]);
+    this.addChild(view, this.isInDocument());
+  }
 
-    for (var title in CourseListView.COLUMN_RENDERER) {
-      var column = goog.dom.createDom(goog.dom.TagName.TD);
-      CourseListView.COLUMN_RENDERER[title].call(this, column, this.courses_[i]);
-      goog.dom.appendChild(row, column);
+  if (this.isInDocument()) {
+    if (this.courses_.length == 0) {
+      goog.style.setElementShown(this.emptyRow_, true);
+    } else {
+      goog.style.setElementShown(this.emptyRow_, false);
     }
-
-    goog.dom.appendChild(this.table_, row);
-
-    // Register event listeners.
-    this.childEventHandler_.
-      listen(row, goog.events.EventType.CLICK, goog.bind(function(model) {
-        var newEvent = new SchedulePlannerEvent(SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS);
-        newEvent.model = model;
-        this.dispatchEvent(newEvent);
-      }, this, this.courses_[i])).
-      listen(row, goog.events.EventType.CONTEXTMENU, goog.bind(function(model, event) {
-        //event.preventDefault();
-        //var scroll = goog.dom.getDomHelper().getDocumentScroll();
-        //var menu = new org.riceapps.views.ContextMenuView(scroll.x + event.clientX - 1, scroll.y + event.clientY - 1);
-        //menu.show();
-      }, this, this.courses_[i]));
   }
-
-  if (this.courses_.length == 0) {
-    row = goog.dom.createDom(goog.dom.TagName.TR);
-    var column = goog.dom.createDom(goog.dom.TagName.TD, {
-      'colspan': col_count
-    });
-    goog.dom.setTextContent(column, 'The courses scheduled on your calendar will also be listed here.');
-    goog.dom.appendChild(row, column);
-    goog.dom.appendChild(this.table_, row);
-  }
-
-  goog.dom.appendChild(this.getElement(), this.table_);
 };
 
 
@@ -270,5 +225,13 @@ CourseListView.prototype.dragEnter = function(item) {};
  * @override
  */
 CourseListView.prototype.dragLeave = function(item) {};
+
+
+/**
+ * @override
+ */
+CourseListView.prototype.getContentElement = function() {
+  return this.tableBody_;
+};
 
 }); // goog.scope

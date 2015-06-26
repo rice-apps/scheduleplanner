@@ -952,7 +952,11 @@ html, body {
 }
 
 .course-list-view-table > tr > td,
-.course-list-view-table > tr > th {
+.course-list-view-table > tr > th,
+.course-list-view-table > tbody > tr > td,
+.course-list-view-table > tbody > tr > th,
+.course-list-view-table > thead > tr > td,
+.course-list-view-table > thead > tr > th {
   margin: 0;
   vertical-align: top;
   line-height: 22px;
@@ -960,31 +964,39 @@ html, body {
   border-right: 1px solid #000;
 }
 
-.course-list-view-table > tr:first-child {
+.course-list-view-table > tr:first-child,
+.course-list-view-table > thead > tr:first-child {
   background-color: #666;
   border: 1px solid #333;
 }
 
-.course-list-view-table > tr:nth-child(2) {
+.course-list-view-table > tr:nth-child(2),
+.course-list-view-table > tbody > tr:nth-child(1) {
   border-top: 1px solid rgb(218, 222, 229);
 }
 
-.course-list-view-table > tr:last-child {
+.course-list-view-table > tr:last-child,
+.course-list-view-table > tbody > tr:last-child {
   border-bottom: 1px solid #333;
 }
 
-.course-list-view-table > tr {
+.course-list-view-table > tr,
+.course-list-view-table > tbody > tr,
+.course-list-view-table > thead > tr {
   border-bottom: 1px solid rgb(218, 222, 229);
   border-right: 1px solid #333;
   border-left: 1px solid #333;
   background-color: rgb(252,252,250);
 }
 
-.course-list-view-table > tr:nth-child(2n) {
+.course-list-view-table > tr:nth-child(2n),
+.course-list-view-table > tbody > tr:nth-child(2n) {
   background-color: #F0F0F4;
 }
 
-.course-list-view-table > tr > th {
+.course-list-view-table > tr > th,
+.course-list-view-table > thead > tr > th,
+.course-list-view-table > tbody > tr > th {
   padding: 5px 10px;
   color: #FFF;
   font-weight: bold;
@@ -992,19 +1004,32 @@ html, body {
   text-shadow: 1px 1px 1px #000;
 }
 
-.course-list-view-table > tr > td {
+.course-list-view-table > tr > td,
+.course-list-view-table > tbody > tr > td,
+.course-list-view-table > thead > tr > td {
   padding: 10px;
   text-align: left;
 }
 
-.course-list-view-table > tr:not(:first-child) {
-  cursor: pointer;
+.course-list-view-table > tr:not(:first-child),
+.course-list-view-table > tbody > tr {
+  /*cursor: pointer;*/
 }
 
 /*.course-list-view-table > tr:not(:first-child):hover {
   background-color: #4281F4;
   color: #FFF;
 }*/
+
+.course-view-crn {
+  width: 60px;
+  text-align: center;
+  padding: 0px;
+  margin: 0px;
+  background-color: rgba(0,0,0,0);
+  outline: none;
+  border: none;
+}
 
 .context-menu-view {
   position: absolute;
