@@ -223,7 +223,8 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
     listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
     listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
     listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_CALENDAR, this.handleMoveToCalendar_).
-    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_);
+    listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_).
+    listen(this.view_, SchedulePlannerEvent.Type.CLOSE_SEARCH_VIEW, this.handleCloseSearchView_);
 
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserInfo(this.userModel_.getUserId(), this.userModel_.getUserName());
@@ -876,6 +877,7 @@ SchedulePlannerController.prototype.onCourseViewDragEnd_ = function(event) {
   this.view_.getCalendarView().relayout();
 };
 
+
 /**
  * Event handler; called when a course view starts to be dragged.
  * @param {goog.events.Event} event
@@ -887,5 +889,16 @@ SchedulePlannerController.prototype.onCourseViewDragStart_ = function(event) {
     this.view_.getSearchView().onCloseSearch();
   }
 };
+
+
+/**
+ * @param {SchedulePlannerEvent} event
+ * @private
+ */
+SchedulePlannerController.prototype.handleCloseSearchView_ = function(event) {
+  window.console.log('SchedulePlannerController.handleCloseSearchView_', event);
+  this.view_.getSearchView().hide();
+};
+
 
 });  // goog.scope

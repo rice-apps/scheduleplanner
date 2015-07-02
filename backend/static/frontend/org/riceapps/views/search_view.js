@@ -70,6 +70,9 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {Element} */
   this.resultsColumn_ = null;
+
+  /** @private {Element} */
+  this.hider_ = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
@@ -100,6 +103,7 @@ SearchView.Theme = {
   COLUMNS: 'search-view-columns',
   RESULTS: 'search-view-results',
   FILTERS: 'search-view-filters',
+  HIDER: 'search-view-hider',
   RESULTS_CONTAINER: 'search-view-results-container'
 };
 
@@ -131,6 +135,10 @@ SearchView.prototype.createDom = function() {
   var columns = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.COLUMNS);
   goog.dom.appendChild(this.getElement(), columns);
   this.columns_ = columns;
+
+  var hider = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.HIDER);
+  goog.dom.appendChild(columns, hider);
+  this.hider_ = hider;
 
   var results = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.RESULTS);
   goog.dom.appendChild(columns, results);
@@ -240,6 +248,7 @@ SearchView.prototype.enterDocument = function() {
   this.getHandler().
     listen(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
     listen(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
+    listen(this.hider_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
     listen(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
     listen(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
     listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
@@ -251,13 +260,7 @@ SearchView.prototype.enterDocument = function() {
  */
 SearchView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
-
-  this.getHandler().
-    unlisten(this.filterContainer_, goog.events.EventType.CHANGE, this.onFilterChange).
-    unlisten(this.cancelButton_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
-    unlisten(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
-    unlisten(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
-    unlisten(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+  this.getHandler().removeAll();
 };
 
 
@@ -463,11 +466,11 @@ SearchView.prototype.relayout = function(opt_preventAnimation) {
     });
 
     goog.style.setStyle(this.resultsColumn_, {
-      'width': (width - 300) + 'px'
+      'width': (width - 311) + 'px' // For hider and filters
     });
 
     goog.style.setStyle(this.resultsContainer_, {
-      'width': (width - 300) + 'px'
+      'width': (width - 311) + 'px' // For hider and filters
     });
   }
 };

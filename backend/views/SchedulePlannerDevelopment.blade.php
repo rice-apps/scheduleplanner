@@ -1,10 +1,11 @@
-@title('Schedule Planner [DEVELOPER BUILD]')
+@title('Rice Schedule Planner')
 
 @script(URL::asset('closure-library/closure/goog/base.js'))
 @script(URL::asset('frontend/deps.js'))
 
 @style(URL::asset('frontend/org/riceapps/stylesheets/animation.min.css'))
 @style(URL::asset('frontend/org/riceapps/stylesheets/view.css'))
+@link('icon', 'image/png', URL::asset('favicon.png'), 'all')
 
 @head
   <script type="text/javascript">

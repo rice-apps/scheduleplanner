@@ -8,6 +8,7 @@
  *
  * FEATURES STILL NEEDING TO BE IMPLEMENTED:
  *  - animate drag handle back to element position when drag ends but no drop
+ *  - input elements not working properly on setDraggable(false)
  *
  */
 

@@ -37,9 +37,13 @@ GuestBannerView.Theme = {
 GuestBannerView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), GuestBannerView.Theme.BASE);
-  goog.dom.classlist.add(this.getElement(), GuestBannerView.Theme.WARNING_BAR);
-  goog.dom.setTextContent(this.getElement(), 'You are not logged in. Your schedule and preferences will not be saved ' +
+
+  var warning = goog.dom.createDom(goog.dom.TagName.DIV);
+  goog.dom.classlist.add(warning, GuestBannerView.Theme.WARNING_BAR);
+  goog.dom.setTextContent(warning, 'You are not logged in. Your schedule and preferences will not be saved ' +
       'and certain features may be unavailable.');
+  goog.dom.appendChild(this.getElement(), warning);
+
   goog.style.setElementShown(this.getElement(), false);
 };
 

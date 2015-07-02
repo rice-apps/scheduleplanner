@@ -66,6 +66,9 @@ org.riceapps.views.ToolbarView = function(searchView) {
 
   /** @private {string} */
   this.userName_ = '';
+
+  /** @private {Element} */
+  this.searchCloseButton_ = null;
 };
 goog.inherits(org.riceapps.views.ToolbarView,
               org.riceapps.views.View);
@@ -79,7 +82,9 @@ ToolbarView.Theme = {
   STATS: 'tool-bar-view-stats',
   TITLE: 'tool-bar-view-title',
   INPUT_ACTIVE: 'tool-bar-view-input-active',
-  LOGOUT: 'tool-bar-view-logout'
+  LOGOUT: 'tool-bar-view-logout',
+  INPUT_CLOSE: 'tool-bar-input-close',
+  INPUT_CLOSE_ACTIVE: 'tool-bar-input-close-active'
 };
 
 
@@ -123,11 +128,14 @@ ToolbarView.prototype.createDom = function() {
   goog.dom.appendChild(this.getElement(), this.statsContainer_);
 
   var titleElement = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.TITLE);
-  goog.dom.setTextContent(titleElement, 'Schedule Planner');
+  goog.dom.setTextContent(titleElement, 'Rice Schedule Planner');
   goog.dom.appendChild(this.getElement(), titleElement);
 
+  this.searchCloseButton_ = goog.dom.createDom(goog.dom.TagName.DIV, ToolbarView.Theme.INPUT_CLOSE);
+  goog.dom.appendChild(this.getElement(), this.searchCloseButton_);
+
   var crnElement = goog.dom.createDom(goog.dom.TagName.DIV, 'crn-view');
-  goog.dom.appendChild(this.getElement(), crnElement);
+  //goog.dom.appendChild(this.getElement(), crnElement); NOTE: No longer needed.
   this.crnElement_ = crnElement;
 };
 
@@ -141,7 +149,7 @@ ToolbarView.prototype.setUserInfo = function(userId, userName) {
 
 
   var spanElement = goog.dom.createDom(goog.dom.TagName.SPAN, ToolbarView.Theme.LOGOUT);
-  goog.dom.setTextContent(spanElement, 'Welcome, ' + this.userName_ + ' ');
+  goog.dom.setTextContent(spanElement, 'Welcome, ' + this.userName_ + '. ');
   goog.dom.appendChild(this.getElement(), spanElement);
 
   var logoutElement = goog.dom.createDom(goog.dom.TagName.A);
@@ -191,7 +199,8 @@ ToolbarView.prototype.enterDocument = function() {
     listen(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
     listen(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
     listen(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-    listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
+    listen(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_).
+    listen(this.searchCloseButton_, goog.events.EventType.CLICK, this.onSearchCloseClick_);
 };
 
 
@@ -200,12 +209,7 @@ ToolbarView.prototype.enterDocument = function() {
  */
 ToolbarView.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
-
-  this.getHandler().
-    unlisten(this.searchInput_, goog.events.EventType.FOCUS, this.onSearchInputFocus_).
-    unlisten(this.searchInput_, goog.events.EventType.BLUR, this.onSearchInputBlur_).
-    unlisten(this.searchInput_, goog.events.EventType.KEYUP, this.onSearchInputKeyUp_).
-    unlisten(this.crnElement_, goog.events.EventType.CLICK, this.onCRNViewClick_);
+  this.getHandler().removeAll();
 };
 
 /**
@@ -239,6 +243,7 @@ ToolbarView.prototype.onSearchInputBlur_ = function(opt_event) {
 ToolbarView.prototype.resetInput = function() {
   this.searchInput_.value = ToolbarView.DEFAULT_QUERY;
   goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+  goog.dom.classlist.remove(this.searchCloseButton_, ToolbarView.Theme.INPUT_CLOSE_ACTIVE);
   this.searchInput_.blur();
   this.onSearchQueryChanged_('');
 };
@@ -249,6 +254,7 @@ ToolbarView.prototype.resetInput = function() {
  */
 ToolbarView.prototype.blurInput = function() {
   goog.dom.classlist.remove(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+  goog.dom.classlist.remove(this.searchCloseButton_, ToolbarView.Theme.INPUT_CLOSE_ACTIVE);
   this.searchInput_.blur();
 };
 
@@ -264,7 +270,18 @@ ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
   }
 
   goog.dom.classlist.add(this.searchInput_, ToolbarView.Theme.INPUT_ACTIVE);
+  goog.dom.classlist.add(this.searchCloseButton_, ToolbarView.Theme.INPUT_CLOSE_ACTIVE);
   this.searchView_.show();
+};
+
+
+/**
+ * @param {goog.events.KeyEvent} event
+ * @private
+ */
+ToolbarView.prototype.onSearchCloseClick_ = function(event) {
+  this.resetInput();
+  this.dispatchEvent(new SchedulePlannerEvent(SchedulePlannerEvent.Type.CLOSE_SEARCH_VIEW));
 };
 
 
@@ -274,7 +291,7 @@ ToolbarView.prototype.onSearchInputFocus_ = function(opt_event) {
  */
 ToolbarView.prototype.onSearchInputKeyUp_ = function(event) {
   if (event.keyCode == goog.events.KeyCodes.ESC) {
-    this.searchInput_.blur();
+    this.resetInput();
     this.searchView_.hide();
   }
 

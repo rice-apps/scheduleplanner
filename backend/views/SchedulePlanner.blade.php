@@ -1,7 +1,8 @@
-@title('Schedule Planner')
+@title('Rice Schedule Planner')
 
 @style(URL::asset('frontend/org/riceapps/stylesheets/animation.min.css'))
 @style(URL::asset('frontend/org/riceapps/stylesheets/view.css'))
+@link('icon', 'image/png', URL::asset('favicon.png'), 'all')
 
 <script src="{{{ URL::asset('frontend/prod.js') }}}" type="text/javascript"></script>
 

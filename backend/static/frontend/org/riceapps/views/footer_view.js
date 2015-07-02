@@ -48,7 +48,7 @@ FooterView.LINKS = {
 FooterView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), FooterView.Theme.BASE);
-  this.getElement().innerHTML = '&copy; 2014 Rice University Computer Science Club';
+  this.getElement().innerHTML = '&copy; 2015 <a href="http://www.riceapps.org/">Rice Apps</a>';
 
   var footerLinks = goog.dom.createDom(goog.dom.TagName.SPAN, FooterView.Theme.LINKS);
   goog.dom.appendChild(this.getElement(), footerLinks);

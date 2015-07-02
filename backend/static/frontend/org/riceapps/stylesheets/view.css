@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,700,700italic,400italic);
+@import url(http://fonts.googleapis.com/css?family=Kaushan+Script);
 
 html, body {
   margin: 0;
@@ -176,30 +177,46 @@ html, body {
 }
 
 .tool-bar-view {
-  background-color: #FFF;
   height: 80px;
   width: 100%;
   position: relative;
+  background-color: #004080;
+  color: #FFF;
+  box-shadow: 0px 0px 6px 0px rgba(0,0,0,1);
+  z-index: 8;
 }
 
 .tool-bar-view .tool-bar-view-title {
+  font-family: 'Kaushan Script';
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
   position: absolute;
-  font-size: 26px;
-  line-height: 26px;
-  top: calc(50% - 22px);
-  left: 20px;
+  font-size: 25px;
+  line-height: 25px;
+  top: calc(50% - 24px);
+  left: 13px;
 }
 
 .tool-bar-view .tool-bar-view-logout {
   position: absolute;
-  font-size: 14px;
-  line-height: 14px;
-  top: calc(50% + 8px);
-  left: 20px;
+  font-size: 16px;
+  line-height: 16px;
+  top: calc(50% + 6px);
+  left: 16px;
 }
 
 .tool-bar-view .tool-bar-view-logout a {
+  color: inherit;
+  text-decoration: underline;
+}
 
+.tool-bar-view-stats {
+  position: absolute;
+  top: calc(50% - 24px);
+  height: 30px;
+  line-height: 30px;
+  left: calc(100% - 460px);
+  width: 360px;
+  padding: 10px;
 }
 
 .tool-bar-view .tool-bar-view-input {
@@ -218,16 +235,35 @@ html, body {
   border-radius: 5px;
   z-index: 1;
   transition: width 0.3s ease-in-out;
+  outline: none;
+  box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.15) inset;
 }
 
-.tool-bar-view-stats {
+.tool-bar-input-close {
+  background-image: url('./close-icon.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
   position: absolute;
-  top: calc(50% - 26px);
-  height: 30px;
-  line-height: 30px;
-  left: calc(100% - 460px);
-  width: 360px;
-  padding: 10px;
+  z-index: 10;
+  left: calc(100% - 750px + 260px - 16px);
+  top: calc(50% - 12px);
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.tool-bar-input-close.tool-bar-input-close-active {
+  left: calc(100% - 370px + 260px - 16px);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.tool-bar-input-close.tool-bar-input-close-active:hover {
+  opacity: 1.0;
 }
 
 .tool-bar-view .tool-bar-view-input.tool-bar-view-input-active {
@@ -239,6 +275,12 @@ html, body {
   color: rgba(0, 0, 0, 0.7);
 }
 
+.tool-bar-view .tool-bar-view-input:focus {
+  box-shadow: 0pt 1px 3px rgba(0, 0, 0, 0.3) inset, 0pt 0pt 5px rgb(54, 160, 255);
+  border: 1px solid rgb(48, 128, 200);
+  color: rgba(0, 0, 0, 1);
+}
+
 .tool-bar-view .tool-bar-view-input.tool-bar-view-input-active {
   outline: none;
   width: calc(100% - 370px);
@@ -246,7 +288,6 @@ html, body {
 }
 
 .playground-view {
-  background-color: #FFF;
   transition: background-color 0.5s ease;
   padding: 0px;
   -webkit-touch-callout: none;
@@ -257,7 +298,7 @@ html, body {
   user-select: none;
   overflow: auto;
   height: 100%;
-  max-height: 575px;
+  max-height: 600px;
 }
 
 .playground-view-directions {
@@ -287,7 +328,6 @@ html, body {
   text-align: center;
   height: 100px;
   width: calc(100% - 20px);
-  background-color: #FFF;
   line-height: 100px;
   padding: 0px 10px;
   font-size: 18px;
@@ -304,11 +344,15 @@ html, body {
   display: inline-block;
 }
 
+.footer-view a {
+  color: #666;
+  text-decoration: underline;
+}
+
 .footer-view .footer-view-links a {
+  color: #999;
   display: inline-block;
   margin-left: 20px;
-  color: #999;
-  text-decoration: underline;
 }
 
 .course-view,
@@ -405,12 +449,9 @@ html, body {
 
 .calendar-view {
   position: relative;
-  background-color: #FFF;
   width: auto;
   display: table-cell;
   vertical-align: top;
-  padding-bottom: 10px;
-  padding-right: 5px;
 }
 
 .calendar-view-directions {
@@ -489,7 +530,7 @@ html, body {
 }
 
 .close-search-view {
-  background-image: url('./close.png');
+  background-image: url('./close-icon.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
@@ -497,26 +538,32 @@ html, body {
   height: 30px;
   cursor: pointer;
   float: right;
-  margin-right: 30px;
+  margin-right: 20px;
+  margin-top: 5px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  display: none; /* TODO(mschurr): Deprecate this. */
 }
 
 .close-search-view:hover {
-  background-image: url('./close-hover.png');
+  opacity: 1.0;
 }
 
 .trash-view {
   position: absolute;
-  top: 0px;
+  top: calc(50% - 30px);
   right: 10px;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   background-repeat: no-repeat;
   background-image: url('./trash.png');
-  background-size: 60% 60%;
+  background-size: 48px 48px;
   background-position: center;
   border-radius: 50%;
   transition: background-color 0.5s ease;
   z-index: 1;
+  box-shadow: 0px 0px 8px 0px rgba(0,0,0,1);
+  background-color: #FFF;
 }
 
 .trash-view.trash-view-hover {
@@ -524,7 +571,7 @@ html, body {
   background-color: rgba(241,231,103,0.7);
 }
 
-.crn-view {
+.crn-view { /* TODO(mschurr): Deprecate this. */
   position: absolute;
   top: 0px;
   right: 90px;
@@ -573,7 +620,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: calc(100% + 6px);
   /*box-shadow: 0 9px 0px 0px white,
               0 -9px 0px 0px white,
               0 20px 15px -4px rgba(31, 73, 125, 0.8),
@@ -617,6 +664,23 @@ html, body {
   display: table;
 }
 
+.search-view-hider {
+  display: table-cell;
+  vertial-align: top;
+  width: 10px;
+  cursor: pointer;
+  border-right: 1px solid #969696;
+  background-image: url('./sidebar-right.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto;
+  transition: background-color 0.5s ease;
+}
+
+.search-view-hider:hover {
+  background-color: rgba(240, 240, 240, 1);
+}
+
 .search-view-results {
   display: table-cell;
   vertical-align: top;
@@ -629,6 +693,7 @@ html, body {
 }
 
 .search-view-filters {
+  padding-top: 5px;
   width: 300px;
   min-width: 300px;
   display: table-cell;
@@ -966,7 +1031,7 @@ html, body {
 
 .course-list-view-table > tr:first-child,
 .course-list-view-table > thead > tr:first-child {
-  background-color: #666;
+  background-color: #003399;
   border: 1px solid #333;
 }
 
@@ -1132,7 +1197,10 @@ html, body {
 }
 
 .guest-banner-view {
-
+  background-color: #004080;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  z-index: 9;
 }
 
 div.bar-error,

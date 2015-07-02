@@ -167,6 +167,7 @@ CalendarView.prototype.hideDirections_ = function() {
 CalendarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), CalendarView.Theme.BASE);
+  goog.style.setStyle(this.getElement(), {'padding-right': '5px'});
 
   var table = goog.dom.createDom(goog.dom.TagName.TABLE, CalendarView.Theme.CALENDAR);
   goog.dom.appendChild(this.getElement(), table);
@@ -231,7 +232,7 @@ CalendarView.prototype.createDom = function() {
   var directionsSpan;
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, CalendarView.Theme.DIRECTIONS);
-  goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner (BETA)!');
+  goog.dom.setTextContent(this.directionsElement_, 'Welcome to Schedule Planner!');
   goog.dom.appendChild(this.getElement(), this.directionsElement_);
 
   for (i = 0; i < CalendarView.DIRECTION_TEXT.length; i++) {
