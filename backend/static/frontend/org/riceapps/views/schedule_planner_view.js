@@ -117,7 +117,7 @@ SchedulePlannerView.prototype.createLoadingInterruptView_ = function() {
     'padding-bottom' : '80px'
   });
   goog.dom.classlist.add(container, SchedulePlannerView.Theme.LOADING_CONTAINER);
-  goog.dom.setTextContent(container, 'Welcome to Rice Schedule Planner (BETA)!');
+  goog.dom.setTextContent(container, 'Welcome to Rice Schedule Planner!');
   goog.dom.appendChild(view.getElement(), container);
 
   element = goog.dom.createDom(goog.dom.TagName.SPAN);
