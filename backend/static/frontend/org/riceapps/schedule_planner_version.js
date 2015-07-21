@@ -15,7 +15,7 @@ var SchedulePlannerVersion = org.riceapps.SchedulePlannerVersion;
  * The current version of the application.
  * @const {number}
  */
-SchedulePlannerVersion.CURRENT_VERSION = 12;
+SchedulePlannerVersion.CURRENT_VERSION = 13;
 
 /**
  * A list of changes associated with each version of the application.
@@ -65,6 +65,10 @@ SchedulePlannerVersion.MESSAGES = [
   ],
   [ // Version 12
     'Visual overhaul and user experience improvements.'
+  ],
+  [ // Version 13
+    'Added filters for department, school, and instructor.',
+    'Added clarification tooltip on the hide conflicts filter.'
   ]
 ];
 
