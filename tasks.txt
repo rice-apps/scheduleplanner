@@ -3,6 +3,7 @@ LONG TERM GOALS:
 
 MED PRIORITY:
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS
+    - Additional filters based on course reviews?
 
 LOW PRIORITY:
   - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
@@ -24,3 +25,5 @@ LOW PRIORITY:
   - Integration with RiceApps Atlas for course locations
 
   - Deprecate the old search view close button + toolbar CRN button.
+
+  - Sorting options

@@ -5,9 +5,15 @@
 goog.provide('org.riceapps.views.SearchView');
 
 goog.require('goog.Timer');
+goog.require('goog.array');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classlist');
+goog.require('goog.iter');
 goog.require('goog.style');
+goog.require('goog.ui.Component.EventType');
+goog.require('goog.ui.ComboBox');
+goog.require('goog.ui.ComboBoxItem');
+goog.require('goog.ui.Tooltip');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.events.ViewEvent');
 goog.require('org.riceapps.fx.Animation');
@@ -73,6 +79,15 @@ org.riceapps.views.SearchView = function() {
 
   /** @private {Element} */
   this.hider_ = null;
+
+  /** @private {goog.ui.ComboBox} */
+  this.instructorNameFilter_ = null;
+
+  /** @private {goog.ui.ComboBox} */
+  this.departmentFilter_ = null;
+
+  /** @private {goog.ui.ComboBox} */
+  this.schoolFilter_ = null;
 };
 goog.inherits(org.riceapps.views.SearchView,
               org.riceapps.views.View);
@@ -88,7 +103,8 @@ var SearchView = org.riceapps.views.SearchView;
  *   d2: !Element,
  *   d3: !Element,
  *   conflicts: !Element,
- *   full: !Element
+ *   full: !Element,
+ *   indep: !Element
  * }}
  */
 SearchView.FilterElements;
@@ -104,7 +120,9 @@ SearchView.Theme = {
   RESULTS: 'search-view-results',
   FILTERS: 'search-view-filters',
   HIDER: 'search-view-hider',
-  RESULTS_CONTAINER: 'search-view-results-container'
+  RESULTS_CONTAINER: 'search-view-results-container',
+  TITLE: 'search-view-title',
+  TOOLTIP: 'search-view-tooltip'
 };
 
 
@@ -180,6 +198,14 @@ SearchView.prototype.getFilterValues = function() {
     return goog.dom.getChildren(element)[0].checked;
   }
 
+  function getComboBoxValue(box) {
+    if (box == null) {
+      return null;
+    }
+
+    return box.getValue() || null;
+  }
+
   return {
     normal: getFilterValue(this.filterElements_.normal),
     d1: getFilterValue(this.filterElements_.d1),
@@ -187,7 +213,14 @@ SearchView.prototype.getFilterValues = function() {
     d3: getFilterValue(this.filterElements_.d3),
     indep: getFilterValue(this.filterElements_.indep),
     hideConflicts: getFilterValue(this.filterElements_.conflicts),
-    hideFull: getFilterValue(this.filterElements_.full)
+    hideFull: getFilterValue(this.filterElements_.full),
+    instructor: getComboBoxValue(this.instructorNameFilter_),
+    school: getComboBoxValue(this.schoolFilter_),
+    department: getComboBoxValue(this.departmentFilter_),
+    courseNumMin: null,
+    courseNumMax: null,
+    creditsMin: null,
+    creditsMax: null
   };
 };
 
@@ -203,19 +236,12 @@ SearchView.prototype.createFiltersDom = function(container) {
   filterDetails.set('d2', ['d[]', '2', 'Distribution 2', true]);
   filterDetails.set('d3', ['d[]', '3', 'Distribution 3', true]);
   filterDetails.set('indep', ['show_indep', '1', 'Independent Study', true]);
-  filterDetails.set('conflicts', ['filter_conflicts', '1', 'Hide conflicts']);
-  filterDetails.set('full', ['filter_full', '1', 'Hide full courses']);
+  filterDetails.set('conflicts', ['filter_conflicts', '1', 'Hide conflicts', false]);
+  filterDetails.set('full', ['filter_full', '1', 'Hide full courses', false]);
 
-  // var normal = DomUtils.createCheckbox('nd', '1', 'Non-Distribution', true);
-  // var d1 = DomUtils.createCheckbox('d[]', '1', 'Distribution 1', true);
-  // var d2 = DomUtils.createCheckbox('d[]', '2', 'Distribution 2', true);
-  // var d3 = DomUtils.createCheckbox('d[]', '3', 'Distribution 3', true);
-  // var conflicts = DomUtils.createCheckbox('filter_conflicts', '1', 'Hide conflicts');
-  // var full = DomUtils.createCheckbox('filter_full', '1', 'Hide full courses');
-  // credit hours
-  // school
-  // department
-  // instructor
+  var header = goog.dom.createDom(goog.dom.TagName.DIV, SearchView.Theme.TITLE);
+  goog.dom.setTextContent(header, 'Filter Results');
+  goog.dom.appendChild(container, header);
 
   function createCheckbox(name) {
     var value = filterDetails.get(name);
@@ -234,7 +260,68 @@ SearchView.prototype.createFiltersDom = function(container) {
     full: createCheckbox('full')
   };
 
+  var tooltip = new goog.ui.Tooltip(this.filterElements_.conflicts,
+    'Hides courses that have time conflicts with any of the courses placed on your calendar.');
+
   this.lastFilterValues_ = this.getFilterValues();
+
+  var caption;
+
+  this.instructorNameFilter_ = new goog.ui.ComboBox();
+  this.instructorNameFilter_.setUseDropdownArrow(true);
+  this.instructorNameFilter_.setDefaultText('Select Instructor...');
+
+  this.schoolFilter_ = new goog.ui.ComboBox();
+  this.schoolFilter_.setUseDropdownArrow(true);
+  this.schoolFilter_.setDefaultText('Select College/School...');
+
+  this.departmentFilter_ = new goog.ui.ComboBox();
+  this.departmentFilter_.setUseDropdownArrow(true);
+  this.departmentFilter_.setDefaultText('Select Department...');
+
+  this.registerDisposable(this.instructorNameFilter_);
+  this.registerDisposable(this.schoolFilter_);
+  this.registerDisposable(this.departmentFilter_);
+
+  this.instructorNameFilter_.render(container);
+  this.schoolFilter_.render(container);
+  this.departmentFilter_.render(container);
+
+  // TODO(mschurr): Credit hours filter.
+  // TODO(mschurr): Course number filter.
+};
+
+
+/**
+ * @param  {!goog.structs.Set.<string>} instructors
+ * @param  {!goog.structs.Set.<string>} schools
+ * @param  {!goog.structs.Set.<string>} departments
+ */
+SearchView.prototype.initializeFilters = function(instructors, schools, departments) {
+  window.console.log('SearchView.initializeFilters');
+
+  var getSortedSet = function(set) {
+    var items = [];
+
+    goog.iter.forEach(set, function(value) {
+      items.push(value);
+    });
+
+    goog.array.sort(items);
+    return items;
+  };
+
+  goog.iter.forEach(getSortedSet(instructors), function(value) {
+    this.instructorNameFilter_.addItem(new goog.ui.ComboBoxItem(value));
+  }, this);
+
+  goog.iter.forEach(getSortedSet(schools), function(value) {
+    this.schoolFilter_.addItem(new goog.ui.ComboBoxItem(value));
+  }, this);
+
+  goog.iter.forEach(getSortedSet(departments), function(value) {
+    this.departmentFilter_.addItem(new goog.ui.ComboBoxItem(value));
+  }, this);
 };
 
 
@@ -251,7 +338,10 @@ SearchView.prototype.enterDocument = function() {
     listen(this.hider_, goog.events.EventType.CLICK, this.onCloseSearchWithReset).
     listen(this, DraggableView.EventType.DRAGSTART, this.onChildDragStart_).
     listen(this, DraggableView.EventType.DRAGEND, this.onChildDragEnd_).
-    listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_);
+    listen(this, [ViewEvent.Type.CHILD_ADDED, ViewEvent.Type.CHILD_REMOVED], this.handleChildrenChanged_).
+    listen(this.instructorNameFilter_, goog.ui.Component.EventType.CHANGE, this.onFilterChange).
+    listen(this.departmentFilter_, goog.ui.Component.EventType.CHANGE, this.onFilterChange).
+    listen(this.schoolFilter_, goog.ui.Component.EventType.CHANGE, this.onFilterChange);
 };
 
 

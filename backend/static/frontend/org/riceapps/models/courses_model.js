@@ -7,6 +7,7 @@ goog.provide('org.riceapps.models.CoursesModel');
 goog.require('goog.array');
 goog.require('goog.string');
 goog.require('goog.structs.Map');
+goog.require('goog.structs.Set');
 goog.require('org.riceapps.events.SchedulePlannerEvent');
 goog.require('org.riceapps.models.CourseModel');
 goog.require('org.riceapps.models.Model');
@@ -208,6 +209,62 @@ CoursesModel.prototype.userModelContainsCourse_ = function(userModel, course) {
   }
 
   return false;
+};
+
+
+/**
+ * @return {!goog.structs.Set.<string>}
+ */
+CoursesModel.prototype.getAllInstructorNames = function() {
+  var set = new goog.structs.Set();
+  var keys = this.courses_.getKeys();
+
+  for (var i = 0; i < keys.length; i++) {
+    var course = this.courses_.get(keys[i]);
+    var instructors = course.getInstructors();
+
+    for (var j = 0; j < instructors.length; j++) {
+      set.add(instructors[j].getName());
+    }
+  }
+
+  set.remove('');
+  return set;
+};
+
+
+/**
+ * @return {!goog.structs.Set.<string>}
+ */
+CoursesModel.prototype.getAllDepartments = function() {
+  var set = new goog.structs.Set();
+  var keys = this.courses_.getKeys();
+
+  for (var i = 0; i < keys.length; i++) {
+    var course = this.courses_.get(keys[i]);
+    set.add(course.getSubject());
+  }
+
+  set.remove('');
+  return set;
+};
+
+
+/**
+ * @return {!goog.structs.Set.<string>}
+ */
+CoursesModel.prototype.getAllSchools = function() {
+  var set = new goog.structs.Set();
+  var keys = this.courses_.getKeys();
+
+  for (var i = 0; i < keys.length; i++) {
+    var course = this.courses_.get(keys[i]);
+    set.add(course.getSchool());
+    set.add(course.getCollege());
+  }
+
+  set.remove('');
+  return set;
 };
 
 });  // goog.scope

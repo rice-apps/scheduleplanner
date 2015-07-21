@@ -59,7 +59,14 @@ var CourseModel = org.riceapps.models.CourseModel;
  *   d3: boolean,
  *   indep: boolean,
  *   hideConflicts: boolean,
- *   hideFull: boolean
+ *   hideFull: boolean,
+ *   instructor: ?string,
+ *   school: ?string,
+ *   department: ?string,
+ *   courseNumMin: ?number,
+ *   courseNumMax: ?number,
+ *   creditsMin: ?number,
+ *   creditsMax: ?number
  * }}
  */
 CourseModel.Filter;
@@ -121,12 +128,55 @@ CourseModel.prototype.isDistribution = function(type) {
 
 
 /**
+ * @param {string} name
+ * @return {boolean}
+ */
+CourseModel.prototype.hasInstructorNamed = function(name) {
+  for (var i = 0; i < this.instructorModels_.length; i++) {
+    if (this.instructorModels_[i].getName() == name) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+
+/**
  * @param {!CourseModel.Filter} filters
  * @param {org.riceapps.models.UserModel=} opt_userModel
  * @return {boolean}
  */
 CourseModel.prototype.passesFilters = function(filters, opt_userModel) {
   if (filters.hideFull && this.isFull()) {
+    return false;
+  }
+
+  if (filters.instructor && !this.hasInstructorNamed(filters.instructor)) {
+    return false;
+  }
+
+  if (filters.school && !(this.getSchool() == filters.school || this.getCollege() == filters.school)) {
+    return false;
+  }
+
+  if (filters.department && this.getSubject() != filters.department) {
+    return false;
+  }
+
+  if (filters.courseNumMin && this.getCourseNumber() < filters.courseNumMin) {
+    return false;
+  }
+
+  if (filters.courseNumMax && this.getCourseNumber() > filters.courseNumMax) {
+    return false;
+  }
+
+  if (filters.creditsMin && this.getCreditsMin() < filters.creditsMin) {
+    return false;
+  }
+
+  if (filters.creditsMax && this.getCreditsMax() > filters.creditsMax) {
     return false;
   }
 
@@ -284,6 +334,7 @@ CourseModel.prototype.timeToString = function(time) {
   var ampm = (hour < 12 || hour == 23 ? ' AM' : ' PM');
   return '' + (hour > 12 ? hour - 12 : hour) + ':' + (min < 10 ? '0' : '') + min + ampm;
 };
+
 
 /**
  * Returns the names of all instructors as a string.

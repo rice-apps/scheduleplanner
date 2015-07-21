@@ -198,33 +198,38 @@ SchedulePlannerController.prototype.onUserModelAndCoursesReady_ = function() {
   window.console.log('SchedulePlannerController.onUserModelAndCoursesReady_');
 
   this.userModel_.initialize(this.coursesModel_);
+  this.view_.getSearchView().initializeFilters(
+    this.coursesModel_.getAllInstructorNames(),
+    this.coursesModel_.getAllSchools(),
+    this.coursesModel_.getAllDepartments()
+  );
   this.addCoursesToPlayground(this.userModel_.getCoursesInPlayground());
   this.addCoursesToSchedule(this.userModel_.getCoursesInSchedule());
 
   // TODO(mschurr@rice.edu): May also wish to listen for remove events to keep model and UI synchronized... however,
   // since delete should only be triggered by the UI, no need to do this for now.
   this.getHandler().
+    listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
+    listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
+    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
     listen(this.view_, DraggableView.EventType.CLICK, this.onCourseViewClick_).
     listen(this.view_, DraggableView.EventType.DROPPED, this.onCourseViewDropped_).
     listen(this.view_, DraggableView.EventType.DRAGEND, this.onCourseViewDragEnd_).
     listen(this.view_, DraggableView.EventType.DRAGSTART, this.onCourseViewDragStart_).
     listen(this.view_, SchedulePlannerEvent.Type.ADD_GUIDE_VIEWS, this.handleAddGuideViews_).
-    listen(this.userModel_, UserModelEvent.Type.PLAYGROUND_COURSES_ADDED, this.handlePlaygroundCoursesAdded_).
-    listen(this.userModel_, UserModelEvent.Type.SCHEDULE_COURSES_ADDED, this.handleScheduleCoursesAdded_).
     listen(this.view_, SchedulePlannerEvent.Type.UPDATE_SEARCH, this.handleUpdateSearch_).
     listen(this.view_, SchedulePlannerEvent.Type.CRN_CLICK, this.onCRNViewClick_).
-    listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
-    listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
-    listen(this.view_.getGuestInterruptView(), SchedulePlannerEvent.Type.AGREE_GUEST, this.onGuestAgreed_).
     listen(this.view_, SchedulePlannerEvent.Type.EXIT_TOUR, this.onTourSeen_).
-    listen(this.userModel_, UserModelEvent.Type.USER_MODEL_CHANGED, this.handleUserModelChange_).
     listen(this.view_, SchedulePlannerEvent.Type.CLEAR_PLAYGROUND_CLICK, this.onClearPlaygroundClick_).
     listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_EVALS, this.handleShowCourseEvals_).
     listen(this.view_, SchedulePlannerEvent.Type.REMOVE_COURSE, this.handleRemoveCourse_).
     listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_PLAYGROUND, this.handleMoveToPlayground_).
     listen(this.view_, SchedulePlannerEvent.Type.MOVE_TO_CALENDAR, this.handleMoveToCalendar_).
     listen(this.view_, SchedulePlannerEvent.Type.SHOW_COURSE_DETAILS, this.handleShowCourseDetails_).
-    listen(this.view_, SchedulePlannerEvent.Type.CLOSE_SEARCH_VIEW, this.handleCloseSearchView_);
+    listen(this.view_, SchedulePlannerEvent.Type.CLOSE_SEARCH_VIEW, this.handleCloseSearchView_).
+    listen(this.view_.getFerpaInterruptView(), SchedulePlannerEvent.Type.AGREE_DISCLAIMER, this.onDisclaimerAgreed_).
+    listen(this.view_.getVersionInterruptView(), SchedulePlannerEvent.Type.AGREE_VERSION, this.onVersionAgreed_).
+    listen(this.view_.getGuestInterruptView(), SchedulePlannerEvent.Type.AGREE_GUEST, this.onGuestAgreed_);
 
   this.handleUserModelChange_();
   this.view_.getToolbarView().setUserInfo(this.userModel_.getUserId(), this.userModel_.getUserName());
