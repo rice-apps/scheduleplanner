@@ -252,6 +252,7 @@ class CourseModelProtocolMessage extends ProtocolMessage {
   public /*int*/ $maxWaitlisted;
   public /*int*/ $enrollment;
   public /*int*/ $waitlisted;
+  public /*int|null*/ $prevYearCrn;
 
   public function __construct() {
     parent::__construct();
@@ -494,6 +495,7 @@ class SchedulePlannerProtocolMessageUtility {
     $message->maxWaitlisted = (int) $query->row['max_waitlisted'];
     $message->enrollment = (int) $query->row['enrollment'];
     $message->waitlisted = (int) $query->row['waitlisted'];
+    $message->prevYearCrn = $query->row['prev_year_crn'] == null ? null : (int) $query->row['prev_year_crn'];
 
     return $message;
   }

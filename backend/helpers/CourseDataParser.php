@@ -92,8 +92,6 @@ class CourseDataParser {
 	protected /*Database*/ $db = null;
 	protected /*int*/ $year;
 	protected /*string*/ $term;
-	protected /*array*/ $keys;
-	protected /*array<array<string,string>>*/ $courses;
 
   /**
    *
@@ -122,8 +120,8 @@ class CourseDataParser {
   /**
    * Returns the HTTP endpoint that should be queried for course data for the provided year and term.
    */
-	public /*string*/ function getEndpoint() {
-		return sprintf(static::$ENDPOINT, $this->year, $this->term);
+	public /*string*/ function getEndpoint(/*int*/ $year, /*int*/ $term) {
+		return sprintf(static::$ENDPOINT, $year, $term);
 	}
 
   public /*mixed*/ function array_get(/*array|ArrayAccess*/ $array, /*scalar*/ $key, /*mixed*/ $default) {
@@ -134,80 +132,95 @@ class CourseDataParser {
     return $default;
   }
 
+
+  public /*tuple(array<string>,array<array<string,string>>)*/ function fetchCourses($year, $term) {
+    // Determine the endpoint URL.
+    $url = $this->getEndpoint($year, $term);
+
+    // Query the server.
+    $this->log("GET ".$url." HTTP/1.1");
+    $xhttp = new xHTTPClient();
+    $response = $xhttp->get($url);
+
+    if(!$response || $response->status != '200')
+      throw new CourseDataParserException("Failed to load courses from remote server.");
+
+    $xml = $response->body;
+
+    $this->log('Finished loading feed.');
+
+    // Parse the XML feed.
+    $this->log("Parsing XML...");
+    $data = null;
+
+    try {
+      $data = new SimpleXMLElement($xml);
+    } catch (Exception $e) {
+      $this->log("Failed to parse XML!");
+      throw new CourseDataParserException($e);
+    }
+
+    // Move data into a native structure.
+    $keys = [];
+    $courses = array();
+
+    foreach($data as $element) {
+      $course = array();
+
+      foreach($element as $key => $value) {
+        $key = str_replace("-", "_", $key);
+        $course[$key] = (string)$value;
+        $keys[] = $key;
+      }
+
+      $keys = array_unique($keys);
+      $courses[] = $course;
+    }
+
+    $this->log("Parsed ".count($courses)." courses with ".count($keys)." keys.");
+
+    unset($xml);
+    unset($data);
+
+    return [$keys, $courses];
+  }
+
+
   /**
    * Imports courses from courses.rice.edu.
    */
 	public /*void*/ function run() {
-		// Determine the endpoint URL.
-		$url = $this->getEndpoint();
-
-		// Query the server.
-		$this->log("GET ".$url." HTTP/1.1");
-		$xhttp = new xHTTPClient();
-		$response = $xhttp->get($url);
-
-		if(!$response || $response->status != '200')
-			throw new CourseDataParserException("Failed to load courses from remote server.");
-
-		$xml = $response->body;//*/
-    //File::open("./test2.xml")->content = $xml;
-		//$xml = File::open("./test2.xml")->content;
-
-		$this->log('Finished loading feed.');
-
-		// Parse the XML feed.
-		$this->log("Parsing XML...");
-		$data = null;
-
-		try {
-			$data = new SimpleXMLElement($xml);
-		} catch (Exception $e) {
-      $this->log("Failed to parse XML!");
-			throw new CourseDataParserException($e);
-		}
-
-		// Move data into a native structure.
-		$this->keys = [];
-		$this->courses = array();
-
-		foreach($data as $element) {
-			$course = array();
-
-			foreach($element as $key => $value) {
-				$key = str_replace("-", "_", $key);
-				$course[$key] = (string)$value;
-				$this->keys[] = $key;
-			}
-
-			$this->keys = array_unique($this->keys);
-			$this->courses[] = $course;
-		}
-
-		$this->log("Parsed ".count($this->courses)." courses with ".count($this->keys)." keys.");
-
-		unset($xml);
-		unset($data);
+    list ($keys, $courses) = $this->fetchCourses($this->year, $this->term);
+    list ($oldKeys, $oldCourses) = $this->fetchCourses($this->year - 1, $this->term);
 
 		// Translate the courses into the database.
-		$this->run_database();
+    $this->importIntoDatabase($this->year - 1, $this->term, $oldKeys, $oldCourses);
+		$this->importIntoDatabase($this->year, $this->term, $keys, $courses);
+
+    // Remove previous year courses.
+    $this->db->prepare("DELETE FROM `courses` WHERE `year` = ? AND `term` = ?;")
+        ->execute([$this->year - 1, CourseDataParserEnum::$_XML_TO_DB_TERMS[$this->term]]);
+    $this->db->query("DELETE FROM `course_restrictions` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `course_times` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `course_instructors` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
 	}
 
   /**
    * Processes XML data into the database.
    */
-	protected /*void*/ function run_database() {
+	protected /*void*/ function importIntoDatabase($year, $term, $keys, $courses) {
 		$this->log('Writing changes to database...');
 
 		$this->db->query("SET NAMES utf8;");
 		$this->db->query("SET CHARACTER SET utf8;");
 		$this->db->query("SET character_set_connection = utf8;");
 
-		for($i = 0; $i < count($this->courses); $i++) {
+		for($i = 0; $i < count($courses); $i++) {
 			if($i % 25 == 0) {
-				$this->log(sprintf("%4d / %4d (%2f percent)", $i + 1, count($this->courses), ($i + 1) / count($this->courses) * 100));
+				$this->log(sprintf("%4d / %4d (%2f percent)", $i + 1, count($courses), ($i + 1) / count($courses) * 100));
 			}
 
-      $course = $this->courses[$i];
+      $course = $courses[$i];
 
       /*
       UNUSED COURSE KEYS:
@@ -238,12 +251,21 @@ class CourseDataParser {
         'xlist_max_waitlisted' => $course['xlst_wait_capacity'],
         'xlist_enrollment' => $this->array_get($course, 'xlst_actual_enrollment', 0),
         'xlist_max_enrollment' => $this->array_get($course, 'xlst_max_enrollment', 0),
-        'year' => $this->year,
-        'term' => CourseDataParserEnum::$_XML_TO_DB_TERMS[$this->term],
+        'year' => $year,
+        'term' => CourseDataParserEnum::$_XML_TO_DB_TERMS[$term],
         'credit_lpap' => ($course['subject'] === 'LPAP'),
         'xlist_group' => $this->array_get($course, 'xlst_group', '')
       );
 
+      $course_data['prev_year_crn'] = null;
+      $q = $this->db->prepare("SELECT `crn` FROM `courses` 
+                               WHERE `year` = ? AND `term` = ? AND `subject` = ? AND `course_number` = ? LIMIT 1;")
+                ->execute([$year - 1, CourseDataParserEnum::$_XML_TO_DB_TERMS[$term], $course_data['subject'], 
+                    $course_data['course_number']]);
+      if ($q->size > 0) {
+        $course_data['prev_year_crn'] = $q->row['crn'];
+      }
+      
       // Parse credit hours.
       if (str_contains($course['credit_hours'], ' TO' )) {
         $credits = explode(' TO ', $course['credit_hours']);
@@ -271,7 +293,7 @@ class CourseDataParser {
 
       // Determine the the course already exists in the database.
       $q = $this->db->prepare("SELECT * FROM `courses` WHERE `year` = ? AND `term` = ? AND `crn` = ? LIMIT 1;")
-         ->execute([$this->year, CourseDataParserEnum::$_XML_TO_DB_TERMS[$this->term], $course['crn']]);
+         ->execute([$year, CourseDataParserEnum::$_XML_TO_DB_TERMS[$term], $course['crn']]);
 
       if ($q->size > 0) {
         $course_data['courseid'] = $q->row['courseid'];

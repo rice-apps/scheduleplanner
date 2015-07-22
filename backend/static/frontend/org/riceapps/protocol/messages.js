@@ -219,7 +219,8 @@ Messages.CourseRestriction;
  *  maxEnrollment: number,
  *  maxWaitlisted: number,
  *  enrollment: number,
- *  waitlisted: number
+ *  waitlisted: number,
+ *  prevYearCrn: (number|null)
  * }}
  */
 Messages.Course;

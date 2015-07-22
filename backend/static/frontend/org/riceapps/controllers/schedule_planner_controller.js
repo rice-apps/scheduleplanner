@@ -355,7 +355,7 @@ SchedulePlannerController.prototype.openCourseEvaluations = function(courseModel
     'p_confirm': '1',
     'p_term': courseModel.getFormattedTermCodeForPrevYear(),
     'p_type': 'Course',
-    'p_crn': courseModel.getCrn()
+    'p_crn': courseModel.getEvaluationCrn()
   };
 
   for (var key in params) {

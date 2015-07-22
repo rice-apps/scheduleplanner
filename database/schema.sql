@@ -143,6 +143,7 @@ CREATE TABLE `courses` (
   `course_number` int(16) UNSIGNED NOT NULL, /* 3-Digit Course Number*/
   `college` int(16) UNSIGNED NULL,
   `crn` int(64) UNSIGNED NOT NULL,
+  `prev_year_crn` int(64) UNSIGNED,
   `last_update` int(64) UNSIGNED NOT NULL, /* UNIX Timestamp*/
   `course_url` varchar(255) NULL,
   `link` varchar(255) NULL, /* Link to page on courses.rice.edu*/
@@ -170,3 +171,4 @@ CREATE TABLE `courses` (
 );
 
 CREATE INDEX `courses_sessions` ON `courses` (`subject`,`course_number`);
+CREATE INDEX `courses_year` ON `courses` (`year`,`term`);

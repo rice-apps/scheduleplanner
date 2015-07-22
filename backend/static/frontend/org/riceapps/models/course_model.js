@@ -389,6 +389,18 @@ CourseModel.prototype.getCrn = function() {
 
 
 /**
+ * @return {number}
+ */
+CourseModel.prototype.getEvaluationCrn = function() {
+  if (this.data_['prevYearCrn'] === null) {
+    return this.data_['crn'];
+  }
+
+  return this.data_['prevYearCrn'];
+};
+
+
+/**
  * @return {string}
  */
 CourseModel.prototype.getFormattedTermCodeForPrevYear = function() {
