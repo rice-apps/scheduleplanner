@@ -183,7 +183,13 @@ SearchView.prototype.createDom = function() {
 
   directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
   goog.dom.setTextContent(directionsSpan,
-    'There are no courses in the database that match your search query and filters.');
+    'There are no courses in our database that match your current search query and filters.');
+  goog.dom.appendChild(this.directionsElement_, directionsSpan);
+
+  directionsSpan = goog.dom.createDom(goog.dom.TagName.SPAN);
+  directionsSpan.innerHTML =
+    'If you can\'t find the course you\'re looking for, it may be because that course is only offered during certain semesters. ' +
+    'Check the <a href="http://courses.rice.edu/" target="_blank">official course catalog</a> for more information.';
   goog.dom.appendChild(this.directionsElement_, directionsSpan);
 
   this.showDirections_();
