@@ -79,6 +79,11 @@ var SchedulePlannerController = org.riceapps.controllers.SchedulePlannerControll
  * @const {!Array.<function(this:org.riceapps.controllers.SchedulePlannerController)>}
  */
 SchedulePlannerController.INTRO_PHASES = [
+  function() {
+    // Prevents a horizontal scroll-bar from occuring on intial render (still not quite sure why needed).
+    this.view_.relayout();
+    this.advancePhase_();
+  },
   function() { // Guest
     if (this.userModel_.isLoggedIn()) {
       this.advancePhase_();

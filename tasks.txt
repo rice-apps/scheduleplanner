@@ -3,12 +3,18 @@ MEDIUM PRIORITY:
     - Add additional search filters based on evaluations data.
     - Note: We have been allocated a Rice server and SSL certificate by IT. Need to migrate the app to this server.
 
-LOW PRIORITY:
+  - Social Features: Get a link to share your schedule with a friend.
 
   - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).
 
-  - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
-    - NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
+LOW PRIORITY:
+  - Automatic scheduling: pick a set of courses and have them scheduled automatically.
+
+  - Support multiple schedules per user per year.
+
+  - Support schedules from past years (e.g. change semester).
+
+  - Add link to open tour on navigation bar as "Help".
 
   - Extend context menus with options:
     * Switch Sections (from calendar to calendar)
@@ -32,3 +38,5 @@ LOW PRIORITY:
   - Add a min/max credit hours search filter.
 
   - Fix DraggableView so that all event listeners are uninstalled when isDraggable=false and installed when isDraggable=true.
+
+  - Context menu support for touch screens via long press.

@@ -771,18 +771,20 @@ html, body {
 .tour-view-next,
 .tour-view-prev {
   top: 25%;
-  width: 30px;
+  font-size: 16px;
+  line-height: 30px;
+  width: 120px;
   text-align: center;
-  padding: 40px 0px;
-  font-size: 40px;
 }
 
 .tour-view-next {
-  right: 1%;
+  right: -30px;
+  transform: rotate(90deg);
 }
 
 .tour-view-prev {
-  left: 1%;
+  transform: rotate(270deg);
+  left: -30px;
 }
 
 .tour-view-exit:hover,
@@ -794,11 +796,12 @@ html, body {
 }
 
 .tour-view-frame {
+  font-family: 'Roboto';
   position: absolute;
   top: calc(10% - 1px);
   left: calc(50% - 401px);
-  width: 800px;
-  height: 500px;
+  width: 700px;
+  height: 440px;
   border: 1px solid #000;
   background-color: #FFF;
   z-index: 1001;
@@ -806,7 +809,109 @@ html, body {
   overflow: auto;
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
-  padding: 50px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.tour-view-splash-section {
+  margin-bottom: 20px;
+}
+
+.tour-view-splash-title {
+  font-size: 32px;
+  line-height: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.tour-view-splash-header {
+  font-size: 23px;
+  line-height: 23px;
+  margin-bottom: 20px;
+}
+
+.tour-view-splash-instructions {
+  border-top: 1px solid #000;
+  padding-top: 20px;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: justify;
+}
+
+.tour-view-splash-header-cloud,
+.tour-view-splash-header-social,
+.tour-view-splash-header-smart {
+  font-size: 20px;
+  line-height: 30px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 30px 30px;
+  padding-left: 40px;
+  margin-top: 30px;
+  margin-bottom: 25px;
+}
+
+.tour-view-splash-header-cloud {
+  background-image: url('splash-cloud.png');
+}
+
+.tour-view-splash-header-social {
+  background-image: url('splash-sharing.png');
+}
+
+.tour-view-splash-header-smart {
+  background-image: url('splash-magic.png');
+}
+
+.tour-view-splash-text {
+  font-size: 16px;
+  line-height: 20px;
+  text-align: justify;
+}
+
+.tour-view-image-search,
+.tour-view-image-scheduling,
+.tour-view-image-context,
+.tour-view-image-deleting,
+.tour-view-image-info,
+.tour-view-image-list,
+.tour-view-image-staging {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  width: 100%;
+  height: 270px;
+  margin-top: 40px;
+}
+
+.tour-view-image-search {
+  background-image: url('tour/search.png');
+}
+
+.tour-view-image-scheduling {
+  background-image: url('tour/scheduling.png');
+}
+
+.tour-view-image-context {
+  background-image: url('tour/context.png');
+}
+
+.tour-view-image-deleting {
+  background-image: url('tour/deleting.png');
+}
+
+.tour-view-image-info {
+  background-image: url('tour/info.png');
+}
+
+.tour-view-image-list {
+  background-image: url('tour/list.png');
+}
+
+.tour-view-image-staging {
+  background-image: url('tour/staging.png');
 }
 
 .course-modal-view {

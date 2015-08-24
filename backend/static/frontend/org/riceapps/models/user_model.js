@@ -51,9 +51,6 @@ org.riceapps.models.UserModel = function(data) {
 
   /** @private {boolean} */
   this.hasAgreedToDisclaimer_ = data['hasAgreedToDisclaimer'];
-
-  // NOTE: Export the user model for the developer console. DO NOT SUBMIT!
-  window['userModel'] = this;
 };
 goog.inherits(org.riceapps.models.UserModel,
               org.riceapps.models.Model);

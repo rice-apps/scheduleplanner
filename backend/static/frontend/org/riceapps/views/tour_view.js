@@ -43,6 +43,9 @@ org.riceapps.views.TourView = function(schedulePlannerView) {
   this.nextButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.NEXT);
 
   /** @private {!Element} */
+  this.rightExitButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.NEXT);
+
+  /** @private {!Element} */
   this.prevButton_ = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.PREV);
 
   /** @private {!Array.<!Element>} */
@@ -53,9 +56,6 @@ org.riceapps.views.TourView = function(schedulePlannerView) {
 
   /** @private {number} */
   this.activeStage_ = -1;
-
-  // DO NOT SUBMIT!
-  window.tourView = this;
 };
 goog.inherits(org.riceapps.views.TourView,
               org.riceapps.views.View);
@@ -78,12 +78,15 @@ TourView.Theme = {
  */
 TourView.prototype.createDom = function() {
   goog.base(this, 'createDom');
+  goog.style.setElementShown(this.getElement(), false);
   goog.dom.classlist.add(this.getElement(), TourView.Theme.BASE);
-  goog.dom.setTextContent(this.exitButton_, 'Exit Tour');
+  goog.dom.setTextContent(this.exitButton_, 'EXIT TOUR');
   goog.dom.appendChild(this.getElement(), this.exitButton_);
-  goog.dom.setTextContent(this.nextButton_, '>');
+  goog.dom.setTextContent(this.nextButton_, 'NEXT');
   goog.dom.appendChild(this.getElement(), this.nextButton_);
-  goog.dom.setTextContent(this.prevButton_, '<');
+  goog.dom.setTextContent(this.rightExitButton_, 'FINISH');
+  goog.dom.appendChild(this.getElement(), this.rightExitButton_);
+  goog.dom.setTextContent(this.prevButton_, 'PREVIOUS');
   goog.dom.appendChild(this.getElement(), this.prevButton_);
 
   this.createFrames_();
@@ -91,30 +94,126 @@ TourView.prototype.createDom = function() {
 
 
 /**
+ * Creates and returns an element representing a frame in the slide show.
+ * Appends the frame to the end of the slideshow.
+ * @return {!Element}
+ * @private
+ */
+TourView.prototype.getFreshFrame_ = function() {
+  var item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
+  goog.style.setElementShown(item, false);
+  goog.dom.appendChild(this.getElement(), item);
+  this.explanations_.push(item);
+  return item;
+};
+
+
+/**
+ * @param {string} headerText
+ * @param {string} bodyText
+ * @param {string} imageClass
+ * @private
+ */
+TourView.prototype.createInfoFrame_ = function(headerText, bodyText, imageClass) {
+  var frame = this.getFreshFrame_();
+  var section = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-section');
+  var header = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-header');
+  var text = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-text');
+  var image = goog.dom.createDom(goog.dom.TagName.DIV, imageClass);
+  goog.dom.appendChild(section, header);
+  goog.dom.appendChild(section, text);
+  goog.dom.appendChild(section, image);
+  goog.dom.appendChild(frame, section);
+  goog.dom.setTextContent(header, headerText);
+  goog.dom.setTextContent(text, bodyText);
+};
+
+
+/**
  * @private
  */
 TourView.prototype.createFrames_ = function() {
-  var item;
-  // TODO(mschurr): To implement tour view, we must build the frames in the tour here
-  // and push them onto the explanations array.
+  var frame, section, header, text;
 
-  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
-  goog.dom.setTextContent(item, 'Test1');
-  goog.style.setElementShown(item, false);
-  goog.dom.appendChild(this.getElement(), item);
-  this.explanations_.push(item);
+  // Frame: Welcome.
+  frame = this.getFreshFrame_();
 
-  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
-  goog.dom.setTextContent(item, 'Test2');
-  goog.style.setElementShown(item, false);
-  goog.dom.appendChild(this.getElement(), item);
-  this.explanations_.push(item);
+  header = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-title');
+  goog.dom.setTextContent(header, 'Welcome to Rice Schedule Planner!');
+  goog.dom.appendChild(frame, header);
 
-  item = goog.dom.createDom(goog.dom.TagName.DIV, TourView.Theme.FRAME);
-  goog.dom.setTextContent(item, 'Test3');
-  goog.style.setElementShown(item, false);
-  goog.dom.appendChild(this.getElement(), item);
-  this.explanations_.push(item);
+  section = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-section');
+  header = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-header-cloud');
+  text = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-text');
+  goog.dom.appendChild(section, header);
+  goog.dom.appendChild(section, text);
+  goog.dom.appendChild(frame, section);
+  goog.dom.setTextContent(header, 'Cloud Powered');
+  goog.dom.setTextContent(text, 'Your schedule is automatically saved and synchronized across your devices.');
+
+  section = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-section');
+  header = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-header-social');
+  text = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-text');
+  goog.dom.appendChild(section, header);
+  goog.dom.appendChild(section, text);
+  goog.dom.appendChild(frame, section);
+  goog.dom.setTextContent(header, 'Socially Aware');
+  goog.dom.setTextContent(text, 'Quickly and easily share your schedule with your friends (coming soon).');
+
+  section = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-section');
+  header = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-header-smart');
+  text = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-text');
+  goog.dom.appendChild(section, header);
+  goog.dom.appendChild(section, text);
+  goog.dom.appendChild(frame, section);
+  goog.dom.setTextContent(header, 'Schedule Smarter, Not Harder');
+  goog.dom.setTextContent(text, 'Specially designed to help you quickly and intuitively navigate the course catalog.');
+
+  section = goog.dom.createDom(goog.dom.TagName.DIV, 'tour-view-splash-instructions');
+  goog.dom.appendChild(frame, section);
+  goog.dom.setTextContent(section, 'This tour will show you how to take advantage of the powerful features in ' +
+      'Schedule Planner. To navigate the tour, use the arrow keys or click the next button on the right side of ' +
+      'your screen.');
+
+  // Frame: Finding Courses.
+  this.createInfoFrame_('Use the search bar to find courses.',
+      'You can drag the resulting courses out of the search panel onto the staging area or calendar. ' +
+          'You can also use the more advanced filters located on the right side to fine tune your search.',
+      'tour-view-image-search');
+
+  // Frame: Staging
+  this.createInfoFrame_('Stage the courses you are interested in taking.',
+      'You can drag all of the courses you might want to take from the search results to the staging area where ' +
+          'you can quickly move them to the calendar.',
+      'tour-view-image-staging');
+
+  // Frame: Calendar Scheduling
+  this.createInfoFrame_('Schedule your courses.',
+      'Drag courses from the search results or staging area onto the calendar guides. For courses with multiple ' +
+          'sections, drop onto the section you want to take. You can pick up a course from the calendar to change ' +
+          'sections or move it back to the staging area.',
+      'tour-view-image-scheduling');
+
+  // Frame: List View
+  this.createInfoFrame_('Courses placed on your calendar will also appear in a list.',
+      'The list gives an overview of the courses you are taking and contains the CRNs you need for registration.',
+      'tour-view-image-list');
+
+  // Frame: Deleting
+  this.createInfoFrame_('Remove unwanted courses.',
+      'Drop courses that you no longer are interested in on to the trash can to remove them. You can find them again ' +
+          'later using the search bar.',
+      'tour-view-image-deleting');
+
+  // Frame: Course Info Modal
+  this.createInfoFrame_('Click on any course to pull up additional information.',
+      'You will be shown a popup with the course description, location, restrictions, and more!',
+      'tour-view-image-info');
+
+  // Frame: Context Menus
+  this.createInfoFrame_('Right click on any course for additional options.',
+      'The context menus provide convenient options for managing your courses.',
+      'tour-view-image-context');
 };
 
 
@@ -127,6 +226,7 @@ TourView.prototype.enterDocument = function() {
 
   this.getHandler().
       listen(this.exitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
+      listen(this.rightExitButton_, goog.events.EventType.CLICK, this.handleExitButtonClick_).
       listen(this.nextButton_, goog.events.EventType.CLICK, this.handleNextButtonClick_).
       listen(this.prevButton_, goog.events.EventType.CLICK, this.handlePrevButtonClick_).
       listen(document, goog.events.EventType.KEYUP, this.handleKeyUp_);
@@ -153,6 +253,8 @@ TourView.prototype.handleKeyUp_ = function(event) {
     case goog.events.KeyCodes.RIGHT:
       if (this.stage_ < this.explanations_.length - 1) {
         this.next();
+      } else {
+        this.handleExitButtonClick_();
       }
       break;
   }
@@ -240,6 +342,7 @@ TourView.prototype.show = function(opt_preventAnimation) {
   });
   goog.style.setElementShown(this.getElement(), true);
   goog.style.setElementShown(this.nextButton_, false);
+  goog.style.setElementShown(this.rightExitButton_, false);
   goog.style.setElementShown(this.prevButton_, false);
   goog.dom.appendChild(document.body, this.transparentOverlay_);
 
@@ -309,6 +412,13 @@ TourView.prototype.renderStage_ = function() {
     Animation.start(this.nextButton_, Animation.Preset.FADE_IN);
   } else {
     Animation.start(this.nextButton_, Animation.Preset.FADE_OUT).then(Animation.hideElement);
+  }
+
+  if (nextStage == this.explanations_.length - 1) {
+    goog.style.setElementShown(this.rightExitButton_, true);
+    Animation.start(this.rightExitButton_, Animation.Preset.FADE_IN);
+  } else {
+    Animation.start(this.rightExitButton_, Animation.Preset.FADE_OUT).then(Animation.hideElement);
   }
 };
 
