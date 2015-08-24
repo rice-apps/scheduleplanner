@@ -1,29 +1,34 @@
-LONG TERM GOALS:
-  TBD
-
-MED PRIORITY:
-  - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS
-    - Additional filters based on course reviews?
+MEDIUM PRIORITY:
+  - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
+    - Add additional search filters based on evaluations data.
+    - Note: We have been allocated a Rice server and SSL certificate by IT. Need to migrate the app to this server.
 
 LOW PRIORITY:
+
+  - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).
+
   - Implement TourView, an interactive slideshow that explains how to use the application. Add link to open tour on navigation bar as "Help".
-    NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
+    - NOTE: As of now, only frame contents need to be implemented; must enable in org.riceapps.SchedulePlannerConfig.
 
   - Extend context menus with options:
     * Switch Sections (from calendar to calendar)
     * Add/Move To Calendar (from search or playground): needs support for multiple sections
 
   - Certain courses cannot be displayed on the calendar because they are not scheduled (e.g. research courses). We need to come up with a way to allow these courses to be scheduled by the user. These courses also usually have variable credit hours. Pretty gross.
-    NOTE: Currently these can just be placed Sunday @ NOON, but that's a temporary fix.
+    - NOTE: Currently these can all just be placed Sunday @ NOON, but that's a temporary fix.
 
   - For courses that have only one section: allow the course to just be dropped straight onto the calendar and/or list view so that the user doesn't actually have to aim and drop it on the guide views.
 
-  - Add button to toolbar to clear calendar.
+  - Add button to toolbar to clear the calendar.
 
   - Compatability testing with IE, Firefox, Safari, Opera, iOS Safari, Android Chrome.
 
-  - Integration with RiceApps Atlas for course locations
+  - Integration with RiceApps Atlas for course locations.
 
-  - Deprecate the old search view close button + toolbar CRN button.
+  - Remove the code for old search view close button + toolbar CRN button.
 
-  - Sorting options
+  - Add "Sort By" dropdown to the search results.
+
+  - Add a min/max credit hours search filter.
+
+  - Fix DraggableView so that all event listeners are uninstalled when isDraggable=false and installed when isDraggable=true.
