@@ -1,3 +1,6 @@
+HIGH PRIORITY:
+  - Syncing with the courses.rice.edu database does not account for the fact that a course may have been deleted from the university course database (e.g. cancelled)
+
 MEDIUM PRIORITY:
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
     - Add additional search filters based on evaluations data.
@@ -36,7 +39,5 @@ LOW PRIORITY:
   - Add "Sort By" dropdown to the search results.
 
   - Add a min/max credit hours search filter.
-
-  - Fix DraggableView so that all event listeners are uninstalled when isDraggable=false and installed when isDraggable=true.
 
   - Context menu support for touch screens via long press.
