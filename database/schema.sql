@@ -167,6 +167,7 @@ CREATE TABLE `courses` (
   `session_type` int(32) UNSIGNED NOT NULL, /* see courses.rice.edu*/
   `xlist_group` varchar(32) NULL,
   `grade_type` int(32) UNSIGNED NOT NULL,
+  `_upgraded` boolean NOT NULL DEFAULT 1,
   PRIMARY KEY  (`courseid`)
 );
 

@@ -7,9 +7,7 @@
  * Any view that wishes to have DraggableViews dropped upon it must implement the DraggableView.DropTarget interface.
  *
  * FEATURES STILL NEEDING TO BE IMPLEMENTED:
- *  - animate drag handle back to element position when drag ends but no drop
- *  - input elements not working properly on setDraggable(false)
- *
+ *  - Animate drag handle back to element position when drag ends but no drop.
  */
 
 goog.provide('org.riceapps.views.DraggableView');
@@ -70,6 +68,9 @@ org.riceapps.views.DraggableView = function() {
 
   /** @private {boolean} */
   this.isDraggable_ = true;
+
+  /** @private {boolean} */
+  this.hasListeners_ = false;
 };
 goog.inherits(org.riceapps.views.DraggableView,
               org.riceapps.views.View);
@@ -128,6 +129,7 @@ DraggableView.SCROLL_TRIGGER_DISTANCE = 100;
 
 
 /**
+ * Enumerates the types of events dispatched by DraggableView.
  * @enum {string}
  */
 DraggableView.EventType = {
@@ -142,6 +144,7 @@ DraggableView.EventType = {
 
 
 /**
+ * Registers a drop target.
  * @param {!DraggableView.DropTarget} target
  */
 DraggableView.prototype.addDropTarget = function(target) {
@@ -150,6 +153,7 @@ DraggableView.prototype.addDropTarget = function(target) {
 
 
 /**
+ * Unregisters a drop target.
  * @param {!DraggableView.DropTarget} target
  */
 DraggableView.prototype.removeDropTarget = function(target) {
@@ -158,7 +162,7 @@ DraggableView.prototype.removeDropTarget = function(target) {
 
 
 /**
- * @return {boolean}
+ * @return {boolean} Whether or not the view is currently draggable.
  */
 DraggableView.prototype.isDraggable = function() {
   return this.isDraggable_;
@@ -166,16 +170,23 @@ DraggableView.prototype.isDraggable = function() {
 
 
 /**
+ * Sets whether or not the view should be draggable.
  * @param {boolean} isDraggable
  */
 DraggableView.prototype.setDraggable = function(isDraggable) {
+  if (isDraggable) {
+    this.installListeners_();
+  } else {
+    this.uninstallListeners_();
+  }
+
   this.isDraggable_ = isDraggable;
 };
 
 
 /**
  * Returns the element that will be shown beneath the mouse cursoe when dragging.
- * The returned element should not be rendered in the DOM tree.
+ * The returned element should not already be in the DOM tree.
  * The default implementation returns a scaled-down copy of the view's element. Override if neccesary.
  * @return {!Element}
  */
@@ -185,6 +196,8 @@ DraggableView.prototype.getDragTooltip = function() {
 
 
 /**
+ * Creates a tooltip from the given (rendered) element by cloning it, scaling it down to fit in the TOOLTIP_BOUNDs,
+ * and applying special effects (opacity, shadow, z-index, etc.). The returned element is not in the DOM tree.
  * @param {!Element} originalElement
  * @return {!Element}
  */
@@ -213,8 +226,9 @@ DraggableView.prototype.makeTooltipFromElement = function(originalElement) {
 
 
 /**
- * @param {!Element} originalElement
- * @return {!Element}
+ * Recursively clones a DOM node.
+ * @param {!Element} originalElement To be cloned
+ * @return {!Element} Cloned element (not in the DOM tree)
  */
 DraggableView.prototype.cloneElement = function(originalElement) {
   return goog.fx.Dragger.cloneNode(originalElement);
@@ -242,20 +256,74 @@ DraggableView.prototype.enterDocument = function() {
   goog.dom.appendChild(document.body, this.dropIndicatorElement_);
   goog.style.setElementShown(this.dropIndicatorElement_, false);
 
-  this.getHandler().
-    listen(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
-    listen(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
-    listen(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
-    listen(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
-    listen(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
-    listen(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
-    listen(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
+  this.installListeners_();
 };
 
 
 /**
- * Handler that captures touch events and re-dispatches them as mouse events.
- * @param {!goog.events.BrowserEvent} event
+ * @override
+ */
+DraggableView.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+
+  goog.dom.removeNode(this.dropIndicatorElement_);
+
+  if (this.isBeingDragged_) {
+    this.stopDragging_();
+  }
+
+  this.uninstallListeners_();
+};
+
+
+/**
+ * Adds the event listeners required for the view to be draggable.
+ * Has no effect if those event listeners are present already.
+ * @private
+ */
+DraggableView.prototype.installListeners_ = function() {
+  if (this.hasListeners_) {
+    return;
+  }
+
+  this.hasListeners_ = true;
+  this.getHandler().
+      listen(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
+      listen(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
+      listen(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
+      listen(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
+      listen(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
+      listen(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
+      listen(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
+};
+
+
+/**
+ * Removes the event listeners required for the view to be draggable.
+ * Has no effect if those event listeners are not present.
+ * @private
+ */
+DraggableView.prototype.uninstallListeners_ = function() {
+  if (!this.hasListeners_) {
+    return;
+  }
+
+  this.hasListeners_ = false;
+  this.getHandler().
+      unlisten(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
+      unlisten(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
+      unlisten(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
+      unlisten(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
+      unlisten(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
+      unlisten(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
+      unlisten(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
+};
+
+
+/**
+ * Event handler; captures touch events and re-dispatches them as mouse events to provide
+ * rudimentry support for dragging and dropping on touch screens.
+ * @param {!goog.events.BrowserEvent} event Original mouse event.
  * @private
  * @suppress {visibility}
  */
@@ -300,29 +368,7 @@ DraggableView.prototype.handleTouchEvent_ = function(event) {
 
 
 /**
- * @override
- */
-DraggableView.prototype.exitDocument = function() {
-  goog.base(this, 'exitDocument');
-
-  goog.dom.removeNode(this.dropIndicatorElement_);
-
-  if (this.isBeingDragged_) {
-    this.stopDragging_();
-  }
-
-  this.getHandler().
-    unlisten(this.getElement(), goog.events.EventType.MOUSEDOWN, this.handleMouseDown_).
-    unlisten(this.getElement(), goog.events.EventType.CLICK, this.handleMouseClick_).
-    unlisten(this.getElement(), goog.events.EventType.DRAGSTART, this.handleDragStart_).
-    unlisten(this.getElement(), goog.events.EventType.TOUCHSTART, this.handleTouchEvent_).
-    unlisten(this.getElement(), goog.events.EventType.TOUCHEND, this.handleTouchEvent_).
-    unlisten(this.getElement(), goog.events.EventType.TOUCHMOVE, this.handleTouchEvent_).
-    unlisten(this.getElement(), goog.events.EventType.TOUCHCANCEL, this.handleTouchEvent_);
-};
-
-
-/**
+ * Event handler; called when user releases mouse button.
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
@@ -334,6 +380,7 @@ DraggableView.prototype.handleMouseUp_ = function(event) {
 
 
 /**
+ * Event handler; called when user clicks on the view.
  * @param {!goog.events.BrowserEvent} event
  * @suppress {invalidCasts}
  * @private
@@ -354,8 +401,8 @@ DraggableView.prototype.handleMouseClick_ = function(event) {
 };
 
 
-
 /**
+ * Event handler; called when user presses mouse button down over view.
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
@@ -376,6 +423,8 @@ DraggableView.prototype.handleMouseDown_ = function(event) {
 
 
 /**
+ * Called after a mouse down but before entering drag mode; should be called repeatedly during this stage.
+ * Triggers entrance into drag mode after the mouse has moved > 15px from original point where button was pressed.
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
@@ -395,17 +444,22 @@ DraggableView.prototype.maybeStartDrag_ = function(event) {
 
 
 /**
+ * Event handler; called by native DRAGSTART event.
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
 DraggableView.prototype.handleDragStart_ = function(event) {
   this.debugLog_('handleDragStart_', event);
+
+  // Eliminate this event.
   event.preventDefault();
   event.stopPropagation();
 };
 
 
 /**
+ * Called when in drag mode and the view is being dragged over a drop target.
+ * Triggers the dragEnter and dragLeave events on that target.
  * @param {org.riceapps.views.DraggableView.DropTarget} target
  * @private
  */
@@ -437,7 +491,7 @@ DraggableView.prototype.dragOver_ = function(target) {
 /**
  * @param {!org.riceapps.views.DraggableView.DropTarget} target
  * @param {!Element} element
- * @return {boolean}
+ * @return {boolean} Whether or not the given drop target contains the provided element
  * @private
  */
 DraggableView.prototype.targetContainsElement_ = function(target, element) {
@@ -454,11 +508,14 @@ DraggableView.prototype.targetContainsElement_ = function(target, element) {
 
 
 /**
+ * Event handler; called when mouse moves while in drag mode.
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
 DraggableView.prototype.handleMouseMove_ = function(event) {
   var i;
+
+  // Check for drag enters and drag exits.
   for (i = 0; i < this.targets_.length; i++) {
     if (this.targetContainsElement_(this.targets_[i], /** @type {!Element} */ (event.target))) {
       this.dragOver_(this.targets_[i]);
@@ -470,6 +527,7 @@ DraggableView.prototype.handleMouseMove_ = function(event) {
     this.dragOver_(null);
   }
 
+  // Reposition the tooltip.
   this.moveDragTooltipTo_(new goog.math.Coordinate(event.clientX, event.clientY));
 };
 

@@ -92,8 +92,8 @@ CalendarView.prototype.exitDocument = function() {
 
 
 /**
- * @param {number} day
- * @return {boolean}
+ * @param {number} day A day of the week (0 = Sunday through 6 = Saturday).
+ * @return {boolean} Whether or not any children have a meeting on that day.
  */
 CalendarView.prototype.hasCoursesOnDay = function(day) {
   var items = this.getCalendarItems();
@@ -112,16 +112,20 @@ CalendarView.prototype.hasCoursesOnDay = function(day) {
 
 
 /**
+ * Event handler; called when a child is added or removed.
  * @param {!org.riceapps.events.ViewEvent} event
  * @private
  */
 CalendarView.prototype.handleChildrenChanged_ = function(event) {
+  // Show/hide the directions based on whether or not the calendar has courses on it.
   if (this.hasChildren()) {
     this.hideDirections_();
   } else {
     this.showDirections_();
   }
 
+  // Determine whether or not to display the "Sunday" and "Saturday" columns.
+  // These columns should only be displayed when a course meets on that day.
   var oldShowSunday = this.showSunday_;
   var oldShowSaturday = this.showSaturday_;
   this.showSunday_ = this.hasCoursesOnDay(0);
@@ -134,6 +138,7 @@ CalendarView.prototype.handleChildrenChanged_ = function(event) {
 
 
 /**
+ * Shows the welcome message and directions.
  * @return {void}
  * @private
  */
@@ -148,6 +153,7 @@ CalendarView.prototype.showDirections_ = function() {
 
 
 /**
+ * Hides the welcome message and directions.
  * @return {void}
  * @private
  */
@@ -169,6 +175,8 @@ CalendarView.prototype.createDom = function() {
   goog.dom.classlist.add(this.getElement(), CalendarView.Theme.BASE);
   goog.style.setStyle(this.getElement(), {'padding-right': '5px'});
 
+  // Create a table to hold the week of the calendar.
+  // Rows are hours and columns are days.
   var table = goog.dom.createDom(goog.dom.TagName.TABLE, CalendarView.Theme.CALENDAR);
   goog.dom.appendChild(this.getElement(), table);
 
@@ -190,12 +198,12 @@ CalendarView.prototype.createDom = function() {
 
   goog.dom.appendChild(table, row);
 
-  // Create the other rows.
+  // Create the other rows (hours).
   for (i = 8; i < 22; i += 1) {
     row = goog.dom.createDom(goog.dom.TagName.TR);
     goog.dom.classlist.add(row, 'cal-hour-' + i);
 
-    // Add the hour column.
+    // Add the hour column for first half hour.
     cell = goog.dom.createDom(goog.dom.TagName.TH, {
       'rowspan': 2
     });
@@ -205,7 +213,7 @@ CalendarView.prototype.createDom = function() {
     goog.dom.setTextContent(cell, (i % 12 == 0) ? '12 PM' : i % 12 + ' ' + (i >= 12 ? 'PM' : 'AM'));
     goog.dom.appendChild(row, cell);
 
-    // Add other columns.
+    // Add columns for each day.
     for (j = 0; j < CalendarView.DAYS.length; j++) {
 
       cell = goog.dom.createDom(goog.dom.TagName.TD);
@@ -216,7 +224,7 @@ CalendarView.prototype.createDom = function() {
 
     goog.dom.appendChild(table, row);
 
-    // Add second row.
+    // Add second row (same as the first, but for second half hour of the hour).
     row = goog.dom.createDom(goog.dom.TagName.TR);
 
     for (j = 0; j < CalendarView.DAYS.length; j++) {
@@ -228,7 +236,7 @@ CalendarView.prototype.createDom = function() {
     goog.dom.appendChild(table, row);
   }
 
-  // Directions
+  // Render welcome/directions message.
   var directionsSpan;
   this.directionsElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
   goog.dom.classlist.add(this.directionsElement_, CalendarView.Theme.DIRECTIONS);
@@ -255,7 +263,7 @@ CalendarView.prototype.relayout = function(opt_preventAnimation) {
   });
   var nodes;
 
-  // Hide/show columns as needed.
+  // Hide/show columns for Saturday and Sunday dynamically (based on whether or not needed by some placed course).
   nodes = this.getElement().querySelectorAll('.cal-toggle-day-0');
   for (var i = 0; i < nodes.length; i++) {
     goog.style.setElementShown(nodes[i], this.showSunday_);
@@ -266,6 +274,7 @@ CalendarView.prototype.relayout = function(opt_preventAnimation) {
     goog.style.setElementShown(nodes[i], this.showSaturday_);
   }
 
+  // Recalculate the width of all cells in the table based on the number of columns now in the calendar.
   var dayWidth = 18;
   var hourWidth = 10;
 
@@ -277,6 +286,7 @@ CalendarView.prototype.relayout = function(opt_preventAnimation) {
     hourWidth = 10;
   }
 
+  // And update the cells in the calendar table with the calculated widths.
   goog.style.setStyle(this.getElement().querySelector('.cal-header-hour'), {'width': hourWidth + '%'});
 
   for (var i = 0; i < CalendarView.DAYS.length; i++) {
@@ -312,19 +322,26 @@ CalendarView.prototype.getCalendarItemRect = function(day, start, end, offset, t
   goog.asserts.assert(start < end);
   var dom = this.getDomHelper();
   var roundedHour = Math.floor(start);
+
+  // Find the element holding row closest to hour at which course starts.
   var element = dom.getElementByClass('cal-hour-' + roundedHour);
 
   if (!element) {
     return null;
   }
 
+  // Find the element holding column for day within that hour row.
   element = dom.getElementByClass('cal-day-' + day, element);
 
   if (!element) {
     return null;
   }
 
+  // Get the adjusted relative position of the (hour row, day column) element to the view base.
   var position = goog.style.getRelativePosition(element, this.getElement());
+
+  // Calculate the rectangle in which an item occuring on 'day' from time 'start' to 'end' using offset and total.
+  // See CalendarLayout for documentation on these parameters.
   var size = goog.style.getSize(element);
   var offsetY = size.height * 2 * (start - roundedHour);
   var width = size.width / total;

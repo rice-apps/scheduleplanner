@@ -190,6 +190,9 @@ class CourseDataParser {
    * Imports courses from courses.rice.edu.
    */
 	public /*void*/ function run() {
+    // Mark all courses as not touched in this sync.
+    $this->db->query("UPDATE `courses` SET `_upgraded` = 0;");
+
     list ($keys, $courses) = $this->fetchCourses($this->year, $this->term);
     list ($oldKeys, $oldCourses) = $this->fetchCourses($this->year - 1, $this->term);
 
@@ -203,7 +206,21 @@ class CourseDataParser {
     $this->db->query("DELETE FROM `course_restrictions` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
     $this->db->query("DELETE FROM `course_times` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
     $this->db->query("DELETE FROM `course_instructors` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+
+    // This removes any courses that have not been touched. Effectively, this will remove any courses that were not
+    // found again when re-running the synchronization. This is needed because courses may have been deleted from the
+    // course catalog and they must, too, be deleted from our database.
+    $this->removeUnflaggedCourses();
 	}
+
+  protected /*void*/ function removeUnflaggedCourses() {
+    $this->db->query("DELETE FROM `courses` WHERE `_upgraded` = 0;");
+    $this->db->query("DELETE FROM `course_restrictions` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `course_times` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `course_instructors` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `playgrounds` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+    $this->db->query("DELETE FROM `schedules` WHERE `courseid` NOT IN (SELECT `courseid` FROM `courses`)");
+  }
 
   /**
    * Processes XML data into the database.
@@ -233,6 +250,7 @@ class CourseDataParser {
         //'course_url' => '',
         //'session_type' => '',
         //'grade_type' => '',
+        '_upgraded' => 1,
         'title' => $course['title'],
         'crn' => $course['crn'],
         'description' => $this->array_get($course, 'description', ''),
@@ -258,14 +276,14 @@ class CourseDataParser {
       );
 
       $course_data['prev_year_crn'] = null;
-      $q = $this->db->prepare("SELECT `crn` FROM `courses` 
+      $q = $this->db->prepare("SELECT `crn` FROM `courses`
                                WHERE `year` = ? AND `term` = ? AND `subject` = ? AND `course_number` = ? LIMIT 1;")
-                ->execute([$year - 1, CourseDataParserEnum::$_XML_TO_DB_TERMS[$term], $course_data['subject'], 
+                ->execute([$year - 1, CourseDataParserEnum::$_XML_TO_DB_TERMS[$term], $course_data['subject'],
                     $course_data['course_number']]);
       if ($q->size > 0) {
         $course_data['prev_year_crn'] = $q->row['crn'];
       }
-      
+
       // Parse credit hours.
       if (str_contains($course['credit_hours'], ' TO' )) {
         $credits = explode(' TO ', $course['credit_hours']);

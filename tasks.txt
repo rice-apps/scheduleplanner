@@ -1,6 +1,3 @@
-HIGH PRIORITY:
-  - Syncing with the courses.rice.edu database does not account for the fact that a course may have been deleted from the university course database (e.g. cancelled)
-
 MEDIUM PRIORITY:
   - Work with Scott Cutler and Klara Jelinkova to get direct access to evaluation data, and to deploy onto Rice hardware w/ HTTPS.
     - Add additional search filters based on evaluations data.
