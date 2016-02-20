@@ -24,7 +24,7 @@ You can view the application live at [scheduleplanner.riceapps.rocks](http://sch
 
 ## Documentation:
 * [Google Closure](https://developers.google.com/closure/)
-* [Closure API Reference](http://docs.closure-library.googlecode.com/git/index.html)
+* [Closure Standard Library API Reference](https://google.github.io/closure-library/api/)
 * [Closure Type Annotation]( https://developers.google.com/closure/compiler/docs/js-for-compiler)
 
 ## Style:
