@@ -271,7 +271,7 @@ class CourseDataParser {
         'xlist_max_enrollment' => $this->array_get($course, 'xlst_max_enrollment', 0),
         'year' => $year,
         'term' => CourseDataParserEnum::$_XML_TO_DB_TERMS[$term],
-        'credit_lpap' => ($course['subject'] === 'LPAP'),
+        'credit_lpap' => ($course['subject'] === 'LPAP' ? 1 : 0),
         'xlist_group' => $this->array_get($course, 'xlst_group', '')
       );
 
