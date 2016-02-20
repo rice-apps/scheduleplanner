@@ -5,10 +5,13 @@ MEDIUM PRIORITY:
 
   - Social Features: Get a link to share your schedule with a friend.
 
-  - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).
+  - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).\
+
+  - Automatic scheduling: pick a set of courses and have them scheduled automatically.
+
+  - Integration with RiceApps Atlas for course locations.
 
 LOW PRIORITY:
-  - Automatic scheduling: pick a set of courses and have them scheduled automatically.
 
   - Support multiple schedules per user per year.
 
@@ -28,8 +31,6 @@ LOW PRIORITY:
   - Add button to toolbar to clear the calendar.
 
   - Compatability testing with IE, Firefox, Safari, Opera, iOS Safari, Android Chrome.
-
-  - Integration with RiceApps Atlas for course locations.
 
   - Remove the code for old search view close button + toolbar CRN button.
 
