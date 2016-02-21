@@ -45,6 +45,9 @@ org.riceapps.views.AbstractCourseView = function(courseModel) {
 
   /** @type {string} */
   this.debug = this.courseModel_.getTitle();
+
+  /** @private {boolean} */
+  this.contextMenuIsEnabled_ = true;
 };
 goog.inherits(org.riceapps.views.AbstractCourseView,
               org.riceapps.views.DraggableView);
@@ -115,11 +118,23 @@ AbstractCourseView.prototype.exitDocument = function() {
 
 
 /**
+ * @param {boolean} isEnabled
+ */
+AbstractCourseView.prototype.setContextMenuEnabled = function(isEnabled) {
+  this.contextMenuIsEnabled_ = isEnabled;
+};
+
+
+/**
  * @param {!goog.events.BrowserEvent} event
  * @private
  */
 AbstractCourseView.prototype.handleContextMenu_ = function(event) {
   window.console.log('AbstractCourseView.handleContextMenu_');
+
+  if (!this.contextMenuIsEnabled_) {
+    return;
+  }
 
   // Override the browser context menu from displaying.
   event.preventDefault();

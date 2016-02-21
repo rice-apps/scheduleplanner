@@ -173,7 +173,7 @@ CalendarView.prototype.hideDirections_ = function() {
 CalendarView.prototype.createDom = function() {
   goog.base(this, 'createDom');
   goog.dom.classlist.add(this.getElement(), CalendarView.Theme.BASE);
-  goog.style.setStyle(this.getElement(), {'padding-right': '5px'});
+  //goog.style.setStyle(this.getElement(), {'padding-right': '5px'});
 
   // Create a table to hold the week of the calendar.
   // Rows are hours and columns are days.
@@ -324,7 +324,7 @@ CalendarView.prototype.getCalendarItemRect = function(day, start, end, offset, t
   var roundedHour = Math.floor(start);
 
   // Find the element holding row closest to hour at which course starts.
-  var element = dom.getElementByClass('cal-hour-' + roundedHour);
+  var element = dom.getElementByClass('cal-hour-' + roundedHour, this.getElement());
 
   if (!element) {
     return null;

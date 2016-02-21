@@ -4,7 +4,7 @@
  * Usage:
  * conflictDetector = new CourseScheduleMatrix();
  * conflictDetector.setCourses(courseModels);
- * if (conflictDetector.hasConflictsWith(courseModel)) { ... } else { ... }
+ * if (conflictDetector.hasConflictWith(courseModel)) { ... } else { ... }
  */
 
 goog.provide('org.riceapps.util.CourseScheduleMatrix');
