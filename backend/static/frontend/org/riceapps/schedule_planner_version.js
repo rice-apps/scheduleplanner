@@ -15,7 +15,7 @@ var SchedulePlannerVersion = org.riceapps.SchedulePlannerVersion;
  * The current version of the application.
  * @const {number}
  */
-SchedulePlannerVersion.CURRENT_VERSION = 14;
+SchedulePlannerVersion.CURRENT_VERSION = 15;
 
 /**
  * A list of changes associated with each version of the application.
@@ -72,6 +72,9 @@ SchedulePlannerVersion.MESSAGES = [
   ],
   [ // Version 14
     'Added an interactive tour shown to new users.'
+  ],
+  [ // Version 15
+    'Course section collapsing will no longer incorrectly collapse some courses (e.g. COLL 200).'
   ]
 ];
 

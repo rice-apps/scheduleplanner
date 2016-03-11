@@ -104,7 +104,7 @@ CourseAutoScheduleTest.prototype.renderSchedule = function(courses) {
   }
 
   goog.style.setStyle(calendar.getElement(), {
-    'transform': 'scale(0.5, 0.5)',
+    //'transform': 'scale(0.5, 0.5)',
     'transform-origin': '0 0',
     'box-shadow': '0px 0px 50px #000',
     'z-index': '10'

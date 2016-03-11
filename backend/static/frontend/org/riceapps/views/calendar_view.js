@@ -347,7 +347,10 @@ CalendarView.prototype.getCalendarItemRect = function(day, start, end, offset, t
   var width = size.width / total;
   var offsetX = offset * (width);
 
-  return new goog.math.Rect(position.x + offsetX, position.y + offsetY, width - 2, size.height * 2 * (end - start));
+  var x = position.x + offsetX;
+  var y = position.y + offsetY;
+
+  return new goog.math.Rect(x, y, width - 2, size.height * 2 * (end - start));
 };
 
 
