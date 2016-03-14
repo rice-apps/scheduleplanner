@@ -248,8 +248,8 @@ class CourseDataParser {
         //'courseid' => 0,
         //'college' => '',
         //'course_url' => '',
-        //'session_type' => '',
-        //'grade_type' => '',
+        'session_type' => 0, // DEFAULT FOR NOW
+        'grade_type' => 0, // DEFAULT FOR NOW
         '_upgraded' => 1,
         'title' => $course['title'],
         'crn' => $course['crn'],
@@ -542,7 +542,7 @@ class CourseDataParser {
         'restriction_type' => 0,
         'target' => 0,
         'target_subject' => '',
-        'target_course_number' => '',
+        'target_course_number' => 0, // DEFAULT FOR NOW
         'description' => $r
       ));
     }
