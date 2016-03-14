@@ -259,7 +259,6 @@ class CourseDataParser {
         'course_number' => $course['course_number'],
         'department' => $course['department'],
         'school' => $course['school'],
-        'section' => $course['section'],
         'enrollment' => $course['actual_enrollment'],
         'max_enrollment' => $course['max_enrollment'],
         'last_update' => time(),
@@ -274,6 +273,12 @@ class CourseDataParser {
         'credit_lpap' => ($course['subject'] === 'LPAP' ? 1 : 0),
         'xlist_group' => $this->array_get($course, 'xlst_group', '')
       );
+
+      if (is_int($course['section'])) {
+        // NOTE: Needed because section IDs may not be integers.
+        // TODO: This assumption is everywhere, so we may need to fix it.
+        $course_data['section'] = $course['section'];
+      }
 
       $course_data['prev_year_crn'] = null;
       $q = $this->db->prepare("SELECT `crn` FROM `courses`
