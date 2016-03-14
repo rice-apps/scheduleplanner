@@ -56,14 +56,14 @@ class UserController extends Controller {
     $q = $this->db->prepare("INSERT INTO `playgrounds` (`userid`, `courseid`) VALUES (?, ?);");
 
     foreach ($message->playground->courses as $course) {
-      $q->execute($this->user->id, $course->courseId);
+      $q->execute([$this->user->id, $course->courseId]);
     }
 
     $this->db->prepare("DELETE FROM `schedules` WHERE `userid` = ?")->execute($this->user->id);
     $q = $this->db->prepare("INSERT INTO `schedules` (`userid`, `courseid`, `year`) VALUES (?, ?, 0);");
 
     foreach ($message->schedule->courses as $course) {
-      $q->execute($this->user->id, $course->courseId);
+      $q->execute([$this->user->id, $course->courseId]);
     }
 
     $this->response->json(['STATUS' => 'OK'], true);
