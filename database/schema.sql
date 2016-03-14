@@ -99,7 +99,7 @@ CREATE TABLE `course_restrictions` (
   `target` int(64) UNSIGNED NOT NULL,
   `target_subject` varchar(4) NOT NULL,
   `target_course_number` int(16) UNSIGNED NOT NULL,
-  `description` varchar(128) NOT NULL DEFAULT ''
+  `description` mediumtext
 );
 
 CREATE INDEX `course_restrictions_courseid` ON `course_restrictions` (`courseid`);
