@@ -714,6 +714,12 @@ html, body {
   margin-bottom: 5px;
 }
 
+.search-view-subtitle {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 3px 6px;
+}
+
 .goog-tooltip, .search-view-tooltip {
   background: #ffe;
   border: 1px solid #999;

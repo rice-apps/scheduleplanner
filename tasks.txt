@@ -5,11 +5,16 @@ MEDIUM PRIORITY:
 
   - Social Features: Get a link to share your schedule with a friend.
 
-  - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).\
+  - Add an option to export courses placed on calendar to Google Calendar (on a recurring weekly basis for that semester).
 
   - Automatic scheduling: pick a set of courses and have them scheduled automatically.
 
   - Integration with RiceApps Atlas for course locations.
+
+  - Filter: Hide courses before/after X PM
+
+  - Suggested Courses: Students who took XXXX also took XXXX.
+    - NOTE: Would require using prior year's data or anonymized data from the registrar if possible.
 
 LOW PRIORITY:
 
@@ -39,3 +44,5 @@ LOW PRIORITY:
   - Add a min/max credit hours search filter.
 
   - Context menu support for touch screens via long press.
+
+  - Sections can have wierd non-integer names like 'A04'

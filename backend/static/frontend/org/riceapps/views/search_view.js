@@ -122,7 +122,8 @@ SearchView.Theme = {
   HIDER: 'search-view-hider',
   RESULTS_CONTAINER: 'search-view-results-container',
   TITLE: 'search-view-title',
-  TOOLTIP: 'search-view-tooltip'
+  TOOLTIP: 'search-view-tooltip',
+  SUBTITLE: 'search-view-subtitle'
 };
 
 
@@ -249,6 +250,10 @@ SearchView.prototype.createFiltersDom = function(container) {
   goog.dom.setTextContent(header, 'Filter Results');
   goog.dom.appendChild(container, header);
 
+  var subtitle = goog.dom.createDom(goog.dom.TagName.SPAN, SearchView.Theme.SUBTITLE);
+  goog.dom.setTextContent(subtitle, 'Show:');
+  goog.dom.appendChild(container, subtitle);
+
   function createCheckbox(name) {
     var value = filterDetails.get(name);
     var child = DomUtils.createCheckbox.apply(this, value);
@@ -261,10 +266,16 @@ SearchView.prototype.createFiltersDom = function(container) {
     d1: createCheckbox('d1'),
     d2: createCheckbox('d2'),
     d3: createCheckbox('d3'),
-    indep: createCheckbox('indep'),
-    conflicts: createCheckbox('conflicts'),
-    full: createCheckbox('full')
+    indep: createCheckbox('indep')
   };
+
+
+  subtitle = goog.dom.createDom(goog.dom.TagName.SPAN, SearchView.Theme.SUBTITLE);
+  goog.dom.setTextContent(subtitle, 'Options:');
+  goog.dom.appendChild(container, subtitle);
+
+  this.filterElements_.conflicts = createCheckbox('conflicts');
+  this.filterElements_.full = createCheckbox('full');
 
   var tooltip = new goog.ui.Tooltip(this.filterElements_.conflicts,
     'Hides courses that have time conflicts with any of the courses placed on your calendar.');
@@ -289,6 +300,9 @@ SearchView.prototype.createFiltersDom = function(container) {
   this.registerDisposable(this.schoolFilter_);
   this.registerDisposable(this.departmentFilter_);
 
+  subtitle = goog.dom.createDom(goog.dom.TagName.SPAN, SearchView.Theme.SUBTITLE);
+  goog.dom.setTextContent(subtitle, 'Filters:');
+  goog.dom.appendChild(container, subtitle);
   this.instructorNameFilter_.render(container);
   this.schoolFilter_.render(container);
   this.departmentFilter_.render(container);

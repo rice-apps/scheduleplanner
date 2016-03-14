@@ -195,7 +195,7 @@ ModalView.prototype.hide = function(opt_preventAnimation) {
           }
         }, this));
   }
-  
+
   WindowManager.getSharedInstance().pop(this);
 };
 
