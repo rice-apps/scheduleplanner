@@ -268,9 +268,11 @@ CourseModel.prototype.isIndependentStudy = function() {
  * @return {string}
  */
 CourseModel.prototype.getCourseCategory = function() {
-  // A (subject, course number) pair uniquely identifies a course (which may have other sessions with different course
-  // ids).
-  return this.getSubject() + ' ' + this.getCourseNumber();
+  // A (subject, course number, title) tuple uniquely identifies a course (from a curriculum standpoint).
+  // For example, COMP 140 is a course but it has multiple sections.
+  // Courses with the same course category are assumed to be different sections of the same course and
+  // that they all have the same curriculum.
+  return this.getSubject() + ' ' + this.getCourseNumber() + ' ' + this.getTitle();
 };
 
 
