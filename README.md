@@ -8,13 +8,14 @@ You can view the application live at [scheduleplanner.riceapps.org](http://sched
 ## Requirements (for building):
 * Google Closure Library
   `git clone https://github.com/google/closure-library.git closure-library`
-  Place folder at `src/main/java/org/riceapps/scheduleplanner/assets/closure-library`.
+  Place folder at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-library`.
 * Google Closure Compiler
   `wget http://dl.google.com/closure-compiler/compiler-latest.zip`
-  Place JAR at `src/main/java/org/riceapps/scheduleplanner/assets/closure-compiler/compiler.jar`.
+  Place JAR at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-compiler/compiler.jar`.
 * MySQL >= 5
 * Python >= 2.7
 * Java >= 8
+* Maven
 
 ## Requirements (for deployment):
 * MySQL >= 5
@@ -47,54 +48,44 @@ We will be following the [Google JavaScript Style Guide](https://google-stylegui
 In order to make following style more convenient, you can utilize the [Closure Linter](https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
 
 ## Developer Set-Up and Workflow:
-1. Clone the `scheduleplanner` repository using GIT.
-2. Clone the dependency `lightning` from [mschurr/lightning](https://github.com/mschurr/lightning) using GIT.
-3. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
-4. Import `lightning` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
-5. Install all of the required software on your system (listed above) and that you have placed the closure dependencies in the correct locations.
+1. Install the required software for building listed above.
+2. Clone this `scheduleplanner` repository using GIT.
+3. Download the closure dependencies listed above and place them at the proper locations within the repo.
+4. Set up the dependency `lightning` from [mschurr/lightning](https://github.com/mschurr/lightning) using GIT.
+    * `git clone https://github.com/mschurr/lightning.git`
+    * `cd lightning`
+    * `mvn install`
+5. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
 6. Start your MySQL database server and create a new database to use for the application.
-  * To start mysql: `mysqld`
-  * Command line to connect: `mysql -u root -h localhost`
-  * To create a database use `create database scheduleplanner`
-  * Command line to import: `mysql -u root -p scheduleplanner -h localhost < schema.sql`
-7. Edit
-* COPY `backend/config-template.php` to `backend/config.php`.
+    * To start mysql: `mysqld`
+    * Command line to connect: `mysql -u root -h localhost`
+    * To create a database use `create database scheduleplanner`
+    * Command line to import: `mysql -u root -p scheduleplanner -h localhost < schema.sql`
+7. Import the initial schema.
+    * `lightning/src/main/resources/schema/schema.sql`
+    * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/database/schema.sql`
+8. Copy `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/config-template.json` to `config.json` in any folder on your machine. Edit the settings in the copy to match your machine.
+9. Compile the development version of the closure front end.
+    * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/assets/frontend/build_dev.sh`
+    * **NOTE**: You will not need to recompile the development version of the Javascript frequently. In fact, after the initial compile you will ONLY need to compile it when you add a new dependency
+        (goog.require) or new JavaScript file.
+    * **NOTE**: You may also build the production Javascript bundle by running build_prod.sh instead. You will not want to use the production bundle to develop; it will make the process significantly slower. However, you will want to occasionally re-build the production bundle in order to perform static analysis (type checking) on your code.
+10. Sync your application with Rice's server.
+    * Run `org.riceapps.scheduleplanner.Parser --config /path/to/config.json --term Spring --year 2016`
+11. Start the development server.
+     * Run `org.riceapps.scheduleplanner.Launcher --config /path/to/config.json`
+     * **Note**: Linux and Mac OSX users cannot bind to port 80 with using sudo or configuring their machine to allow non-root users to bind to port 80. You can either configure your system, use sudo (not recommended), or pick an alternative port.
+12. View the application in your browser (Chrome works best) at [http://localhost/](http://localhost).
+13. You can now begin making changes to the Javascript code using an IDE of your choice. Your changes will be reflected instantly when you refresh the page. If you add new files or dependencies (e.g. goog.require()), you will need to re-run `build_dev.sh` in order for the change to take effect.
+    * Run the compiler periodically (build_prod.sh) to check for syntax and type errors.
+    * Follow the style of existing code (see guidelines above).
+    * Use the developer console in Chrome to monitor performance, syntax/runtime errors, and for general debugging.
 
-* Edit `backend/config.php` and replace the database connection information with the information of your local MySQL server.
-
-* Import the initial database structure from `database/schema.sql` and `backend/vendor/mschurr/framework/src/schema.sql`.
-
-* Ensure that you have properly configured your HOSTS file (`/etc/hosts` or `C:\Windows\System32\Drivers\etc\hosts`) to bind `local.dev` to `127.0.0.1`. You can do this by simply adding the line `127.0.0.1 local.dev` to your hosts file (requires sudo or administrator).
-* Ensure that you have compiled the development version of the closure front end. You can do this by running:
-`backend/static/frontend/build_dev.sh` (or .bat if on Windows)
-
-  **NOTE**: You will not need to recompile the development version of the Javascript frequently. In fact, after the initial compile you will ONLY need to compile it when you add a new dependency
-(goog.require) or new JavaScript file.
-
-  **NOTE**: You may also build the production Javascript bundle by running build_prod.sh instead. You will not want to use the production bundle to develop; it will make the process significantly slower. However, you will want to occasionally re-build the production bundle in order to perform static analysis (type checking) on your code.
-
-* Import the latest course data from Rice: `php server.php courses pull`
-
-* Start the development server by running the following command within the backend directory: `php -S local.dev:80 server.php`
-
-  **Note**: Linux and Mac OSX users cannot bind to port 80 with using sudo or configuring their machine to allow non-root users to bind to port 80. You can either configure your system, use sudo (not recommended), or pick an alternative port.
-
-* You can view the application in your browser (Chrome usually works best):
-  * Development Version (instant refreshes): `http://local.dev/`
-  * Production Version (must run `build_prod.sh`): set `app.development` to `false` in `backend/config.php` and then view `http://local.dev/`; set it back to `true` to view the development version again.
-
-* You can now begin making changes to the Javascript code using an IDE of your choice. Your changes will be reflected instantly when you refresh the page.
-If you add new files or dependencies (e.g. goog.require()), you will need to re-run `build_dev.sh` in order for the change to take effect.
-
-  * Run the compiler periodically (build_prod.sh) to check for syntax and type errors.
-  * Follow the style of existing code (see guidelines above).
-  * Use the developer console in Chrome to monitor performance, syntax/runtime errors, and for general debugging.
-
-* **IMPORTANT**: Before committing, you MUST run `build_prod.sh` and ensure that you have not created any compiler warnings.
+**IMPORTANT**: Before committing, you MUST run `build_prod.sh` and ensure that you have not created any compiler warnings.
 
 ## Deployment:
 1. Set up a MySQL database for use by the application and import the initial data as described above.
-2. Configure the application in `org.riceapps.scheduleplanner.ConfigFactory`.
-3. Package the application into a JAR using Maven/Eclipse.
-4. Run `org.riceapps.scheduleplanner.Launcher --config /path/to/config.json` to start the app.
-5. Run `org.riceapps.scheduleplaner.Parser --config /path/to/config.json --term TERM --year YEAR --daemonize` to pull new course data periodically. You will need to restart this program with new parameters when the term and/or year changes.
+2. Create a configuration file based off of `src/main/resources/org/riceapps/scheduleplanner/config-template.json`.
+3. Package the application into a JAR using Maven/Eclipse: `mvn assembly:single`.
+4. Run `java -jar sp.jar --config /path/to/config.json` to start the app.
+5. Run `java -cp sp.jar org.riceapps.scheduleplaner.Parser --config /path/to/config.json --term TERM --year YEAR --daemonize` to pull new course data periodically. You will need to restart this program with new parameters when the term and/or year changes.
