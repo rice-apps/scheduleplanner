@@ -7,7 +7,7 @@ import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
 
 import com.google.gson.FieldNamingPolicy;
 
-import lightning.mvc.Lightning;
+import lightning.Lightning;
 
 public class CourseCache {
   public static File get() {

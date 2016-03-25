@@ -1,0 +1,23 @@
+{
+    "enable_debug_mode": false,
+    "auto_reload_prefixes": [
+        "org.riceapps.scheduleplanner"
+    ],
+    "scan_prefixes": [
+        "org.riceapps.scheduleplanner",
+        "lightning.examples.cas"
+    ],
+    "server": {
+        "port": 80,
+        "hmac_key": "LONG_RANDOM_SOMETHING",
+        "static_files_path": "org/riceapps/scheduleplanner/assets",
+        "template_files_path": "org/riceapps/scheduleplanner/templates"
+    },
+    "db": {
+        "host": "localhost",
+        "port": 3306,
+        "username": "httpd",
+        "password": "httpd",
+        "name": "scheduleplannerjava"
+    }
+}

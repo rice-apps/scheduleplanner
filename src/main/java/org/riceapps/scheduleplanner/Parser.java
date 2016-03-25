@@ -20,7 +20,7 @@ public class Parser {
   public static void main(String[] args) throws Exception {
     Flags.parse(args);
     
-    Config config = ConfigFactory.make();
+    Config config = ConfigFactory.make(Flags.getFile("config"));
     MySQLDatabaseProvider dbp = new MySQLDatabaseProvider(
         config.db.host, 
         config.db.port, 

@@ -1,19 +1,19 @@
 package org.riceapps.scheduleplanner.controllers;
 
-import static lightning.mvc.Context.accessViolationIf;
-import static lightning.mvc.Context.badRequestIf;
-import static lightning.mvc.Context.db;
-import static lightning.mvc.Context.session;
-import static lightning.mvc.Context.user;
+import static lightning.Context.accessViolationIf;
+import static lightning.Context.badRequestIf;
+import static lightning.Context.db;
+import static lightning.Context.session;
+import static lightning.Context.user;
 import static lightning.mvc.HTTPMethod.GET;
 import static lightning.mvc.HTTPMethod.POST;
 
 import java.sql.ResultSet;
 
+import lightning.Lightning;
 import lightning.db.NamedPreparedStatement;
 import lightning.mvc.Controller;
 import lightning.mvc.Json;
-import lightning.mvc.Lightning;
 import lightning.mvc.QParam;
 import lightning.mvc.RequireAuth;
 import lightning.mvc.Route;

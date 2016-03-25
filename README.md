@@ -3,24 +3,22 @@ scheduleplanner
 
 An open-source schedule planner and visualizer for university students maintained by [Rice Apps](http://www.riceapps.org/).
 
-You can view the application live at [scheduleplanner.riceapps.rocks](http://scheduleplanner.riceapps.rocks).
+You can view the application live at [scheduleplanner.riceapps.org](http://scheduleplanner.riceapps.org).
 
 ## Requirements (for building):
 * Google Closure Library
   `git clone https://github.com/google/closure-library.git closure-library`
-  Place folder at `backend/static/closure-library`.
+  Place folder at `src/main/java/org/riceapps/scheduleplanner/assets/closure-library`.
 * Google Closure Compiler
   `wget http://dl.google.com/closure-compiler/compiler-latest.zip`
-  Place JAR at `backend/static/closure-compiler/compiler.jar`.
+  Place JAR at `src/main/java/org/riceapps/scheduleplanner/assets/closure-compiler/compiler.jar`.
 * MySQL >= 5
 * Python >= 2.7
-* Java >= 7
-* PHP >= 5.5 or HHVM
-* PHP Composer (https://getcomposer.org/)
+* Java >= 8
 
 ## Requirements (for deployment):
 * MySQL >= 5
-* PHP >= 5.5 or HHVM
+* Java >= 8
 
 ## Documentation:
 * [Google Closure](https://developers.google.com/closure/)
@@ -49,19 +47,17 @@ We will be following the [Google JavaScript Style Guide](https://google-stylegui
 In order to make following style more convenient, you can utilize the [Closure Linter](https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
 
 ## Developer Set-Up and Workflow:
-1. Clone the code repository.
-* Install all of the required software on your system (listed above) and that you have placed the closure dependencies in the correct location.
-
-* Install the back end by typing `composer install` within the backend/ directory. (Note: If you didn’t add composer to your PATH, and you can alternatively run the phar file by typing `php composer.phar install`).
-
-* Start your MySQL database server and create a new database to use for the application.
+1. Clone the `scheduleplanner` repository using GIT.
+2. Clone the dependency `lightning` from [mschurr/lightning](https://github.com/mschurr/lightning) using GIT.
+3. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
+4. Import `lightning` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
+5. Install all of the required software on your system (listed above) and that you have placed the closure dependencies in the correct locations.
+6. Start your MySQL database server and create a new database to use for the application.
   * To start mysql: `mysqld`
-
   * Command line to connect: `mysql -u root -h localhost`
   * To create a database use `create database scheduleplanner`
-
   * Command line to import: `mysql -u root -p scheduleplanner -h localhost < schema.sql`
-
+7. Edit
 * COPY `backend/config-template.php` to `backend/config.php`.
 
 * Edit `backend/config.php` and replace the database connection information with the information of your local MySQL server.
@@ -98,5 +94,7 @@ If you add new files or dependencies (e.g. goog.require()), you will need to re-
 
 ## Deployment:
 1. Set up a MySQL database for use by the application and import the initial data as described above.
-* Deploy the application files (backend directory) within a PHP environment. You will need to configure URL rewriting so that requests to `/static/*` are mapped directly and all other requests are mapped to `webapp.php`.
-* Create a CRON job that will periodically run the command `php server.php courses pull` to update enrollment data on courses.
+2. Configure the application in `org.riceapps.scheduleplanner.ConfigFactory`.
+3. Package the application into a JAR using Maven/Eclipse.
+4. Run `org.riceapps.scheduleplanner.Launcher --config /path/to/config.json` to start the app.
+5. Run `org.riceapps.scheduleplaner.Parser --config /path/to/config.json --term TERM --year YEAR --daemonize` to pull new course data periodically. You will need to restart this program with new parameters when the term and/or year changes.

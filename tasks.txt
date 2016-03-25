@@ -16,6 +16,8 @@ MEDIUM PRIORITY:
   - Suggested Courses: Students who took XXXX also took XXXX.
     - NOTE: Would require using prior year's data or anonymized data from the registrar if possible.
 
+  - Automate the course parser daemon to move forward to new terms/years automatically.
+
 LOW PRIORITY:
 
   - Support multiple schedules per user per year.

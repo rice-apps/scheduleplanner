@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 import lightning.mvc.*;
+import static lightning.Context.*;
 import static lightning.mvc.HTTPMethod.*;
-import static lightning.mvc.Context.*;
 
 @Controller
 public class MainController {

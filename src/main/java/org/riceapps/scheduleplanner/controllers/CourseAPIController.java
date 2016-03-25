@@ -1,6 +1,6 @@
 package org.riceapps.scheduleplanner.controllers;
 
-import static lightning.mvc.Context.sendFile;
+import static lightning.Context.sendFile;
 import static lightning.mvc.HTTPMethod.GET;
 import lightning.mvc.Controller;
 import lightning.mvc.Route;
