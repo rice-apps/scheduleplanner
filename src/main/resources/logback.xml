@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Worth reading the manual over at http://logback.qos.ch/manual/architecture.html -->
+<configuration>
+
+  <!-- Send debug messages to System.out -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Logger for our packages. -->
+  <logger name="org.riceapps" level="DEBUG" />
+  <logger name="lightning" level="DEBUG" />
+
+  <!-- By default, the level of the root level is set to DEBUG -->
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+    
+</configuration>
