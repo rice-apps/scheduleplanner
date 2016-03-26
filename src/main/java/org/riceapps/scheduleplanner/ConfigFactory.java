@@ -3,12 +3,13 @@ package org.riceapps.scheduleplanner;
 import java.io.File;
 import java.io.FileInputStream;
 
-import lightning.Lightning;
+import org.apache.commons.io.IOUtils;
+
 import lightning.config.Config;
-import spark.utils.IOUtils;
+import lightning.json.JsonFactory;
 
 public class ConfigFactory {
   public static Config make(File file) throws Exception {
-    return Lightning.newGson().create().fromJson(IOUtils.toString(new FileInputStream(file)), SchedulePlannerConfig.class);
+    return JsonFactory.newJsonParser().fromJson(IOUtils.toString(new FileInputStream(file)), SchedulePlannerConfig.class);
   }
 }

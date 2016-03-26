@@ -3,11 +3,11 @@ package org.riceapps.scheduleplanner.cache;
 import java.io.File;
 import java.io.FileWriter;
 
+import lightning.json.JsonFactory;
+
 import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
 
 import com.google.gson.FieldNamingPolicy;
-
-import lightning.Lightning;
 
 public class CourseCache {
   public static File get() {
@@ -16,7 +16,7 @@ public class CourseCache {
   
   public static void set(CourseCatalogMessage data) throws Exception {
     try (FileWriter file = new FileWriter("./cache.json")) {
-      file.write("')]}\n" + Lightning.newGson(FieldNamingPolicy.IDENTITY).create().toJson(data));
+      file.write("')]}\n" + JsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).toJson(data));
     }
   }
 }

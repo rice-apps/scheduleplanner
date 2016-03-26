@@ -1,12 +1,16 @@
 package org.riceapps.scheduleplanner.controllers;
 
+import static lightning.enums.HTTPMethod.GET;
+import static lightning.server.Context.isLoggedIn;
+import static lightning.server.Context.user;
+
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
+import lightning.ann.Controller;
+import lightning.ann.Route;
+import lightning.ann.Template;
 
-import lightning.mvc.*;
-import static lightning.Context.*;
-import static lightning.mvc.HTTPMethod.*;
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 public class MainController {

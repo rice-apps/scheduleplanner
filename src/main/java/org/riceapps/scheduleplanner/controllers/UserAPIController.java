@@ -1,22 +1,22 @@
 package org.riceapps.scheduleplanner.controllers;
 
-import static lightning.Context.accessViolationIf;
-import static lightning.Context.badRequestIf;
-import static lightning.Context.db;
-import static lightning.Context.session;
-import static lightning.Context.user;
-import static lightning.mvc.HTTPMethod.GET;
-import static lightning.mvc.HTTPMethod.POST;
+import static lightning.enums.HTTPMethod.GET;
+import static lightning.enums.HTTPMethod.POST;
+import static lightning.server.Context.accessViolationIf;
+import static lightning.server.Context.badRequestIf;
+import static lightning.server.Context.db;
+import static lightning.server.Context.session;
+import static lightning.server.Context.user;
 
 import java.sql.ResultSet;
 
-import lightning.Lightning;
+import lightning.ann.Controller;
+import lightning.ann.Json;
+import lightning.ann.QParam;
+import lightning.ann.RequireAuth;
+import lightning.ann.Route;
 import lightning.db.NamedPreparedStatement;
-import lightning.mvc.Controller;
-import lightning.mvc.Json;
-import lightning.mvc.QParam;
-import lightning.mvc.RequireAuth;
-import lightning.mvc.Route;
+import lightning.json.JsonFactory;
 
 import org.riceapps.scheduleplanner.protocol.CourseIdMessage;
 import org.riceapps.scheduleplanner.protocol.UserModelMessage;
@@ -76,7 +76,7 @@ public class UserAPIController {
   @RequireAuth
   @Json
   public Object handleUserPush(@QParam("_proto") String data) throws Exception {
-    UserModelPushMessage request = Lightning.newGson(FieldNamingPolicy.IDENTITY).create().fromJson(data, UserModelPushMessage.class);
+    UserModelPushMessage request = JsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).fromJson(data, UserModelPushMessage.class);
     badRequestIf(!request.xsrfToken.equals(session().getXSRFToken()));
     accessViolationIf(request.userId != user().getId());
     badRequestIf(request.lastSeenVersion < 0);
