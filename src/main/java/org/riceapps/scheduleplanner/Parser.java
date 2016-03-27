@@ -20,6 +20,9 @@ import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
  * Rice's course catalog.
  * 
  * Options:
+ *   --config <file>:     (REQUIRED) Specifies the location of the JSON-formatted config file.
+ *                                   See SchedulePlannerConfig and its inheritence tree for structure.
+ *                                   Template is provided in src/main/resources.
  *   --recache:           (OPTIONAL) Don't sync, just update the cached JSON.
  *   --year <year>:       (REQUIRED) The year to sync.
  *   --term <term>:       (REQUIRED) The term to sync (e.g. fall or spring).
