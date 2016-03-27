@@ -33,7 +33,6 @@ import org.riceapps.scheduleplanner.cache.CourseCache;
 import org.riceapps.scheduleplanner.db.Day;
 import org.riceapps.scheduleplanner.db.GradeType;
 import org.riceapps.scheduleplanner.db.Term;
-import org.riceapps.scheduleplanner.dom.DOM;
 import org.riceapps.scheduleplanner.dom.DOM.SmartNode;
 import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
 import org.slf4j.Logger;
@@ -49,7 +48,11 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Responsible for pulling course data from the Rice University Courses API and synchronizing it into
- * our own internal database.
+ * our own internal database. It is safe to run the fetcher over and over again FOR THE SAME YEAR AND
+ * TERM. When switching years/terms, you must first clear the database.
+ * 
+ * Processing occurs in parallel to speed up the synchronization process.
+ * 
  * @see https://docs.rice.edu/confluence/display/~lpb1/Courses+API
  */
 public class CourseFetcher {
@@ -356,7 +359,7 @@ public class CourseFetcher {
           logger.debug("Syncing Data...");
           for (Node _courseNode : children(data.getDocumentElement(), e -> e.getNodeType() == Node.ELEMENT_NODE)) {
             if (i % NUM_THREADS == localTaskId) {
-              final SmartNode courseNode = DOM.wrap(_courseNode);
+              final SmartNode courseNode = new SmartNode(_courseNode);
               syncCourse(courseNode, pastYearCrns);
               processed += 1;
             }

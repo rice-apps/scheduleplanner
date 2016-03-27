@@ -19,10 +19,14 @@ import com.google.common.collect.ImmutableList;
  * is shockingly horrible.
  */
 public class DOM {
-  public static final SmartNode wrap(Node node) {
-    return new SmartNode(node);
-  }
-  
+  /**
+   * Provides a convenience wrapper over the DOM Node API.
+   * Allows you chain statements (even on children/attributes that do not exist).
+   * 
+   * As an example:
+   * SmartNode node = new SmartNode(domNode);
+   * node.children("TAG").attr("ABC").exists()
+   */
   public static class SmartNode {
     private final Node node;
     
@@ -111,26 +115,21 @@ public class DOM {
     }
   }
   
-  public static final Iterable<Node> children(Node node) {
-    return iter(node.getChildNodes());
-  }
-  
+  /**
+   * Returns an Iterable over the children of a given DOM Node that match a given filter.
+   * @param node
+   * @param filter
+   * @return
+   */
   public static final Iterable<Node> children(Node node, Iterables.Filter<Node> filter) {
     return Iterables.filter(iter(node.getChildNodes()), filter);
   }
-  
-  public static final Param attribute(Node node, String name) {
-    return Param.wrap(name, node.getAttributes().getNamedItem(name).getNodeValue());
-  }
-  
-  public static final Node child(Node node, String name) {
-    return ((Element) node).getElementsByTagName(name).item(0);
-  }
-  
-  public static final Param text(Node node) {
-    return Param.wrap("$", node.getTextContent());
-  }
-  
+    
+  /**
+   * Returns an Iterable over the DOM API's NodeList.
+   * @param list
+   * @return
+   */
   public static final Iterable<Node> iter(NodeList list) {
     return new Iterable<Node>() {
       @Override
@@ -140,6 +139,11 @@ public class DOM {
     };
   }
   
+  /**
+   * Returns an Iterable over the DOM API's NamedNodeMap.
+   * @param map
+   * @return
+   */
   public static final Iterable<Map.Entry<String, Node>> iter(NamedNodeMap map) {
     return new Iterable<Map.Entry<String, Node>>() {
       @Override
@@ -149,6 +153,9 @@ public class DOM {
     };
   }
   
+  /**
+   * Provides an Iterator over the DOM API's NodeListIterator.
+   */
   private static final class NodeListIterator implements Iterator<Node> {
     private final NodeList list;
     private int position;
@@ -170,6 +177,9 @@ public class DOM {
     }
   }
   
+  /**
+   * Provides an Iterator over the DOM API's NamedNodeMap.
+   */
   private static final class NamedNodeMapIterator implements Iterator<Map.Entry<String, Node>> {
     private final NamedNodeMap list;
     private int position;
@@ -192,6 +202,11 @@ public class DOM {
     }
   }
   
+  /**
+   * Provides a simple, immutable Map.Entry implementation.
+   * @param <K>
+   * @param <V>
+   */
   private static final class MapEntry<K, V> implements Map.Entry<K, V> {
     private final K key;
     private final V value;
@@ -212,7 +227,7 @@ public class DOM {
     }
 
     @Override
-    public V setValue(V arg0) {
+    public V setValue(V value) {
       throw new UnsupportedOperationException();
     }
   }

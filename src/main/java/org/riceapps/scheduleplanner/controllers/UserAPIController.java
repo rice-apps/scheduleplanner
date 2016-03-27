@@ -9,6 +9,7 @@ import static lightning.server.Context.session;
 import static lightning.server.Context.user;
 
 import java.sql.ResultSet;
+import java.util.Map;
 
 import lightning.ann.Controller;
 import lightning.ann.Json;
@@ -28,10 +29,11 @@ import com.google.gson.FieldNamingPolicy;
 @Controller
 public class UserAPIController {
   @Route(path="/api/user", methods={GET})
-  @RequireAuth
   @Json(prefix="')]}\n", names=FieldNamingPolicy.IDENTITY)
-  public Object handleFetchUser() throws Exception {
+  @RequireAuth
+  public UserModelMessage handleFetchUser() throws Exception {
     UserModelMessage message = new UserModelMessage();
+    
     message.userId = user().getId();
     message.userName = user().getUserName();
     message.xsrfToken = session().newXSRFToken();
@@ -75,7 +77,7 @@ public class UserAPIController {
   @Route(path="/api/user", methods={POST})
   @RequireAuth
   @Json
-  public Object handleUserPush(@QParam("_proto") String data) throws Exception {
+  public Map<String, ?> handleUserPush(@QParam("_proto") String data) throws Exception {
     UserModelPushMessage request = JsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).fromJson(data, UserModelPushMessage.class);
     badRequestIf(!request.xsrfToken.equals(session().getXSRFToken()));
     accessViolationIf(request.userId != user().getId());

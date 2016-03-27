@@ -15,7 +15,19 @@ import org.riceapps.scheduleplanner.db.Term;
 import org.riceapps.scheduleplanner.parser.CourseFetcher;
 import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
 
-
+/**
+ * Run this program to synchronize the application database with
+ * Rice's course catalog.
+ * 
+ * Options:
+ *   --recache:           (OPTIONAL) Don't sync, just update the cached JSON.
+ *   --year <year>:       (REQUIRED) The year to sync.
+ *   --term <term>:       (REQUIRED) The term to sync (e.g. fall or spring).
+ *   --daemonize:         (OPTIONAL) Run as a daemon that syncs periodically.
+ *   --current-xml <file> (OPTIONAL) Specify XML file located locally to parse instead of using Rice API.
+ *   --past-xml <file>    (OPTIONAL) Specify XML file located locally to parse instead of using Rice API.
+ *   
+ */
 public class Parser {
   public static void main(String[] args) throws Exception {
     Flags.parse(args);
@@ -56,7 +68,7 @@ public class Parser {
         }
       }, 0, TimeUnit.HOURS.toMillis(1));
     } else {
-      if (Flags.has("file")) {
+      if (Flags.has("current-xml")) {
         fetcher.sync(new File(Flags.getString("current-xml")), new File(Flags.getString("past-xml")));  
       } else {
         fetcher.sync();
