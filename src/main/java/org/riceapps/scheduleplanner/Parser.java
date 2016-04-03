@@ -23,6 +23,7 @@ import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
  *   --config <file>:     (REQUIRED) Specifies the location of the JSON-formatted config file.
  *                                   See SchedulePlannerConfig and its inheritence tree for structure.
  *                                   Template is provided in src/main/resources.
+ *   --reset:             (OPTIONAL) Don't sync, just reset the database. Should be run before changing term/year.
  *   --recache:           (OPTIONAL) Don't sync, just update the cached JSON.
  *   --year <year>:       (REQUIRED) The year to sync.
  *   --term <term>:       (REQUIRED) The term to sync (e.g. fall or spring).
@@ -37,6 +38,25 @@ public class Parser {
     
     Config config = ConfigFactory.make(Flags.getFile("config"));
     MySQLDatabaseProvider dbp = new MySQLDatabaseProvider(config);
+    
+    if (Flags.has("reset")) {
+      System.out.println("Reseting Database...");
+      
+      try (MySQLDatabase db = dbp.getDatabase()) {
+        db.transaction(() -> {
+          db.prepare("DELETE FROM `playgrounds`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `schedules`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `instructors`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `courses`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `course_restrictions`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `course_times`;").executeUpdateAndClose();
+          db.prepare("DELETE FROM `course_instructors`;").executeUpdateAndClose();
+        });
+      }
+      
+      System.out.println("DONE");
+      return;
+    }
     
     if (Flags.has("recache")) {
       System.out.println("Updating Cache...");
