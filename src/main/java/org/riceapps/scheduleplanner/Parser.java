@@ -36,12 +36,7 @@ public class Parser {
     Flags.parse(args);
     
     Config config = ConfigFactory.make(Flags.getFile("config"));
-    MySQLDatabaseProvider dbp = new MySQLDatabaseProvider(
-        config.db.host, 
-        config.db.port, 
-        config.db.username, 
-        config.db.password, 
-        config.db.name);
+    MySQLDatabaseProvider dbp = new MySQLDatabaseProvider(config);
     
     if (Flags.has("recache")) {
       System.out.println("Updating Cache...");
