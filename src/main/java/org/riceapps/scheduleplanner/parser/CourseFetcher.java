@@ -405,7 +405,7 @@ public class CourseFetcher {
   }
   
   public void syncCourse(SmartNode courseNode, ConcurrentHashMap<CourseId, Long> pastYearCrns) throws Exception {
-    // Changes: 
+    // TODO: 
     // - Credit hours can be decimals
     // - Section can be non-integers
     // - Instructor Net IDs available
@@ -414,6 +414,10 @@ public class CourseFetcher {
     // - Long and short course titles available
     // - Instructional method available
     // - Repeatable for credit REPS_CODE
+    // - Session type available
+    // - College available
+    // - More data available for times
+    // - Redo how restrictions are dealt with (current schema is lacking)
     
     Map<String, Object> course = new HashMap<>();
     long crn = courseNode.child("CRN").text().longValue();
@@ -462,7 +466,7 @@ public class CourseFetcher {
       course.put("prev_year_crn", SQLNull.INTEGER);
     }
     
-    // Find whether or not this course is already persent in the database.
+    // Find whether or not this course is already present in the database.
     // If it is, we should update the existing record rather than inserting a new one.
     try (MySQLDatabase db = dbp.getDatabase()) {
       try (NamedPreparedStatement q = db.prepare("SELECT courseid FROM courses WHERE term = :term AND year = :year AND crn = :crn;",
