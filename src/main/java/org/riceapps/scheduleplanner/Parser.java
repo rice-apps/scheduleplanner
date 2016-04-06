@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import lightning.config.Config;
 import lightning.db.MySQLDatabase;
 import lightning.db.MySQLDatabaseProvider;
+import lightning.db.MySQLDatabaseProviderImpl;
 import lightning.util.Flags;
 
 import org.riceapps.scheduleplanner.cache.CourseCache;
@@ -37,7 +38,7 @@ public class Parser {
     Flags.parse(args);
     
     Config config = ConfigFactory.make(Flags.getFile("config"));
-    MySQLDatabaseProvider dbp = new MySQLDatabaseProvider(config);
+    MySQLDatabaseProvider dbp = new MySQLDatabaseProviderImpl(config);
     
     if (Flags.has("reset")) {
       System.out.println("Reseting Database...");
