@@ -1,7 +1,7 @@
 package org.riceapps.scheduleplanner;
 
 import lightning.Lightning;
-import lightning.config.Config;
+import lightning.inject.InjectorModule;
 import lightning.util.Flags;
 
 /**
@@ -9,19 +9,29 @@ import lightning.util.Flags;
  * 
  * Options:
  *   --config <file>:   (REQUIRED) Specifies the location of the JSON-formatted config file.
- *                                 See SchedulePlannerConfig and its inheritence tree for structure.
+ *                                 See SchedulePlannerConfig and its inheritance tree for structure.
  *                                 Template is provided in src/main/resources.
  *   --debug:           (OPTIONAL) Overrides the config option to enable debug mode if present.
  */
 public class Launcher {
   public static void main(String[] args) throws Exception {
+    // Parse the command line flags.
     Flags.parse(args);    
-    Config config = ConfigFactory.make(Flags.getFile("config"));
     
+    // Parse the configuration from the file specified by command line flags.
+    SchedulePlannerConfig config = ConfigFactory.make(Flags.getFile("config"));
+    
+    // Allow command-line override to enable debug mode.
     if (Flags.has("debug")) {
       config.enableDebugMode = true;
+      config.useProductionView = false;
     }
     
-    Lightning.launch(config);
+    // Set up dependency injection for SchedulePlannerConfig.
+    InjectorModule injector = new InjectorModule();
+    injector.bindClassToInstance(SchedulePlannerConfig.class, config);
+    
+    // Launch the web server.
+    Lightning.launch(config, injector);
   }
 }

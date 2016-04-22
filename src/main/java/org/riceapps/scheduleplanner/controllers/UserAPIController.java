@@ -5,20 +5,20 @@ import static lightning.enums.HTTPMethod.POST;
 import static lightning.server.Context.accessViolationIf;
 import static lightning.server.Context.badRequestIf;
 import static lightning.server.Context.db;
+import static lightning.server.Context.parseJson;
 import static lightning.server.Context.session;
 import static lightning.server.Context.user;
 
 import java.sql.ResultSet;
 import java.util.Map;
 
-import lightning.ann.Controller;
 import lightning.ann.Json;
 import lightning.ann.QParam;
 import lightning.ann.RequireAuth;
 import lightning.ann.Route;
 import lightning.db.NamedPreparedStatement;
-import lightning.json.JsonFactory;
 
+import org.riceapps.scheduleplanner.SchedulePlannerConfig;
 import org.riceapps.scheduleplanner.protocol.CourseIdMessage;
 import org.riceapps.scheduleplanner.protocol.UserModelMessage;
 import org.riceapps.scheduleplanner.protocol.UserModelPushMessage;
@@ -26,10 +26,9 @@ import org.riceapps.scheduleplanner.protocol.UserModelPushMessage;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.FieldNamingPolicy;
 
-@Controller
-public class UserAPIController {
+public class UserAPIController extends AbstractController {
   @Route(path="/api/user", methods={GET})
-  @Json(prefix="')]}\n", names=FieldNamingPolicy.IDENTITY)
+  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=FieldNamingPolicy.IDENTITY)
   @RequireAuth
   public UserModelMessage handleFetchUser() throws Exception {
     UserModelMessage message = new UserModelMessage();
@@ -75,10 +74,10 @@ public class UserAPIController {
   }
   
   @Route(path="/api/user", methods={POST})
+  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=FieldNamingPolicy.IDENTITY)
   @RequireAuth
-  @Json
   public Map<String, ?> handleUserPush(@QParam("_proto") String data) throws Exception {
-    UserModelPushMessage request = JsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).fromJson(data, UserModelPushMessage.class);
+    UserModelPushMessage request = parseJson(data, UserModelPushMessage.class, FieldNamingPolicy.IDENTITY);
     badRequestIf(!request.xsrfToken.equals(session().getXSRFToken()));
     accessViolationIf(request.userId != user().getId());
     badRequestIf(request.lastSeenVersion < 0);
