@@ -36,15 +36,9 @@ public class UserAPIController extends AbstractController {
     message.userId = user().getId();
     message.userName = user().getUserName();
     message.xsrfToken = session().newXSRFToken();
-    message.hasAgreedToDisclaimer = user().hasProperty("HAS_AGREED_TO_DISCLAIMER")
-        ? user().getBoolean("HAS_AGREED_TO_DISCLAIMER")
-        : false;
-    message.hasSeenTour = user().hasProperty("HAS_SEEN_TOUR")
-        ? user().getBoolean("HAS_SEEN_TOUR")
-        : false;
-    message.lastSeenVersion = user().hasProperty("LAST_SEEN_VERSION")
-        ? user().getInt("LAST_SEEN_VERSION")
-        : 0;
+    message.hasAgreedToDisclaimer = user().getProperty("HAS_AGREED_TO_DISCLAIMER").booleanOption().or(false);
+    message.hasSeenTour = user().getProperty("HAS_SEEN_TOUR").booleanOption().or(false);
+    message.lastSeenVersion = user().getProperty("LAST_SEEN_VERSION").intOption().or(0);
         
     try (
       NamedPreparedStatement q = db().prepare("SELECT * FROM playgrounds WHERE userid = :userid;",
