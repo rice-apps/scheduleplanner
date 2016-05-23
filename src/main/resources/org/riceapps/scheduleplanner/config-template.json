@@ -5,7 +5,7 @@
     ],
     "scan_prefixes": [
         "org.riceapps.scheduleplanner",
-        "lightning.examples.cas"
+        "lightning.plugins.cas.controllers"
     ],
     "server": {
         "port": 80,

@@ -73,6 +73,11 @@
     <dependency>
       <groupId>edu.rice.mschurr</groupId>
       <artifactId>lightning</artifactId>
+      <version>0.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.rice.mschurr</groupId>
+      <artifactId>lightning-cas</artifactId>
       <version>0.0.1</version>
     </dependency>
   </dependencies>

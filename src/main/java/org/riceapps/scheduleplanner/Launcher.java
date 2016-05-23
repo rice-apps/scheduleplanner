@@ -2,6 +2,9 @@ package org.riceapps.scheduleplanner;
 
 import lightning.Lightning;
 import lightning.inject.InjectorModule;
+import lightning.plugins.cas.ann.CASDomain;
+import lightning.plugins.cas.ann.CASHost;
+import lightning.plugins.cas.ann.CASPath;
 import lightning.util.Flags;
 
 /**
@@ -30,6 +33,9 @@ public class Launcher {
     // Set up dependency injection for SchedulePlannerConfig.
     InjectorModule injector = new InjectorModule();
     injector.bindClassToInstance(SchedulePlannerConfig.class, config);
+    injector.bindAnnotationToInstance(CASHost.class, "netid.rice.edu");
+    injector.bindAnnotationToInstance(CASPath.class, "/cas");
+    injector.bindAnnotationToInstance(CASDomain.class, "@rice.edu");
     
     // Launch the web server.
     Lightning.launch(config, injector);

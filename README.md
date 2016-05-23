@@ -51,32 +51,36 @@ In order to make following style more convenient, you can utilize the [Closure L
 1. Install the required software for building listed above.
 2. Clone this `scheduleplanner` repository using GIT.
 3. Download the closure dependencies listed above and place them at the proper locations within the repo.
-4. Set up the dependency `lightning` from [mschurr/lightning](https://github.com/mschurr/lightning) using GIT.
-    * `git clone https://github.com/mschurr/lightning.git`
+4. Set up the dependency `lightning` from [lightning-framework/lightning](https://github.com/lightning-framework/lightning) using GIT.
+    * `git clone https://github.com/lightning-framework/lightning.git`
     * `cd lightning`
     * `mvn install`
-5. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
-6. Start your MySQL database server and create a new database to use for the application.
+5. Set up the dependency `lightning-cas` from [lightning-framework/lightning-cas](https://github.com/lightning-framework/lightning-cas) using GIT.
+    * `git clone https://github.com/lightning-framework/lightning-cas.git`
+    * `cd lightning`
+    * `mvn install`
+6. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
+7. Start your MySQL database server and create a new database to use for the application.
     * To start mysql: `mysqld`
     * Command line to connect: `mysql -u root -h localhost`
     * To create a database use `create database scheduleplanner`
     * Command line to import: `mysql -u root -p scheduleplanner -h localhost < schema.sql`
-7. Import the initial schema.
+8. Import the initial schema.
     * `lightning/src/main/resources/schema/schema.sql`
     * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/database/schema.sql`
-8. Copy `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/config-template.json` to `config.json` in any folder on your machine. Edit the settings in the copy to match your machine.
-9. Compile the development version of the closure front end.
+9. Copy `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/config-template.json` to `config.json` in any folder on your machine. Edit the settings in the copy to match your machine.
+10. Compile the development version of the closure front end.
     * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/assets/frontend/build_dev.sh`
     * **NOTE**: You will not need to recompile the development version of the Javascript frequently. In fact, after the initial compile you will ONLY need to compile it when you add a new dependency
         (goog.require) or new JavaScript file.
     * **NOTE**: You may also build the production Javascript bundle by running build_prod.sh instead. You will not want to use the production bundle to develop; it will make the process significantly slower. However, you will want to occasionally re-build the production bundle in order to perform static analysis (type checking) on your code.
-10. Sync your application with Rice's server.
+11. Sync your application with Rice's server.
     * Run `org.riceapps.scheduleplanner.Parser --config /path/to/config.json --term Spring --year 2016`
-11. Start the development server.
+12. Start the development server.
      * Run `org.riceapps.scheduleplanner.Launcher --config /path/to/config.json`
      * **Note**: Linux and Mac OSX users cannot bind to port 80 with using sudo or configuring their machine to allow non-root users to bind to port 80. You can either configure your system, use sudo (not recommended), or pick an alternative port.
-12. View the application in your browser (Chrome works best) at [http://localhost/](http://localhost).
-13. You can now begin making changes to the Javascript code using an IDE of your choice. Your changes will be reflected instantly when you refresh the page. If you add new files or dependencies (e.g. goog.require()), you will need to re-run `build_dev.sh` in order for the change to take effect.
+13. View the application in your browser (Chrome works best) at [http://localhost/](http://localhost).
+14. You can now begin making changes to the Javascript code using an IDE of your choice. Your changes will be reflected instantly when you refresh the page. If you add new files or dependencies (e.g. goog.require()), you will need to re-run `build_dev.sh` in order for the change to take effect.
     * Run the compiler periodically (build_prod.sh) to check for syntax and type errors.
     * Follow the style of existing code (see guidelines above).
     * Use the developer console in Chrome to monitor performance, syntax/runtime errors, and for general debugging.
