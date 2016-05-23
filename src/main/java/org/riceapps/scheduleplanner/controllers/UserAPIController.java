@@ -17,6 +17,7 @@ import lightning.ann.QParam;
 import lightning.ann.RequireAuth;
 import lightning.ann.Route;
 import lightning.db.NamedPreparedStatement;
+import lightning.enums.JsonFieldNamingPolicy;
 
 import org.riceapps.scheduleplanner.SchedulePlannerConfig;
 import org.riceapps.scheduleplanner.protocol.CourseIdMessage;
@@ -24,11 +25,10 @@ import org.riceapps.scheduleplanner.protocol.UserModelMessage;
 import org.riceapps.scheduleplanner.protocol.UserModelPushMessage;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.FieldNamingPolicy;
 
 public class UserAPIController extends AbstractController {
   @Route(path="/api/user", methods={GET})
-  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=FieldNamingPolicy.IDENTITY)
+  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=JsonFieldNamingPolicy.IDENTITY)
   @RequireAuth
   public UserModelMessage handleFetchUser() throws Exception {
     UserModelMessage message = new UserModelMessage();
@@ -68,10 +68,10 @@ public class UserAPIController extends AbstractController {
   }
   
   @Route(path="/api/user", methods={POST})
-  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=FieldNamingPolicy.IDENTITY)
+  @Json(prefix=SchedulePlannerConfig.XSSI_PREFIX, names=JsonFieldNamingPolicy.IDENTITY)
   @RequireAuth
   public Map<String, ?> handleUserPush(@QParam("_proto") String data) throws Exception {
-    UserModelPushMessage request = parseJson(data, UserModelPushMessage.class, FieldNamingPolicy.IDENTITY);
+    UserModelPushMessage request = parseJson(data, UserModelPushMessage.class, JsonFieldNamingPolicy.IDENTITY);
     badRequestIf(!request.xsrfToken.equals(session().getXSRFToken()));
     accessViolationIf(request.userId != user().getId());
     badRequestIf(request.lastSeenVersion < 0);

@@ -3,7 +3,7 @@ package org.riceapps.scheduleplanner.cache;
 import java.io.File;
 import java.io.FileWriter;
 
-import lightning.json.JsonFactory;
+import lightning.json.GsonFactory;
 
 import org.riceapps.scheduleplanner.SchedulePlannerConfig;
 import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
@@ -21,7 +21,7 @@ public class CourseCache {
   
   public static void set(CourseCatalogMessage data) throws Exception {
     try (FileWriter file = new FileWriter("./cache.json")) {
-      file.write(SchedulePlannerConfig.XSSI_PREFIX + JsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).toJson(data));
+      file.write(SchedulePlannerConfig.XSSI_PREFIX + GsonFactory.newJsonParser(FieldNamingPolicy.IDENTITY).toJson(data));
     }
   }
 }
