@@ -35,9 +35,13 @@ import org.riceapps.scheduleplanner.protocol.CourseCatalogMessage;
  */
 public class Parser {
   public static void main(String[] args) throws Exception {
+    // Parse the command-line flags.
     Flags.parse(args);
     
+    // Parse the config from file.
     Config config = ConfigFactory.make(Flags.getFile("config"));
+    
+    // Create a database connection pool.
     MySQLDatabaseProvider dbp = new MySQLDatabaseProviderImpl(config);
     
     if (Flags.has("reset")) {

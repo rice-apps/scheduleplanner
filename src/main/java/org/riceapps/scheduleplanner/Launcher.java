@@ -30,8 +30,9 @@ public class Launcher {
       config.useProductionView = false;
     }
     
-    // Set up dependency injection for SchedulePlannerConfig.
+    // Set up dependency injection.
     InjectorModule injector = new InjectorModule();
+    
     injector.bindClassToInstance(SchedulePlannerConfig.class, config);
     injector.bindAnnotationToInstance(CASHost.class, "netid.rice.edu");
     injector.bindAnnotationToInstance(CASPath.class, "/cas");

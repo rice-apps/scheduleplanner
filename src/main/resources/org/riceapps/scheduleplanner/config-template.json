@@ -1,7 +1,9 @@
 {
     "enable_debug_mode": false,
     "auto_reload_prefixes": [
-        "org.riceapps.scheduleplanner"
+        "org.riceapps.scheduleplanner.controllers",
+        "org.riceapps.scheduleplanner.db",
+        "org.riceapps.scheduleplanner.protocol"
     ],
     "scan_prefixes": [
         "org.riceapps.scheduleplanner",
