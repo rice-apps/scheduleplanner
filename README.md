@@ -24,7 +24,8 @@ You can view the application live at [scheduleplanner.riceapps.org](http://sched
 ## Documentation:
 * [Google Closure](https://developers.google.com/closure/)
 * [Closure Standard Library API Reference](https://google.github.io/closure-library/api/)
-* [Closure Type Annotation]( https://developers.google.com/closure/compiler/docs/js-for-compiler)
+* [Closure Type Annotation](https://developers.google.com/closure/compiler/docs/js-for-compiler)
+* [Lightning Java](https://lightning-framework.github.io/)
 
 ## Style:
 We will be following the [Google JavaScript Style Guide](https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). In general,
@@ -57,7 +58,7 @@ In order to make following style more convenient, you can utilize the [Closure L
     * `mvn install`
 5. Set up the dependency `lightning-cas` from [lightning-framework/lightning-cas](https://github.com/lightning-framework/lightning-cas) using GIT.
     * `git clone https://github.com/lightning-framework/lightning-cas.git`
-    * `cd lightning`
+    * `cd lightning-cas`
     * `mvn install`
 6. Import `scheduleplanner` into your Java IDE. (Eclipse > File > Import > Existing Maven Project).
 7. Start your MySQL database server and create a new database to use for the application.
