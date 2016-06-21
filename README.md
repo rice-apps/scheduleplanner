@@ -5,17 +5,17 @@ An open-source schedule planner and visualizer for university students maintaine
 
 You can view the application live at [scheduleplanner.riceapps.org](http://scheduleplanner.riceapps.org).
 
-## Requirements (for building):
+## Requirements (for development):
 * Google Closure Library
-  `git clone https://github.com/google/closure-library.git closure-library`
-  Place folder at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-library`.
+  * Clone [closure-library](https://github.com/google/closure-library.git).
+  * Place cloned folder at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-library`.
 * Google Closure Compiler
-  `wget http://dl.google.com/closure-compiler/compiler-latest.zip`
-  Place JAR at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-compiler/compiler.jar`.
+  * Download [compiler-latest.zip](http://dl.google.com/closure-compiler/compiler-latest.zip).
+  * Extract and place JAR at `src/main/resources/org/riceapps/scheduleplanner/assets/closure-compiler/compiler.jar`.
 * MySQL >= 5
 * Python >= 2.7
 * Java >= 8
-* Maven
+* Maven Package Manager (for Java)
 
 ## Requirements (for deployment):
 * MySQL >= 5
@@ -27,8 +27,10 @@ You can view the application live at [scheduleplanner.riceapps.org](http://sched
 * [Closure Type Annotation](https://developers.google.com/closure/compiler/docs/js-for-compiler)
 * [Lightning Java](https://lightning-framework.github.io/)
 
-## Style:
-We will be following the [Google JavaScript Style Guide](https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). In general,
+## JS Style:
+We will be following the [Google JavaScript Style Guide](https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). You may want to configure your IDE to automatically format your code to match this style.
+
+In general,
 
 * Always indent using spaces
 * Use unix line endings
@@ -48,10 +50,14 @@ We will be following the [Google JavaScript Style Guide](https://google-stylegui
 
 In order to make following style more convenient, you can utilize the [Closure Linter](https://developers.google.com/closure/utilities/docs/linter_howto) and `fixjsstyle`.
 
+## Java Style
+
+We will be following the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html). You may want to configure your IDE to automatically format code to match this style.
+
 ## Developer Set-Up and Workflow:
-1. Install the required software for building listed above.
+1. Install the required software for development (listed above).
 2. Clone this `scheduleplanner` repository using GIT.
-3. Download the closure dependencies listed above and place them at the proper locations within the repo.
+3. Download the closure dependencies (listed above) and place them at the proper locations within the repo.
 4. Set up the dependency `lightning` from [lightning-framework/lightning](https://github.com/lightning-framework/lightning) using GIT.
     * `git clone https://github.com/lightning-framework/lightning.git`
     * `cd lightning`
@@ -66,20 +72,19 @@ In order to make following style more convenient, you can utilize the [Closure L
     * Command line to connect: `mysql -u root -h localhost`
     * To create a database use `create database scheduleplanner`
     * Command line to import: `mysql -u root -p scheduleplanner -h localhost < schema.sql`
-8. Import the initial schema.
+8. Import the initial schema files located at:
     * `lightning/src/main/resources/schema/schema.sql`
     * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/database/schema.sql`
-9. Copy `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/config-template.json` to `config.json` in any folder on your machine. Edit the settings in the copy to match your machine.
+9. Copy `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/config-template.json` to `config.json` in any folder on your machine. Edit the settings in the copy to fit your machine. Ensure `enable_debug_mode` is set to `true`.
 10. Compile the development version of the closure front end.
-    * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/assets/frontend/build_dev.sh`
-    * **NOTE**: You will not need to recompile the development version of the Javascript frequently. In fact, after the initial compile you will ONLY need to compile it when you add a new dependency
-        (goog.require) or new JavaScript file.
-    * **NOTE**: You may also build the production Javascript bundle by running build_prod.sh instead. You will not want to use the production bundle to develop; it will make the process significantly slower. However, you will want to occasionally re-build the production bundle in order to perform static analysis (type checking) on your code.
-11. Sync your application with Rice's server.
-    * Run `org.riceapps.scheduleplanner.Parser --config /path/to/config.json --term Spring --year 2016`
-12. Start the development server.
+    * `scheduleplanner/src/main/resources/org/riceapps/scheduleplanner/assets/frontend/build_dev.sh` (bat equivalent available for Windows systems)
+    * **NOTE**: You will not need to recompile the development version of the Javascript frequently. In fact, after the initial compile you will ONLY need to compile it when you add a new dependency (goog.require) or new JavaScript file.
+    * **NOTE**: You may also build the production Javascript bundle by running `build_prod.sh` instead. You will not want to use the production bundle to develop; it will make the process significantly slower. **However, you will want to occasionally re-build the production bundle in order to perform static analysis (type checking) on your code.**
+11. Sync your application database with Rice's course database server.
+    * Run `org.riceapps.scheduleplanner.Parser --config /path/to/config.json --term Spring --year 2016` (you may replace year and term to match current term)
+12. Start the development web server.
      * Run `org.riceapps.scheduleplanner.Launcher --config /path/to/config.json`
-     * **Note**: Linux and Mac OSX users cannot bind to port 80 with using sudo or configuring their machine to allow non-root users to bind to port 80. You can either configure your system, use sudo (not recommended), or pick an alternative port.
+     * **Note**: Linux and Mac OSX users cannot bind to port 80 with using sudo or configuring their machine to allow non-root users to bind to port 80. You can either configure your system, use sudo (not recommended), or pick an alternative port in your config file.
 13. View the application in your browser (Chrome works best) at [http://localhost/](http://localhost).
 14. You can now begin making changes to the Javascript code using an IDE of your choice. Your changes will be reflected instantly when you refresh the page. If you add new files or dependencies (e.g. goog.require()), you will need to re-run `build_dev.sh` in order for the change to take effect.
     * Run the compiler periodically (build_prod.sh) to check for syntax and type errors.
@@ -89,8 +94,8 @@ In order to make following style more convenient, you can utilize the [Closure L
 **IMPORTANT**: Before committing, you MUST run `build_prod.sh` and ensure that you have not created any compiler warnings.
 
 ## Deployment:
-1. Set up a MySQL database for use by the application and import the initial data as described above.
-2. Create a configuration file based off of `src/main/resources/org/riceapps/scheduleplanner/config-template.json`.
-3. Package the application into a JAR using Maven/Eclipse: `mvn assembly:single`.
-4. Run `java -jar sp.jar --config /path/to/config.json` to start the app.
+1. Set up a MySQL database for use by the application and import the initial data (as described above).
+2. Create a configuration file based off of `src/main/resources/org/riceapps/scheduleplanner/config-template.json` (as described above).
+3. Package the application into a JAR (named `sp.jar`) using Maven/Eclipse (`mvn assembly:single`) and upload the JAR to your server nodes.
+4. Run `java -jar sp.jar --config /path/to/config.json` to start the app web server.
 5. Run `java -cp sp.jar org.riceapps.scheduleplaner.Parser --config /path/to/config.json --term TERM --year YEAR --daemonize` to pull new course data periodically. You will need to restart this program with new parameters when the term and/or year changes.
