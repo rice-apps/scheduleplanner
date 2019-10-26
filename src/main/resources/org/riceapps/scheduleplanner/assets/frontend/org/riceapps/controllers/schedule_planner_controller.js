@@ -571,7 +571,7 @@ SchedulePlannerController.prototype.handleMoveToCalendar_ = function(event) {
 SchedulePlannerController.prototype.addCoursesToSchedule = function(courses, opt_index) {
   var index = opt_index || this.calendarInsertAt_ || 0;
   index = Math.max(index, 0);
-  index = Math.min(index, this.view_.getCalendarView().getChildCount() + 1);
+  index = Math.min(index, this.view_.getCalendarView().getChildCount());
 
   for (var i = 0; i < courses.length; i++) {
     var course = new org.riceapps.views.CourseCalendarView(courses[i]);

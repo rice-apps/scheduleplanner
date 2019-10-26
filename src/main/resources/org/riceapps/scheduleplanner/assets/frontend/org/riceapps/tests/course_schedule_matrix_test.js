@@ -33,7 +33,7 @@ var CourseScheduleMatrixTest = org.riceapps.tests.CourseScheduleMatrixTest;
 CourseScheduleMatrixTest.prototype.start = function() {
   window.console.log('CourseScheduleMatrixTest.start');
   var xhrController = new org.riceapps.controllers.SchedulePlannerXhrController();
-  xhrController.getAllCourses('../../../../../cache/courses.json').then(this.startInternal_);
+  xhrController.getAllCourses('/api/courses').then(this.startInternal_);
 };
 
 

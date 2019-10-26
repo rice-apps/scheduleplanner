@@ -217,6 +217,7 @@ public class CourseFetcher {
     if (section.isInteger()) {
       return section.intValue();
     } else if (section.isNotEmpty()) {
+      // Hack: Section numbers aren't actually numeric like we thought, so try to make them numeric.
       section = Param.wrap("$", section.stringValue().replaceAll("[^0-9]", ""));
       if (section.isInteger()) {
         return section.intValue();

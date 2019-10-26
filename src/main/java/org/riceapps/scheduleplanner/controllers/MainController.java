@@ -1,18 +1,15 @@
 package org.riceapps.scheduleplanner.controllers;
 
 import static lightning.enums.HTTPMethod.GET;
-import static lightning.server.Context.*;
-
+import static lightning.server.Context.isLoggedIn;
+import static lightning.server.Context.render;
+import static lightning.server.Context.user;
 import java.util.Map;
-
-import lightning.ann.Route;
-import lightning.ann.Template;
-
 import com.google.common.collect.ImmutableMap;
+import lightning.ann.Route;
 
 public class MainController extends AbstractController {
   @Route(path="/", methods={GET})
-  @Template
   public void handleIndex() throws Exception {
     String template = config.useProductionView 
         ? "production.ftl" 
