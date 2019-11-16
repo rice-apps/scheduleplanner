@@ -5,9 +5,9 @@
     <link rel="stylesheet" type="text/css" href="/frontend/org/riceapps/stylesheets/animation.min.css" />
     <link rel="stylesheet" type="text/css" href="/frontend/org/riceapps/stylesheets/view.css" />
     <link rel="icon" type="image/png" href="/favicon.png" media="all" />
-    <script src="/frontend/prod.js" type="text/javascript"></script>
   </head>
   <body>
+    <script src="/frontend/prod.js" type="text/javascript"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

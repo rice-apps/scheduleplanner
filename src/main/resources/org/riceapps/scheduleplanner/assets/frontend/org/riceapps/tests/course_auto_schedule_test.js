@@ -41,7 +41,7 @@ var CourseAutoScheduleTest = org.riceapps.tests.CourseAutoScheduleTest;
 CourseAutoScheduleTest.prototype.start = function() {
   window.console.log('CourseAutoScheduleTest.start');
   var xhrController = new org.riceapps.controllers.SchedulePlannerXhrController();
-  xhrController.getAllCourses('../../../../../cache/courses.json').then(goog.bind(this.whenLoaded_, this));
+  xhrController.getAllCourses('/api/courses').then(goog.bind(this.whenLoaded_, this));
 };
 
 
